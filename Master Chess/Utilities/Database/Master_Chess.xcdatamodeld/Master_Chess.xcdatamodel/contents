@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F66" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Achievement" representedClassName=".Achievement" syncable="YES">
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="des" optional="YES" attributeType="String"/>
+        <attribute name="icon" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="points" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="progress" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="targetProgress" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="unlockDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="unlocked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <relationship name="source" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Users" inverseName="userAchievement" inverseEntity="Users"/>
+    </entity>
+    <entity name="GameHistory" representedClassName=".GameHistory" syncable="YES">
+        <attribute name="datePlayed" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="gameID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="gameLength" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="opponentUsername" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="outcome" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="userColor" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="userRatingChange" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="source" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Users" inverseName="userHistory" inverseEntity="Users"/>
+    </entity>
+    <entity name="GameStats" representedClassName=".GameStats" syncable="YES">
+        <attribute name="draws" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="losses" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="totalGames" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="winRate" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="wins" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="source" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Users" inverseName="userStats" inverseEntity="Users"/>
+    </entity>
+    <entity name="Item" representedClassName=".Item" syncable="YES">
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="SavedGame" representedClassName=".SavedGame" syncable="YES">
+        <attribute name="autoPromotionEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="blackTimeLeft" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="boardSetup" optional="YES" attributeType="Transformable" customClassName="NSArray"/>
+        <attribute name="currentPlayer" optional="YES" attributeType="String" customClassName="Player"/>
+        <attribute name="difficulty" optional="YES" attributeType="String"/>
+        <attribute name="isCheck" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="language" optional="YES" attributeType="String"/>
+        <attribute name="moveAvailable" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="whiteTimeLeft" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" customClassName="TimeInterval"/>
+        <relationship name="source" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Users" inverseName="savedGame" inverseEntity="Users"/>
+    </entity>
+    <entity name="Setting" representedClassName=".Setting" syncable="YES">
+        <attribute name="autoPromotionEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="difficulty" optional="YES" attributeType="String"/>
+        <attribute name="isDarkMode" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="language" optional="YES" attributeType="String"/>
+        <attribute name="musicEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="soundEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <relationship name="source" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Users" inverseName="userSettings" inverseEntity="Users"/>
+    </entity>
+    <entity name="Test" representedClassName=".Test" syncable="YES">
+        <attribute name="age" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="gender" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Users" representedClassName=".Users" syncable="YES">
+        <attribute name="hasActiveGame" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="joinDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="password" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="profilePicture" optional="YES" attributeType="String" defaultValueString="&quot;&quot;"/>
+        <attribute name="ranking" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="rating" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="userID" optional="YES" attributeType="UUID" defaultValueString="" usesScalarValueType="NO"/>
+        <attribute name="username" optional="YES" attributeType="String" defaultValueString=""/>
+        <relationship name="savedGame" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SavedGame" inverseName="source" inverseEntity="SavedGame"/>
+        <relationship name="userAchievement" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Achievement" inverseName="source" inverseEntity="Achievement"/>
+        <relationship name="userHistory" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GameHistory" inverseName="source" inverseEntity="GameHistory"/>
+        <relationship name="userSettings" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Setting" inverseName="source" inverseEntity="Setting"/>
+        <relationship name="userStats" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameStats" inverseName="source" inverseEntity="GameStats"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="username"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+</model>
