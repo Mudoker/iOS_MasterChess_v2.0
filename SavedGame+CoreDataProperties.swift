@@ -26,10 +26,11 @@ extension SavedGame {
     @NSManaged public var moveAvailable: Int16
     @NSManaged public var whiteTimeLeft: Double
     @NSManaged public var source: Users?
+
     public var unwrappedDifficulty: String {
-                difficulty ?? ""
-        }
-        
+                    difficulty ?? ""
+            }
+            
     public var unwrappedLanguage: String {
         language ?? ""
     }
