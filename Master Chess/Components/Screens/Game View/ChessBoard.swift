@@ -1,4 +1,10 @@
-
+//
+//  Board.swift
+//  Chess
+//
+//  Created by Ivan Ruiz Monjo on 08/05/2020.
+//  Copyright © 2020 Ivan Ruiz Monjo. All rights reserved.
+//
 
 import Foundation
 import Combine
@@ -20,9 +26,11 @@ struct ChessBoard {
     private var history: [Move] = []
     private var kingPosition: Position = Position(x: 0, y: 0)
     private var isWhiteKingMoved = false
-    private var isWhiteRookMoved = false
+    private var isWhiteRightRookMoved = false
+    private var isWhiteLeftRookMoved = false
     private var isBlackKingMoved = false
-    private var isBlackRookMoved = false
+    private var isBlackRightRookMoved = false
+    private var isBlackLeftRookMoved = false
     init(player: Binding<Player>, user: Binding<Users>) {
         _currentUser = user
         gameSetting = user.wrappedValue.userSettings ?? Setting()
@@ -203,52 +211,74 @@ struct ChessBoard {
     private func validKingMove(board: [[ChessPiece?]], from start: Position, to end: Position) -> Bool {
         let deltaX = abs(start.x - end.x)
         let deltaY = abs(start.y - end.y)
-        
+    
         switch (deltaX, deltaY) {
         case (0...1, 0...1):
+            // Check if the destination square is empty or occupied by an opponent's piece
+            if let piece = board[end.y][end.x], piece.player == currentPlayer.value {
+                return false
+            }
+            
             var tempBoard = board
             tempBoard[end.y][end.x] = tempBoard[start.y][start.x]
             tempBoard[start.y][start.x] = nil
             
             return !isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history)
+            
         case (2, 0):
             if !isKingInCheck(player: currentPlayer.value, board: piecePositions.value, history: history) {
                 let castlingDirection: Int
                 let rookInitialX: Int
                 let kingXAfterCastling: Int
                 let emptySquaresX: [Int]
-
-                if player == .white {
+                
+                if currentPlayer.value == .white {
                     castlingDirection = end.x > start.x ? 1 : -1
                     rookInitialX = castlingDirection == 1 ? 7 : 0
                     kingXAfterCastling = start.x + (2 * castlingDirection)
                     emptySquaresX = [start.x + castlingDirection, kingXAfterCastling]
-                } else { // player == .black
+                    
+                    if castlingDirection == 1 {
+                        if isWhiteKingMoved || isWhiteRightRookMoved {
+                            return false
+                        }
+                    } else {
+                        if isWhiteKingMoved || isWhiteLeftRookMoved {
+                            return false
+                        }
+                    }
+                } else { // currentPlayer.value == .black
                     castlingDirection = end.x > start.x ? 1 : -1
                     rookInitialX = castlingDirection == 1 ? 7 : 0
                     kingXAfterCastling = start.x + (2 * castlingDirection)
                     emptySquaresX = [start.x + castlingDirection, kingXAfterCastling]
+                    
+                    if castlingDirection == 1 {
+                        if isBlackKingMoved || isBlackRightRookMoved {
+                            return false
+                        }
+                    } else {
+                        if isBlackKingMoved || isBlackLeftRookMoved {
+                            return false
+                        }
+                    }
                 }
-
-                let rookPosition = Position(x: rookInitialX, y: start.y)
-
+                
                 // Check if the squares between the king and the rook are empty
                 if emptySquaresX.allSatisfy({ board[start.y][$0] == nil }) {
                     // Create a temporary board with the king's move
                     var tempBoardAfterCastling = board
-                    tempBoardAfterCastling[rookPosition.y][rookPosition.x] = tempBoardAfterCastling[start.y][start.x]
+                    tempBoardAfterCastling[start.y][kingXAfterCastling] = tempBoardAfterCastling[start.y][start.x]
                     tempBoardAfterCastling[start.y][start.x] = nil
-
-                    // Check if the king is in check after castling
+                    
                     if isKingInCheck(player: currentPlayer.value, board: tempBoardAfterCastling, history: history) {
                         return false
                     }
-
-                    // Everything checks out, so allow castling
+                               
                     return true
                 }
             }
-            return false
+            return false 
         default:
             return false
         }
