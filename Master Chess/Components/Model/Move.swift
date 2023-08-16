@@ -8,6 +8,5 @@
 import Foundation
 
 struct Move {
-    let start: Position
-    let end: Position
+    var from, to: Position
 }

@@ -26,8 +26,8 @@ enum Player {
 struct ChessPiece: ExpressibleByStringLiteral {
     let id: String
     var pieceType: PieceType
-    let side: Color
-
+    let side: Player
+    let imageView: String
     init(stringLiteral value: String) {
         guard value.count == 3 else {
             preconditionFailure("Invalid string literal length")
@@ -53,5 +53,6 @@ struct ChessPiece: ExpressibleByStringLiteral {
         }
 
         id = value
+        imageView = color + type
     }
 }

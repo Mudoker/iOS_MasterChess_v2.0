@@ -2,7 +2,7 @@
 //  SavedGame+CoreDataProperties.swift
 //  Master Chess
 //
-//  Created by Quoc Doan Huu on 15/08/2023.
+//  Created by Quoc Doan Huu on 16/08/2023.
 //
 //
 
@@ -16,21 +16,20 @@ extension SavedGame {
         return NSFetchRequest<SavedGame>(entityName: "SavedGame")
     }
 
-    @NSManaged public var difficulty: String?
-    @NSManaged public var language: String?
     @NSManaged public var autoPromotionEnabled: Bool
-    @NSManaged public var boardSetup: NSArray?
-    @NSManaged public var whiteTimeLeft: Double
-    @NSManaged public var moveAvailable: Int16
-    @NSManaged public var isCheck: Bool
     @NSManaged public var blackTimeLeft: Double
+    @NSManaged public var boardSetup: NSArray?
     @NSManaged public var currentPlayer: String?
+    @NSManaged public var difficulty: String?
+    @NSManaged public var isCheck: Bool
+    @NSManaged public var language: String?
+    @NSManaged public var moveAvailable: Int16
+    @NSManaged public var whiteTimeLeft: Double
     @NSManaged public var source: Users?
-    
     public var unwrappedDifficulty: String {
-            difficulty ?? ""
-    }
-    
+                difficulty ?? ""
+        }
+        
     public var unwrappedLanguage: String {
         language ?? ""
     }

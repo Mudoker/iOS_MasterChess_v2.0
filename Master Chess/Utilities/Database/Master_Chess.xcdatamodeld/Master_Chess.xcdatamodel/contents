@@ -37,7 +37,7 @@
     <entity name="SavedGame" representedClassName=".SavedGame" syncable="YES">
         <attribute name="autoPromotionEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="blackTimeLeft" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="boardSetup" optional="YES" attributeType="Transformable" customClassName="NSArray"/>
+        <attribute name="boardSetup" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer" customClassName="NSArray"/>
         <attribute name="currentPlayer" optional="YES" attributeType="String" customClassName="Player"/>
         <attribute name="difficulty" optional="YES" attributeType="String"/>
         <attribute name="isCheck" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>

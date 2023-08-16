@@ -2,7 +2,7 @@
 //  SavedGame+CoreDataClass.swift
 //  Master Chess
 //
-//  Created by Quoc Doan Huu on 15/08/2023.
+//  Created by Quoc Doan Huu on 16/08/2023.
 //
 //
 
