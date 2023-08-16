@@ -25,9 +25,10 @@ struct ChessBoard {
     private var timer = Timer.publish(every: 1.0, on: .main, in: .common)
     private var history: [Move] = []
     private var kingPosition: Position = Position(x: 0, y: 0)
-    private var isKingMoved = false
-    private var isRookMoved = false
-
+    private var isWhiteKingMoved = false
+    private var isWhiteRookMoved = false
+    private var isBlackKingMoved = false
+    private var isBlackRookMoved = false
     init(player: Binding<Player>, user: Binding<Users>) {
         _currentUser = user
         gameSetting = user.wrappedValue.userSettings ?? Setting()
@@ -219,30 +220,56 @@ struct ChessBoard {
         case (2, 0):
             // only allow castling if King is not in check
             if !isKingInCheck(player: currentPlayer.value, board: piecePositions.value, history: history) {
-                // Check if castling is allowed
-                if !isKingMoved && !isRookMoved {
-                    let castlingDirection = end.x > start.x ? 1 : -1
-                    let rookPosition = Position(x: castlingDirection == 1 ? 7 : 0, y: start.y)
-                    let emptySquares = castlingDirection == 1 ? [Position(x: start.x + 1, y: start.y), Position(x: start.x + 2, y: start.y)] : [Position(x: start.x - 1, y: start.y), Position(x: start.x - 2, y: start.y)]
-                    
-                    // Check if the squares between the king and the rook are empty
-                    if emptySquares.allSatisfy({ board[$0.y][$0.x] == nil }) {
-                        // Create a temporary board with the king's move
-                        var tempBoardAfterCastling = board
-                        tempBoardAfterCastling[rookPosition.y][rookPosition.x] = tempBoardAfterCastling[start.y][start.x]
-                        tempBoardAfterCastling[start.y][start.x] = nil
+                if player == .white {
+                    // Check if castling is allowed
+                    if !isWhiteKingMoved && !isWhiteRookMoved {
+                        let castlingDirection = end.x > start.x ? 1 : -1
+                        let rookPosition = Position(x: castlingDirection == 1 ? 7 : 0, y: start.y)
+                        let emptySquares = castlingDirection == 1 ? [Position(x: start.x + 1, y: start.y), Position(x: start.x + 2, y: start.y)] : [Position(x: start.x - 1, y: start.y), Position(x: start.x - 2, y: start.y)]
                         
-                        // Check if the king is in check after castling
-                        if isKingInCheck(player: currentPlayer.value, board: tempBoardAfterCastling, history: history) {
-                            return false
+                        // Check if the squares between the king and the rook are empty
+                        if emptySquares.allSatisfy({ board[$0.y][$0.x] == nil }) {
+                            // Create a temporary board with the king's move
+                            var tempBoardAfterCastling = board
+                            tempBoardAfterCastling[rookPosition.y][rookPosition.x] = tempBoardAfterCastling[start.y][start.x]
+                            tempBoardAfterCastling[start.y][start.x] = nil
+                            
+                            // Check if the king is in check after castling
+                            if isKingInCheck(player: currentPlayer.value, board: tempBoardAfterCastling, history: history) {
+                                return false
+                            }
+                            
+                            // Everything checks out, so allow castling
+                            return true
                         }
+                    }
+                    return false
+                } else player == .black {
+                    // Check if castling is allowed
+                    if !isKingMoved && !isRookMoved {
+                        let castlingDirection = end.x > start.x ? 1 : -1
+                        let rookPosition = Position(x: castlingDirection == 1 ? 7 : 0, y: start.y)
+                        let emptySquares = castlingDirection == 1 ? [Position(x: start.x + 1, y: start.y), Position(x: start.x + 2, y: start.y)] : [Position(x: start.x - 1, y: start.y), Position(x: start.x - 2, y: start.y)]
                         
-                        // Everything checks out, so allow castling
-                        return true
+                        // Check if the squares between the king and the rook are empty
+                        if emptySquares.allSatisfy({ board[$0.y][$0.x] == nil }) {
+                            // Create a temporary board with the king's move
+                            var tempBoardAfterCastling = board
+                            tempBoardAfterCastling[rookPosition.y][rookPosition.x] = tempBoardAfterCastling[start.y][start.x]
+                            tempBoardAfterCastling[start.y][start.x] = nil
+                            
+                            // Check if the king is in check after castling
+                            if isKingInCheck(player: currentPlayer.value, board: tempBoardAfterCastling, history: history) {
+                                return false
+                            }
+                            
+                            // Everything checks out, so allow castling
+                            return true
+                        }
+                    }
+                    return false
                     }
                 }
-                return false
-            }
             return false
         default:
             return false
