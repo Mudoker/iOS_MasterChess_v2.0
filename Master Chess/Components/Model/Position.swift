@@ -5,6 +5,9 @@ import Foundation
 // Represents a position on a 2D grid
 struct Position: Hashable {
     var x, y: Int
+    var isValid: Bool {
+            return x >= 0 && x < Constant.boardSize && y >= 0 && y < Constant.boardSize
+    }
 
     // Overload for the - operator.
     // Calculates the difference between two positions and returns a Position
