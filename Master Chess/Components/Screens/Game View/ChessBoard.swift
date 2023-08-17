@@ -1,10 +1,4 @@
-//
-//  Board.swift
-//  Chess
-//
-//  Created by Ivan Ruiz Monjo on 08/05/2020.
-//  Copyright © 2020 Ivan Ruiz Monjo. All rights reserved.
-//
+
 
 import Foundation
 import Combine
@@ -31,6 +25,7 @@ struct ChessBoard {
     private var isBlackKingMoved = false
     private var isBlackRightRookMoved = false
     private var isBlackLeftRookMoved = false
+    private var allValidMoves: [Position] = []
     init(player: Binding<Player>, user: Binding<Users>) {
         _currentUser = user
         gameSetting = user.wrappedValue.userSettings ?? Setting()
@@ -103,21 +98,25 @@ struct ChessBoard {
         return piecePositions.value[position.y][position.x]
     }
     
-    mutating func movePiece(from: Position, to: Position) {
-        var updatedPiecePositions = piecePositions.value  // Make a copy of the current piecePositions
+    mutating func movePiece(from start: Position, to end: Position) {
+        if allValidMoves.contains(end) {
+             var updatedPiecePositions = piecePositions.value  // Make a copy of the current piecePositions
         
-        // Move the piece
-        updatedPiecePositions[to.y][to.x] = getPiece(at: from)
-        updatedPiecePositions[from.y][from.x] = nil
-        
-        // Update the piecePositions with the new value
-        piecePositions.send(updatedPiecePositions)
+            // Move the piece
+            updatedPiecePositions[end.y][end.x] = getPiece(at: start)
+            updatedPiecePositions[start.y][start.x] = nil
+            
+            // Update the piecePositions with the new value
+            piecePositions.send(updatedPiecePositions)
+            currentUser.savedGame?.unwrappedBoardSetup = piecePositions.value
+        }  
     }
     
     mutating func removePiece(at position: Position) {
         var updatedPiecePositions = piecePositions.value
         updatedPiecePositions[position.y][position.x] = nil
         piecePositions.send(updatedPiecePositions)
+        currentUser.savedGame?.unwrappedBoardSetup = piecePositions.value
     }
 
     mutating func promotePiece(at position: Position, to type: PieceType) {
@@ -126,6 +125,7 @@ struct ChessBoard {
         piece?.pieceType = type
         updatedPiecePositions[position.y][position.x] = piece
         piecePositions.send(updatedPiecePositions)
+        currentUser.savedGame?.unwrappedBoardSetup = piecePositions.value
     }
     
     private func validPawnMove(board: [[ChessPiece?]], from start: Position, to end: Position, player: Player, history: [Move]) -> Bool {
@@ -140,6 +140,7 @@ struct ChessBoard {
             if let destinationPiece = board[end.y][end.x], destinationPiece.side == player {
                 return false
             }
+
             // Pawn can only move one step forward, with direction based on the player
             return deltaY == (player == .white ? -1 : 1) && !isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history)
         }
@@ -177,6 +178,29 @@ struct ChessBoard {
         return false
     }
     
+    // Show all available moves for a pawn
+    mutating func allValidPawnMoves(board: [[ChessPiece?]], from start: Position, player: Player, history: [Move]) {
+        allValidMoves.removeAll()
+        let directions: [Position] = [
+            Position(x: 0, y: player == .white ? -1 : 1), // Forward move
+            Position(x: 1, y: player == .white ? -1 : 1), // Diagonal right capture
+            Position(x: -1, y: player == .white ? -1 : 1) // Diagonal left capture
+        ]
+        
+        for direction in directions {
+            let destination = start + direction
+            
+            // Check if the destination is valid
+            guard destination.isValid else {
+                continue
+            }
+            
+            if validPawnMove(board: board, from: start, to: destination, player: player, history: history) {
+                allValidMoves.append(destination)
+            }
+        }
+    }
+
     // L-shape movement for Knight
     private func validKnightMove(board: [[ChessPiece?]],from start: Position, to end: Position) -> Bool {
         let deltaX = start.x - end.x
@@ -199,6 +223,10 @@ struct ChessBoard {
                 tempBoard[end.y][end.x] = tempBoard[start.y][start.x]
                 tempBoard[start.y][start.x] = nil
                 
+                if piecePositions.value[end.y][end.x]?.side == currentPlayer.value {
+                    return false
+                }
+
                 if !isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history) {
                     return true
                 }
@@ -208,6 +236,34 @@ struct ChessBoard {
         return false
     }
     
+    // L-shape movement for Knight
+    mutating func allValidKnightMoves(board: [[ChessPiece?]], from start: Position, player: Player, history: [Move]) {
+        allValidMoves.removeAll()
+        let possibleMoves: [Position] = [
+            Position(x: start.x + 1, y: start.y + 2),
+            Position(x: start.x + 1, y: start.y - 2),
+            Position(x: start.x - 1, y: start.y + 2),
+            Position(x: start.x - 1, y: start.y - 2),
+            Position(x: start.x + 2, y: start.y + 1),
+            Position(x: start.x + 2, y: start.y - 1),
+            Position(x: start.x - 2, y: start.y + 1),
+            Position(x: start.x - 2, y: start.y - 1)
+        ]
+        
+        for move in possibleMoves {
+            let destination = start + move
+            
+            // Check if the destination is valid
+            guard destination.isValid else {
+                continue
+            }
+            
+            if validKnightMove(board: board, from: start, to: destination) {
+                allValidMoves.append(destination)
+            }
+        }
+    }
+
     private func validKingMove(board: [[ChessPiece?]], from start: Position, to end: Position) -> Bool {
         let deltaX = abs(start.x - end.x)
         let deltaY = abs(start.y - end.y)
@@ -283,7 +339,41 @@ struct ChessBoard {
             return false
         }
     }
-    
+    mutating func allValidKingMoves(board: [[ChessPiece?]], from start: Position, player: Player, history: [Move]) {
+        allValidMoves.removeAll()
+        let directions: [Position] = [
+            Position(x: -1, y: -1),
+            Position(x: -1, y: 0),
+            Position(x: -1, y: 1),
+            Position(x: 0, y: -1),
+            Position(x: 0, y: 1),
+            Position(x: 1, y: -1),
+            Position(x: 1, y: 0),
+            Position(x: 1, y: 1)
+        ]
+        
+        for direction in directions {
+            let destination = start + direction
+            
+            // Check if the destination is valid
+            guard destination.isValid else {
+                continue
+            }
+            
+            if validKingMove(board: board, from: start, to: destination, player: player, history: history) {
+                allValidMoves.append(destination)
+            }
+        }
+        
+        // Check for castling moves
+        if validKingMove(board: board, from: start, to: start + Position(x: 2, y: 0), player: player, history: history) {
+            allValidMoves.append(start + Position(x: 2, y: 0))
+        }
+        if validKingMove(board: board, from: start, to: start + Position(x: -2, y: 0), player: player, history: history) {
+            allValidMoves.append(start + Position(x: -2, y: 0))
+        }
+    }
+
     func isKingInCheck(player: Player, board: [[ChessPiece?]], history: [Move]) -> Bool {
         // Check if any opponent's piece threatens the king's position
         for row in 0..<Constant.boardSize {
@@ -329,6 +419,36 @@ struct ChessBoard {
         return false
     }
 
+    mutating func allValidRookMoves(board: [[ChessPiece?]], from start: Position, player: Player, history: [Move]) {
+        allValidMoves.removeAll()
+        let directions: [Position] = [
+            Position(x: 1, y: 0), // Right
+            Position(x: -1, y: 0), // Left
+            Position(x: 0, y: 1), // Up
+            Position(x: 0, y: -1) // Down
+        ]
+        
+        for direction in directions {
+            var currentPosition = start + direction
+            
+            while currentPosition.isValid {
+                if validRookMove(board: board, from: start, to: currentPosition) {
+                    allValidMoves.append(currentPosition)
+                }
+                
+                if let piece = board[currentPosition.y][currentPosition.x] {
+                    if piece.player != player {
+                        allValidMoves.append(currentPosition) // Capture move
+                    }
+                    break // Stop moving in this direction if a piece is encountered
+                }
+                
+                currentPosition += direction
+            }
+        }
+    }
+
+
     private func validBishopMove(board: [[ChessPiece?]], from start: Position, to end: Position) -> Bool {
         let deltaX = abs(start.x - end.x)
         let deltaY = abs(start.y - end.y)
@@ -359,6 +479,36 @@ struct ChessBoard {
         
         return !isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history)
     }
+
+    mutating func allValidBishopMoves(board: [[ChessPiece?]], from start: Position, player: Player, history: [Move]) {
+        allValidMoves.removeAll()
+        let directions: [Position] = [
+            Position(x: 1, y: 1), // Diagonal up-right
+            Position(x: 1, y: -1), // Diagonal down-right
+            Position(x: -1, y: 1), // Diagonal up-left
+            Position(x: -1, y: -1) // Diagonal down-left
+        ]
+        
+        for direction in directions {
+            var currentPosition = start + direction
+            
+            while currentPosition.isValid {
+                if validBishopMove(board: board, from: start, to: currentPosition) {
+                    allValidMoves.append(currentPosition)
+                }
+                
+                if let piece = board[currentPosition.y][currentPosition.x] {
+                    if piece.player != player {
+                        allValidMoves.append(currentPosition) // Capture move
+                    }
+                    break // Stop moving in this direction if a piece is encountered
+                }
+                
+                currentPosition += direction
+            }
+        }
+    }
+
 
     func isValid(board: [[ChessPiece?]], from start: Position, to end: Position, player: Player) -> Bool {
         let bounds = 0..<Constant.boardSize
