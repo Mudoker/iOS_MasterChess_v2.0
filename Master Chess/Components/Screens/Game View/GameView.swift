@@ -9,7 +9,7 @@ import SwiftUI
 
 struct GameView: View {
     @State private var currentUser: Users = Users()
-    @State private var currentPiece: (Piece?, CGSize) = (nil, .zero)
+    @State private var currentPiece: (ChessPiece?, CGSize) = (nil, .zero)
     @ObservedObject var viewModel: GameViewModel
     @State private var isRotatingWhite = true
 
@@ -44,6 +44,20 @@ struct GameView: View {
                 currentUser = user
                 viewModel = GameViewModel(user: user)
             }
+        }
+    }
+
+    private func dragGesture(_ piece: ChessPiece) -> _EndedGesture<_ChangedGesture<DragGesture>> {
+        DragGesture()
+            .onChanged { dragValue in
+                self.currentPiece = (piece, self.viewModel.indexOf(piece).size + dragValue.translation)
+                self.viewModel.objectWillChange.send()
+        }
+        .onEnded {
+            self.currentPiece = (nil, .zero)
+            let finalPosition = self.viewModel.indexOf(piece) + Position($0.translation)
+            let move = Move(start: self.viewModel.indexOf(piece), end: finalPosition)
+            self.viewModel.didMove(move: move)
         }
     }
 }
