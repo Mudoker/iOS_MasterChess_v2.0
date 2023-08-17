@@ -34,7 +34,8 @@ struct LoginView: View {
     @State var isShowHint = false
     @AppStorage("userIndex") var userIndex = 0
     @AppStorage("userName") var username = ""
-    
+    @StateObject var currentUser = CurrentUser() // Create an instance of CurrentUser
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -142,7 +143,18 @@ struct LoginView: View {
                         Button {
                             for index in users.indices {
                                 if users[index].username == accountInput && users[index].password == passwordInput {
-                                    
+                                    // Assign data to the CurrentUser instance
+                                    currentUser.username = user.username
+                                    currentUser.joinDate = user.joinDate
+                                    currentUser.password = user.password
+                                    currentUser.profilePicture = user.profilePicture
+                                    currentUser.ranking = user.ranking
+                                    currentUser.rating = user.rating
+                                    currentUser.userID = user.userID
+                                    currentUser.hasActiveGame = user.hasActiveGame
+                                    currentUser.userAchievement = user.userAchievement
+                                    currentUser.userHistory = user.userHistory
+                                    currentUser.userSettings = user.userSettings
                                     loginStatus = "Login Successfully!"
                                     isMenuView = true
                                     userIndex = index
