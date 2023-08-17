@@ -1,4 +1,6 @@
-import swiftUI
+import Foundation
+import CoreData
+
 class CurrentUser: ObservableObject {
     @Published var username: String?
     @Published var joinDate: Date?
