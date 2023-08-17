@@ -28,8 +28,9 @@ struct ChessPiece: ExpressibleByStringLiteral {
     var pieceType: PieceType
     let side: Player
     let imageView: String
+    let pieceName: StringLiteralType
     init(stringLiteral value: String) {
-        guard value.count == 3 else {
+        guard value.count == 2 else {
             preconditionFailure("Invalid string literal length")
         }
 
@@ -52,7 +53,8 @@ struct ChessPiece: ExpressibleByStringLiteral {
             default: preconditionFailure("Invalid piece type")
         }
 
-        id = value
+        id = UUID().uuidString
         imageView = color + type
+        pieceName = value
     }
 }
