@@ -1,13 +1,10 @@
-import Foundation
-import CoreData
-
 class CurrentUser: ObservableObject {
     @Published var username: String?
     @Published var joinDate: Date?
     @Published var password: String?
     @Published var profilePicture: String?
-    @Published var ranking: Int16 = 0
-    @Published var rating: Int16 = 0
+    @Published var ranking: Int = 0
+    @Published var rating: Int = 0
     @Published var userID: UUID?
     @Published var hasActiveGame: Bool = false
     // Add the new properties
@@ -21,8 +18,8 @@ class CurrentUser: ObservableObject {
         self.joinDate = joinDate
         self.password = password
         self.profilePicture = profilePicture
-        self.ranking = ranking
-        self.rating = rating
+        self.ranking = Int(ranking)
+        self.rating = Int(rating)
         self.userID = userID
         self.hasActiveGame = hasActiveGame
         self.userAchievement = userAchievement
