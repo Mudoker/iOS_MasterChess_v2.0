@@ -11,10 +11,14 @@ import SwiftUI
 struct Master_ChessApp: App {
 //    let persistenceController = PersistenceController.shared
     @StateObject private var dataManager = DataManager()
+    @StateObject private var currentUser = CurrentUser() // Initialize the CurrentUser instance
+
     var body: some Scene {
         WindowGroup {
             SplashView()
                 .environment(\.managedObjectContext, dataManager.container.viewContext)
+                .environmentObject(currentUser) // Pass currentUser as an environment object
+
         }
     }
 }
