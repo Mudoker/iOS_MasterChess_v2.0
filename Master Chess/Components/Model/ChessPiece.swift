@@ -8,11 +8,11 @@ enum PieceType: String {
     // Assign weight for AI to calculate best move
     var weight: Int {
         switch self {
-            case .pawn: return 10
-            case .knight, .bishop: return 30
-            case .rook: return 50
-            case .queen: return 90
-            case .king: return 900
+            case .pawn: return 1
+            case .knight, .bishop: return 3
+            case .rook: return 5
+            case .queen: return 9
+            case .king: return 90
         }
     }
 }

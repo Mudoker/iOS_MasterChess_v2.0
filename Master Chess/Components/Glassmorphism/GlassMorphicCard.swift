@@ -12,13 +12,16 @@ struct GlassMorphicCard: View {
     @State var opacity: CGFloat = 0.65
     // default option for card
     @State var useMinWidth = false
+    @State var cornerRadius: CGFloat = 20
+    @Binding var color: UIBlurEffect.Style
+    @State var isCustomColor: Bool
     var body: some View {
         // custom dimension for card
         if useMinWidth {
             ZStack {
                 // Apply glass morphic effect with the provided dark mode binding
-                GlassMorphicCardView(isDarkMode: $isDarkMode)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                GlassMorphicCardView(isDarkMode: $isDarkMode, isCustomColor: $isCustomColor, color: $color)
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
                     .opacity(opacity)
             }
             .frame(minWidth: minWidth)
@@ -26,8 +29,8 @@ struct GlassMorphicCard: View {
         } else {
             ZStack {
                 // Apply glass morphic effect with the provided dark mode binding
-                GlassMorphicCardView(isDarkMode: $isDarkMode)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                GlassMorphicCardView(isDarkMode: $isDarkMode, isCustomColor: $isCustomColor, color: $color)
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
                     .opacity(opacity)
             }
             .frame(width: width)
@@ -40,7 +43,8 @@ struct GlassMorphicCard: View {
 struct GlassMorphicCardView: UIViewRepresentable {
     // Checking for darkmode
     @Binding var isDarkMode: Bool
-
+    @Binding var isCustomColor: Bool
+    @Binding var color: UIBlurEffect.Style
     // creates the UIView representation of the card
     func makeUIView(context: Context) -> UIVisualEffectView {
         let view = UIVisualEffectView(effect: nil)
@@ -50,7 +54,7 @@ struct GlassMorphicCardView: UIViewRepresentable {
 
     // updates the UIView when the isDarkMode state changes
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
-        let effectStyle: UIBlurEffect.Style = isDarkMode ? .extraLight : .dark
+        let effectStyle: UIBlurEffect.Style = isCustomColor ? color : isDarkMode ? .extraLight : .dark
         
         let newEffect = UIBlurEffect(style: effectStyle)
         uiView.effect = newEffect
@@ -59,6 +63,6 @@ struct GlassMorphicCardView: UIViewRepresentable {
 
 struct GlassView: PreviewProvider {
     static var previews: some View {
-        GlassMorphicCard(isDarkMode: .constant(true))
+        GlassMorphicCard(isDarkMode: .constant(true), color: .constant(UIBlurEffect.Style.dark), isCustomColor: false)
     }
 }

@@ -4,29 +4,30 @@ import Foundation
 import Combine
 import SwiftUI
 
-struct ChessBoard {
+class ChessBoard {
     @Binding var currentUser: Users
 
     var piecePositions: CurrentValueSubject<[[ChessPiece?]], Never> = CurrentValueSubject([])
 
     let currentPlayer: CurrentValueSubject<Player, Never> = CurrentValueSubject(.white)
     let isChecked: CurrentValueSubject<Bool, Never> = CurrentValueSubject(false)
+    var activePieces: [ChessPiece] { piecePositions.value.flatMap { $0 }.compactMap { $0 } }
 
     let whiteTimeLeft: CurrentValueSubject<TimeInterval, Never>
     let blackTimeLeft: CurrentValueSubject<TimeInterval, Never>
-    private var cancellables = Set<AnyCancellable>()
-    private let gameSetting: Setting
-    private var timer = Timer.publish(every: 1.0, on: .main, in: .common)
-    private var history: [Move] = []
-    private var kingPosition: Position = Position(x: 0, y: 0)
-    private var isWhiteKingMoved = false
-    private var isWhiteRightRookMoved = false
-    private var isWhiteLeftRookMoved = false
-    private var isBlackKingMoved = false
-    private var isBlackRightRookMoved = false
-    private var isBlackLeftRookMoved = false
-    private var allValidMoves: [Position] = []
-    init(player: Binding<Player>, user: Binding<Users>) {
+     var cancellables = Set<AnyCancellable>()
+     let gameSetting: Setting
+     var timer = Timer.publish(every: 1.0, on: .main, in: .common)
+     var history: [Move] = []
+     var kingPosition: Position = Position(x: 0, y: 0)
+     var isWhiteKingMoved = false
+     var isWhiteRightRookMoved = false
+     var isWhiteLeftRookMoved = false
+     var isBlackKingMoved = false
+     var isBlackRightRookMoved = false
+     var isBlackLeftRookMoved = false
+     var allValidMoves: [Move] = []
+    init(user: Binding<Users>) {
         _currentUser = user
         gameSetting = user.wrappedValue.userSettings ?? Setting()
 
@@ -53,7 +54,7 @@ struct ChessBoard {
     }
     
     // Start new game
-    mutating func createInitialBoard() -> [[ChessPiece?]] {
+    func createInitialBoard() -> [[ChessPiece?]] {
         var piecePositions = Array(repeating: Array<ChessPiece?>(repeating: nil, count: Constant.boardSize), count: Constant.boardSize)
         for (rank, files) in Constant.initialBoardSetup.enumerated() {
             for (file, pieceCode) in files.enumerated() {
@@ -71,7 +72,7 @@ struct ChessBoard {
     }
     
     // Load game from saved
-    mutating func createBoardFromLoad() -> [[ChessPiece?]] {
+    func createBoardFromLoad() -> [[ChessPiece?]] {
         var piecePositions = Array(repeating: Array<ChessPiece?>(repeating: nil, count: Constant.boardSize), count: Constant.boardSize)
 
         if let unwrappedBoardSetup = currentUser.savedGame?.unwrappedBoardSetup as? [[String?]] {
@@ -91,7 +92,7 @@ struct ChessBoard {
         return piecePositions
     }
     
-    mutating func start() {
+    func start() {
         // Clean up any existing cancellables
         cancellables.removeAll()
 
@@ -114,32 +115,42 @@ struct ChessBoard {
         }
         return piecePositions.value[position.y][position.x]
     }
-    
-    mutating func movePiece(from start: Position, to end: Position) {
-        if allValidMoves.contains(end) {
+    func getPiece(_ piece: ChessPiece) -> Position {
+        if let index = piecePositions.value.flatMap({ $0 }).firstIndex (where: { $0?.id == piece.id }) {
+            return Position(x: index / 8, y: index % 8)
+        }
+        fatalError()
+    }
+    func movePiece(from start: Position, to end: Position) {
+        let validMove = allValidMoves.first { $0.from == start && $0.to == end }
+        
+        if let validMove = validMove {
             var updatedPiecePositions = piecePositions.value
             
             // Move the piece
-            updatedPiecePositions[end.y][end.x] = updatedPiecePositions[start.y][start.x]
+            let movingPiece = updatedPiecePositions[start.y][start.x]
+            updatedPiecePositions[end.y][end.x] = movingPiece
             updatedPiecePositions[start.y][start.x] = nil
             
             // Update the piecePositions with the new value
             piecePositions.send(updatedPiecePositions)
             
-            // Unwrap the boardSetup in SavedGame
+            // Update the boardSetup in SavedGame
             if var boardSetup = currentUser.savedGame?.boardSetup {
-                if let pieceID = getPiece(at: end)?.id {
-                    boardSetup[end.y][end.x] = pieceID
+                if let movingPieceID = movingPiece?.id {
+                    boardSetup[end.y][end.x] = movingPieceID
                 }
                 boardSetup[start.y][start.x] = ""
                 currentUser.savedGame?.boardSetup = boardSetup
             }
             
+            // Switch to the next player's turn
             currentPlayer.send(currentPlayer.value == .white ? .black : .white)
         }
     }
 
-    mutating func removePiece(at position: Position) {
+
+    func removePiece(at position: Position) {
         var updatedPiecePositions = piecePositions.value
         updatedPiecePositions[position.y][position.x] = nil
         piecePositions.send(updatedPiecePositions)
@@ -152,7 +163,7 @@ struct ChessBoard {
         }
     }
 
-    mutating func promotePiece(at position: Position, to type: PieceType) {
+    func promotePiece(at position: Position, to type: PieceType) {
         let getCurrentSide = currentPlayer.value == .white ? "w" : "b"
         let pieceName = getCurrentSide + String(type.rawValue.first!)
         let promotedPiece = ChessPiece(stringLiteral: pieceName)
@@ -169,7 +180,7 @@ struct ChessBoard {
         }
     }
     
-    private func validPawnMove(board: [[ChessPiece?]], from start: Position, to end: Position, player: Player, history: [Move]) -> Bool {
+    private func validPawnMove(board: [[ChessPiece?]], from start: Position, to end: Position, history: [Move]) -> Bool {
         let deltaX = abs(start.x - end.x)
         let deltaY = end.y - start.y
         var tempBoard = board
@@ -178,40 +189,40 @@ struct ChessBoard {
         // Check for diagonal move
         if deltaX == 1 {
             // Check if there is a piece at the destination and if it belongs to the same player
-            if let destinationPiece = board[end.y][end.x], destinationPiece.side == player {
+            if let destinationPiece = board[end.y][end.x], destinationPiece.side == currentPlayer.value {
                 return false
             }
 
             // Pawn can only move one step forward, with direction based on the player
-            return deltaY == (player == .white ? -1 : 1) && !isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history)
+            return deltaY == (currentPlayer.value == .white ? -1 : 1) && !isKingInCheck(board: tempBoard)
         }
         
         // Check for vertical move
         if deltaX == 0 {
-            let middleY = start.y + (player == .white ? 1 : -1)
+            let middleY = start.y + (currentPlayer.value == .white ? 1 : -1)
             
-            if deltaY == (player == .white ? 1 : -1) {
+            if deltaY == (currentPlayer.value == .white ? 1 : -1) {
                 // Check if the destination is empty
                 if board[end.y][end.x] == nil {
-                    return !isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history)
+                    return !isKingInCheck(board: tempBoard)
                 }
-            } else if deltaY == (player == .white ? 2 : -2) {
+            } else if deltaY == (currentPlayer.value == .white ? 2 : -2) {
                 // Check for the initial double move of the pawn
                 if board[end.y][end.x] == nil && board[start.y][middleY] == nil {
                     // Make sure it's the initial move for the pawn
-                    if (player == .white && start.y == 1) || (player == .black && start.y == 6) {
-                        return !isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history)
+                    if (currentPlayer.value == .white && start.y == 1) || (currentPlayer.value == .black && start.y == 6) {
+                        return !isKingInCheck(board: tempBoard)
                     }
                 }
             }
         }
         // Check for en passant
-        if deltaX == 1 && deltaY == (player == .white ? -1 : 1) {
+        if deltaX == 1 && deltaY == (currentPlayer.value == .white ? -1 : 1) {
             if let lastMove = history.last, lastMove.to.x == end.x {
-                if let piece = board[lastMove.to.y][lastMove.to.x], piece.pieceType == .pawn, piece.side != player {
-                    if (player == .white && lastMove.from.y == end.y - 1 && lastMove.to.y == end.y + 1) ||
-                       (player == .black && lastMove.from.y == end.y + 1 && lastMove.to.y == end.y - 1) {
-                        return !isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history)
+                if let piece = board[lastMove.to.y][lastMove.to.x], piece.pieceType == .pawn, piece.side != currentPlayer.value {
+                    if (currentPlayer.value == .white && lastMove.from.y == end.y - 1 && lastMove.to.y == end.y + 1) ||
+                       (currentPlayer.value == .black && lastMove.from.y == end.y + 1 && lastMove.to.y == end.y - 1) {
+                        return !isKingInCheck(board: tempBoard)
                     }
                 }
             }
@@ -220,12 +231,12 @@ struct ChessBoard {
     }
     
     // Show all available moves for a pawn
-    mutating func allValidPawnMoves(board: [[ChessPiece?]], from start: Position, player: Player, history: [Move]) {
+    func allValidPawnMoves(board: [[ChessPiece?]], from start: Position, history: [Move]) -> [Move]{
         allValidMoves.removeAll()
         let directions: [Position] = [
-            Position(x: 0, y: player == .white ? -1 : 1), // Forward move
-            Position(x: 1, y: player == .white ? -1 : 1), // Diagonal right capture
-            Position(x: -1, y: player == .white ? -1 : 1) // Diagonal left capture
+            Position(x: 0, y: currentPlayer.value == .white ? -1 : 1), // Forward move
+            Position(x: 1, y: currentPlayer.value == .white ? -1 : 1), // Diagonal right capture
+            Position(x: -1, y: currentPlayer.value == .white ? -1 : 1) // Diagonal left capture
         ]
         
         for direction in directions {
@@ -236,10 +247,11 @@ struct ChessBoard {
                 continue
             }
             
-            if validPawnMove(board: board, from: start, to: destination, player: player, history: history) {
-                allValidMoves.append(destination)
+            if validPawnMove(board: board, from: start, to: destination, history: history) {
+                allValidMoves.append(Move(from: start, to: destination))
             }
         }
+        return allValidMoves
     }
 
     // L-shape movement for Knight
@@ -266,7 +278,7 @@ struct ChessBoard {
                     return false
                 }
 
-                if !isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history) {
+                if !isKingInCheck(board: tempBoard) {
                     return true
                 }
             }
@@ -276,7 +288,7 @@ struct ChessBoard {
     }
     
     // L-shape movement for Knight
-    mutating func allValidKnightMoves(board: [[ChessPiece?]], from start: Position, player: Player, history: [Move]) {
+    func allValidKnightMoves(board: [[ChessPiece?]], from start: Position) -> [Move] {
         allValidMoves.removeAll()
         let possibleMoves: [Position] = [
             Position(x: start.x + 1, y: start.y + 2),
@@ -298,9 +310,10 @@ struct ChessBoard {
             }
             
             if validKnightMove(board: board, from: start, to: destination) {
-                allValidMoves.append(destination)
+                allValidMoves.append(Move(from: start, to: destination))
             }
         }
+        return allValidMoves
     }
 
     private func validKingMove(board: [[ChessPiece?]], from start: Position, to end: Position) -> Bool {
@@ -318,10 +331,10 @@ struct ChessBoard {
             tempBoard[end.y][end.x] = tempBoard[start.y][start.x]
             tempBoard[start.y][start.x] = nil
             
-            return !isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history)
+            return !isKingInCheck(board: tempBoard)
             
         case (2, 0):
-            if !isKingInCheck(player: currentPlayer.value, board: piecePositions.value, history: history) {
+            if !isKingInCheck(board: piecePositions.value) {
                 let castlingDirection: Int
                 let kingXAfterCastling: Int
                 let emptySquaresX: [Int]
@@ -363,7 +376,7 @@ struct ChessBoard {
                     tempBoardAfterCastling[start.y][kingXAfterCastling] = tempBoardAfterCastling[start.y][start.x]
                     tempBoardAfterCastling[start.y][start.x] = nil
                     
-                    if isKingInCheck(player: currentPlayer.value, board: tempBoardAfterCastling, history: history) {
+                    if isKingInCheck(board: tempBoardAfterCastling) {
                         return false
                     }
                                
@@ -375,7 +388,7 @@ struct ChessBoard {
             return false
         }
     }
-    mutating func allValidKingMoves(board: [[ChessPiece?]], from start: Position, player: Player, history: [Move]) {
+    func allValidKingMoves(board: [[ChessPiece?]], from start: Position) -> [Move]{
         allValidMoves.removeAll()
         let directions: [Position] = [
             Position(x: -1, y: -1),
@@ -397,25 +410,26 @@ struct ChessBoard {
             }
             
             if validKingMove(board: board, from: start, to: destination) {
-                allValidMoves.append(destination)
+                allValidMoves.append(Move(from: start, to: destination))
             }
         }
         
         // Check for castling moves
         if validKingMove(board: board, from: start, to: start + Position(x: 2, y: 0)) {
-            allValidMoves.append(start + Position(x: 2, y: 0))
+            allValidMoves.append(Move(from: start, to: start + Position(x: 2, y: 0)))
         }
         if validKingMove(board: board, from: start, to: start + Position(x: -2, y: 0)) {
-            allValidMoves.append(start + Position(x: -2, y: 0))
+            allValidMoves.append(Move(from: start, to: start + Position(x: -2, y: 0)))
         }
+        return allValidMoves
     }
 
-    func isKingInCheck(player: Player, board: [[ChessPiece?]], history: [Move]) -> Bool {
+    func isKingInCheck(board: [[ChessPiece?]]) -> Bool {
         // Check if any opponent's piece threatens the king's position
         for row in 0..<Constant.boardSize {
             for col in 0..<Constant.boardSize {
-                if let piece = board[row][col], piece.side != player {
-                    if isValid(board: board, from: Position(x: col, y: row), to: kingPosition, player: piece.side) {
+                if let piece = board[row][col], piece.side != currentPlayer.value {
+                    if isValid(board: board, from: Position(x: col, y: row), to: kingPosition) {
                         return true
                     }
                 }
@@ -434,7 +448,7 @@ struct ChessBoard {
             tempBoard[end.y][end.x] = tempBoard[start.y][start.x]
             tempBoard[start.y][start.x] = nil
             
-            if isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history) {
+            if isKingInCheck(board: tempBoard) {
                 return false
             }
             
@@ -454,7 +468,7 @@ struct ChessBoard {
         return false
     }
 
-    mutating func allValidRookMoves(board: [[ChessPiece?]], from start: Position, player: Player, history: [Move]) {
+    func allValidRookMoves(board: [[ChessPiece?]], from start: Position) -> [Move]{
         allValidMoves.removeAll()
         let directions: [Position] = [
             Position(x: 1, y: 0), // Right
@@ -468,12 +482,12 @@ struct ChessBoard {
             
             while currentPosition.isValid {
                 if validRookMove(board: board, from: start, to: currentPosition) {
-                    allValidMoves.append(currentPosition)
+                    allValidMoves.append(Move(from: start, to: currentPosition))
                 }
                 
                 if let piece = board[currentPosition.y][currentPosition.x] {
-                    if piece.side != player {
-                        allValidMoves.append(currentPosition) // Capture move
+                    if piece.side != currentPlayer.value {
+                        allValidMoves.append(Move(from: start, to: currentPosition)) // Capture move
                     }
                     break // Stop moving in this direction if a piece is encountered
                 }
@@ -481,6 +495,7 @@ struct ChessBoard {
                 currentPosition += direction
             }
         }
+        return allValidMoves
     }
 
 
@@ -512,10 +527,10 @@ struct ChessBoard {
         tempBoard[end.y][end.x] = tempBoard[start.y][start.x]
         tempBoard[start.y][start.x] = nil
         
-        return !isKingInCheck(player: currentPlayer.value, board: tempBoard, history: history)
+        return !isKingInCheck(board: tempBoard)
     }
 
-    mutating func allValidBishopMoves(board: [[ChessPiece?]], from start: Position, player: Player, history: [Move]) {
+    func allValidBishopMoves(board: [[ChessPiece?]], from start: Position) -> [Move]{
         allValidMoves.removeAll()
         let directions: [Position] = [
             Position(x: 1, y: 1), // Diagonal up-right
@@ -529,12 +544,12 @@ struct ChessBoard {
             
             while currentPosition.isValid {
                 if validBishopMove(board: board, from: start, to: currentPosition) {
-                    allValidMoves.append(currentPosition)
+                    allValidMoves.append(Move(from: start, to: currentPosition))
                 }
                 
                 if let piece = board[currentPosition.y][currentPosition.x] {
-                    if piece.side != player {
-                        allValidMoves.append(currentPosition) // Capture move
+                    if piece.side != currentPlayer.value {
+                        allValidMoves.append(Move(from: start, to: currentPosition)) // Capture move
                     }
                     break // Stop moving in this direction if a piece is encountered
                 }
@@ -542,25 +557,26 @@ struct ChessBoard {
                 currentPosition += direction
             }
         }
+        return allValidMoves
     }
 
 
-    func isValid(board: [[ChessPiece?]], from start: Position, to end: Position, player: Player) -> Bool {
+    func isValid(board: [[ChessPiece?]], from start: Position, to end: Position) -> Bool {
         let bounds = 0..<Constant.boardSize
         
         guard start != end,
               let piece = board[start.y][start.x],
               bounds.contains(end.x) && bounds.contains(end.y),
-              piece.side == player else {
+              piece.side == currentPlayer.value else {
             return false
         }
 
-        if let boardPlayer = board[end.y][end.x]?.side, boardPlayer == player {
+        if let boardPlayer = board[end.y][end.x]?.side, boardPlayer == currentPlayer.value {
             return false
         }
 
         switch piece.pieceType {
-        case .pawn: return validPawnMove(board: board, from: start, to: end, player: player, history: [])
+        case .pawn: return validPawnMove(board: board, from: start, to: end, history: [])
         case .knight: return validKnightMove(board: board,from: start, to: end)
         case .king: return validKingMove(board: board,from: start, to: end)
         case .rook: return validRookMove(board: board, from: start, to: end)
@@ -569,7 +585,8 @@ struct ChessBoard {
         }
     }
     
-    mutating func startClocks() {
+//    func validMovementFor(
+    func startClocks() {
         timer.sink { [self] _ in
             let currentPlayer = self.currentPlayer.value
             let timeLeftKeyPath = currentPlayer == .white ? \ChessBoard.whiteTimeLeft : \ChessBoard.blackTimeLeft
@@ -584,5 +601,27 @@ struct ChessBoard {
             }
         }
         .store(in: &cancellables)
+    }
+    
+    func copy() -> ChessBoard {
+        let copiedBoard = ChessBoard(user: $currentUser)
+        
+        // Copy properties
+        copiedBoard.piecePositions.value = piecePositions.value
+        copiedBoard.isChecked.value = isChecked.value
+        copiedBoard.kingPosition = kingPosition
+        copiedBoard.isWhiteKingMoved = isWhiteKingMoved
+        copiedBoard.isWhiteRightRookMoved = isWhiteRightRookMoved
+        copiedBoard.isWhiteLeftRookMoved = isWhiteLeftRookMoved
+        copiedBoard.isBlackKingMoved = isBlackKingMoved
+        copiedBoard.isBlackRightRookMoved = isBlackRightRookMoved
+        copiedBoard.isBlackLeftRookMoved = isBlackLeftRookMoved
+        // Copy other properties as needed
+        
+        // Copy time left
+        copiedBoard.whiteTimeLeft.value = whiteTimeLeft.value
+        copiedBoard.blackTimeLeft.value = blackTimeLeft.value
+        
+        return copiedBoard
     }
 }
