@@ -14,6 +14,7 @@ struct Welcome_Screen: View {
     // Show help panel
     @State var showAlert = false
     @AppStorage("userName") var username = ""
+    @EnvironmentObject var currentUser: CurrentUser
 
     var body: some View {
         GeometryReader { proxy in
@@ -72,14 +73,14 @@ struct Welcome_Screen: View {
                     .navigationDestination(
                         isPresented: $isLogin // trigger the navigation
                     ) {
-                        if username != "" {
-                            TabBar()
-                                .navigationBarBackButtonHidden(true)
-                        } else {
+//                        if username != "" {
+//                            TabBar()
+//                                .navigationBarBackButtonHidden(true)
+//                        } else {
                             LoginView()
+                                .environmentObject(currentUser)
                                 .navigationBarBackButtonHidden(true)
-                        }
-                        
+//                        }
                     }
                     
                     Button {

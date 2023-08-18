@@ -9,11 +9,11 @@
 import GameplayKit
 
 class AIMove: NSObject, GKGameModelUpdate {
-    var value: Int = 0
-
     let move: Move
+    var value: Int = 0
 
     init(move: Move) {
         self.move = move
     }
 }
+

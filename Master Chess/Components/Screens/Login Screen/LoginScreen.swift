@@ -34,7 +34,7 @@ struct LoginView: View {
     @State var isShowHint = false
     @AppStorage("userIndex") var userIndex = 0
     @AppStorage("userName") var username = ""
-    @StateObject var currentUser = CurrentUser() // Create an instance of CurrentUser
+    @EnvironmentObject var currentUser: CurrentUser
 
     var body: some View {
         NavigationStack {
@@ -143,18 +143,51 @@ struct LoginView: View {
                         Button {
                             for index in users.indices {
                                 if users[index].username == accountInput && users[index].password == passwordInput {
-                                    // Assign data to the CurrentUser instance
-                                    currentUser.username = user.username
-                                    currentUser.joinDate = user.joinDate
-                                    currentUser.password = user.password
-                                    currentUser.profilePicture = user.profilePicture
-                                    currentUser.ranking = user.ranking
-                                    currentUser.rating = user.rating
-                                    currentUser.userID = user.userID
-                                    currentUser.hasActiveGame = user.hasActiveGame
-                                    currentUser.userAchievement = user.userAchievement
-                                    currentUser.userHistory = user.userHistory
-                                    currentUser.userSettings = user.userSettings
+                                    CurrentUser.shared.username = users[index].username
+                                    CurrentUser.shared.joinDate = users[index].joinDate
+                                    CurrentUser.shared.password = users[index].password
+                                    CurrentUser.shared.profilePicture = users[index].profilePicture
+                                    CurrentUser.shared.ranking = Int(users[index].ranking)
+                                    CurrentUser.shared.rating = Int(users[index].rating)
+                                    CurrentUser.shared.userID = users[index].userID
+                                    CurrentUser.shared.hasActiveGame = users[index].hasActiveGame
+                                    CurrentUser.shared.userAchievement = users[index].userAchievement
+                                    CurrentUser.shared.userHistory = users[index].userHistory
+                                    CurrentUser.shared.username = users[index].username
+                                    CurrentUser.shared.joinDate = users[index].joinDate
+                                    CurrentUser.shared.password = users[index].password
+                                    CurrentUser.shared.profilePicture = users[index].profilePicture
+                                    CurrentUser.shared.ranking = Int(users[index].ranking)
+                                    CurrentUser.shared.rating = Int(users[index].rating)
+                                    CurrentUser.shared.userID = users[index].userID
+                                    CurrentUser.shared.hasActiveGame = users[index].hasActiveGame
+                                    
+                                    // Properties from Setting
+                                    CurrentUser.shared.settingAutoPromotionEnabled = users[index].userSettings?.autoPromotionEnabled ?? false
+                                    CurrentUser.shared.settingIsDarkMode = users[index].userSettings?.isDarkMode ?? false
+                                    CurrentUser.shared.settingLanguage = users[index].userSettings?.language ?? ""
+                                    CurrentUser.shared.settingMusicEnabled = users[index].userSettings?.musicEnabled ?? false
+                                    CurrentUser.shared.settingSoundEnabled = users[index].userSettings?.soundEnabled ?? false
+                                    CurrentUser.shared.settingDifficulty = users[index].userSettings?.difficulty ?? ""
+
+                                    // Properties from SavedGame
+                                    CurrentUser.shared.savedGameAutoPromotionEnabled = users[index].savedGame?.autoPromotionEnabled ?? false
+                                    CurrentUser.shared.savedGameBlackTimeLeft = users[index].savedGame?.blackTimeLeft ?? 0
+                                    CurrentUser.shared.savedGameBoardSetup = users[index].savedGame?.boardSetup ?? []
+                                    CurrentUser.shared.savedGameCurrentPlayer = users[index].savedGame?.currentPlayer ?? ""
+                                    CurrentUser.shared.savedGameDifficulty = users[index].savedGame?.difficulty ?? ""
+                                    CurrentUser.shared.savedGameIsCheck = users[index].savedGame?.isCheck ?? false
+                                    CurrentUser.shared.savedGameLanguage = users[index].savedGame?.language ?? ""
+                                    CurrentUser.shared.savedGameMoveAvailable = users[index].savedGame?.moveAvailable ?? 0
+                                    CurrentUser.shared.savedGameWhiteTimeLeft = users[index].savedGame?.whiteTimeLeft ?? 0
+                                    CurrentUser.shared.savedGameIsWhiteKingMoved = users[index].savedGame?.isWhiteKingMoved ?? false
+                                    CurrentUser.shared.savedGameIsBlackKingMoved = users[index].savedGame?.isBlackKingMoved ?? false
+                                    CurrentUser.shared.savedGameIsWhiteLeftRookMoved = users[index].savedGame?.isWhiteLeftRookMoved ?? false
+                                    CurrentUser.shared.savedGameIsWhiteRightRookMoved = users[index].savedGame?.isWhiteRightRookMoved ?? false
+                                    CurrentUser.shared.savedGameIsBlackLeftRookMoved = users[index].savedGame?.isBlackLeftRookMoved ?? false
+                                    CurrentUser.shared.savedGameIsBlackRightRookMoved = users[index].savedGame?.isBlackRightRookMoved ?? false
+                                    CurrentUser.shared.savedGameKingPosition = users[index].savedGame?.kingPosition ?? 0
+                                    
                                     loginStatus = "Login Successfully!"
                                     isMenuView = true
                                     userIndex = index
@@ -184,7 +217,8 @@ struct LoginView: View {
                         }
                         .navigationDestination(
                             isPresented: $isMenuView) {
-                                TabBar().navigationBarBackButtonHidden(true)
+                                GameView()
+                                    .navigationBarBackButtonHidden(true)
                         }
                             
                         HStack {

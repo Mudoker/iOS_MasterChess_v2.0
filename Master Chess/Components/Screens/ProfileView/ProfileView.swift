@@ -10,7 +10,8 @@ import SwiftUI
 struct ProfileView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.username, ascending: true)], animation: .default) private var users: FetchedResults<Users>
-    
+    @EnvironmentObject var currentUserr: CurrentUser
+
     @State private var selectedLanguage = "English"
     @State private var selectedSound = false
     @State private var selectedSFX = false

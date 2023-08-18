@@ -98,6 +98,7 @@ struct SignUpScreen: View {
                             user.userAchievement?.adding(gameAchievement)
                             user.userHistory?.adding(gameHistory)
                             user.userStats = gameStats
+                            user.hasActiveGame = false
                             print(selectedProfile)
 
                             try? viewContext.save()

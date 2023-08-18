@@ -9,6 +9,7 @@ class AIPlayer: NSObject, GKGameModelPlayer {
 
     static var allPlayers = [AIPlayer(player: .white), AIPlayer(player: .black)]
 
+    // set the side for AI based on user side
     var opponent: AIPlayer {
         if player == .white {
             return AIPlayer.allPlayers[1]

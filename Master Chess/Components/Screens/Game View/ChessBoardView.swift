@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ChessBoardView: View {
-    @State var currentUser = Users()
+    var currentUser = CurrentUser.shared
     let yourCapturedCount: Int = 7
     let theirCapturedCount: Int = 10
     let isAdmin = true // Set this to true or false based on admin status

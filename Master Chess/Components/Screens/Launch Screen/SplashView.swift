@@ -19,7 +19,8 @@ struct SplashView: View {
     @State private var isActive = false
     @State private var size = 1.0
     @State private var opacity = 0.5
-    
+    @EnvironmentObject var currentUser: CurrentUser
+
     var body: some View {
         NavigationStack {
             // Navigate to welcome screen if true
