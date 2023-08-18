@@ -82,18 +82,19 @@ struct ChessBoardView: View {
                             
                         }
                     }
+                    .frame(height: proxy.size.width/3)
                     .padding(.horizontal)
                     .padding(.bottom, proxy.size.width/20)
                     ForEach((0...7).reversed(), id: \.self) { y in
                         HStack(spacing: 0) {
                             ForEach(0...7, id: \.self) { x in
                                 GlassMorphicCard(
-                                    isDarkMode: .constant((x + y).isMultiple(of: 2)),
+                                    isDarkMode: .constant(!(x + y).isMultiple(of: 2)),
                                     width: proxy.size.width / 8,
                                     height: proxy.size.width / 8,
                                     cornerRadius: 0,
                                     color: .constant(UIBlurEffect.Style.regular),
-                                    isCustomColor: !(x + y).isMultiple(of: 2)
+                                    isCustomColor: (x + y).isMultiple(of: 2)
                                 )
                             }
                         }
@@ -143,7 +144,7 @@ struct ChessBoardView: View {
                                 let move = history[index]
                                 Rectangle()
                                     .frame(width: proxy.size.width/6, height: proxy.size.width/12)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.white.opacity(0.1))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: proxy.size.width/40)
                                             .stroke(index % 2 == 0 ? Color.blue : Color.clear, lineWidth: proxy.size.width/100)
@@ -152,7 +153,7 @@ struct ChessBoardView: View {
                                         Text("\(coordinateString(for: move.from))\(coordinateString(for: move.to))")
                                             .multilineTextAlignment(.center)
                                             .font(.caption)
-                                            .foregroundColor(.black)
+                                            .foregroundColor(.white)
                                     )
                                     .cornerRadius(proxy.size.width/40)
                             }
@@ -196,7 +197,7 @@ struct ChessBoardView: View {
                                         .frame(width: proxy.size.width / 4, height: proxy.size.width / 10)
                                         .foregroundColor(.green)
                                         .background(Color.white.opacity(0.1))
-                                        .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/80))
+                                        .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/50))
                                 }
                             }
                             
@@ -208,7 +209,7 @@ struct ChessBoardView: View {
                                         .frame(width: proxy.size.width / 4, height: proxy.size.width / 10)
                                         .foregroundColor(.yellow)
                                         .background(Color.white.opacity(0.1))
-                                        .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/80))
+                                        .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/50))
                                 }
                             }
                             
@@ -220,7 +221,7 @@ struct ChessBoardView: View {
                                         .frame(width: proxy.size.width / 4, height: proxy.size.width / 10)
                                         .foregroundColor(.red)
                                         .background(Color.white.opacity(0.1))
-                                        .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/80))
+                                        .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/50))
                                 }
                             }
                         }

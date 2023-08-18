@@ -15,13 +15,12 @@ final class GameViewModel: ObservableObject {
     var pieces: [ChessPiece] { chessGame.activePieces }
 
     private var disposables = Set<AnyCancellable>()
-    private let chessGame: ChessBoard
+     let chessGame: ChessBoard
     private let ai: Mitten
     var gameSetting = Setting()
 
     init() {
         chessGame = ChessBoard()
-        
         // create an AI (Will be updated)
         ai = Mitten(chessGame: chessGame)
         
@@ -81,6 +80,10 @@ final class GameViewModel: ObservableObject {
         chessGame.getPiece(piece)
     }
 
+    func getPiece(at position: Position) -> ChessPiece? {
+        chessGame.getPiece(at: position)
+    }
+    
     // start new game
     func start() {
         currentUser.hasActiveGame = true

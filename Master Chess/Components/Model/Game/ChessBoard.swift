@@ -15,10 +15,10 @@ class ChessBoard {
 
     var whiteTimeLeft: CurrentValueSubject<TimeInterval, Never> = CurrentValueSubject(0) // Initialize with default value
     var blackTimeLeft: CurrentValueSubject<TimeInterval, Never> = CurrentValueSubject(0) // Initialize with default value
-     var cancellables = Set<AnyCancellable>()
-     var timer = Timer.publish(every: 1.0, on: .main, in: .common)
-     var history: [Move] = []
-     var kingPosition: Position = Position(x: 0, y: 0)
+    var cancellables = Set<AnyCancellable>()
+    var timer = Timer.publish(every: 1.0, on: .main, in: .common)
+    var history: [Move] = []
+    var kingPosition: Position = Position(x: 4, y: 7)
     var whiteKingPosition: Position = Position(x: 0, y: 0)
     var blackKingPosition: Position = Position(x: 0, y: 0)
 
@@ -57,7 +57,6 @@ class ChessBoard {
                 }
             }
         }
-
         return piecePositions
     }
     
@@ -92,10 +91,12 @@ class ChessBoard {
 
         // Set up the initial game state
         if currentUser.hasActiveGame {
-            piecePositions.value = createBoardFromLoad()
+            let loadedPiecePositions = createBoardFromLoad()
+            piecePositions.send(loadedPiecePositions) // Populate piecePositions
             currentPlayer.value = currentUser.savedGameCurrentPlayer == "w" ? .white : .black
         } else {
-            piecePositions.value = createInitialBoard()
+            let initialPiecePositions = createInitialBoard()
+            piecePositions.send(initialPiecePositions) // Populate piecePositions
             currentPlayer.value = .white
         }
 
@@ -108,14 +109,17 @@ class ChessBoard {
         guard (0 ..< Constant.boardSize).contains(position.y), (0 ..< Constant.boardSize).contains(position.x) else {
             return nil
         }
-        return piecePositions.value[position.y][position.x]
+        if piecePositions.value != [] {
+            return piecePositions.value[position.y][position.x]
+        }
+        return ChessPiece(stringLiteral: "bk")
     }
     
     func getPiece(_ piece: ChessPiece) -> Position {
         if let index = piecePositions.value.flatMap({ $0 }).firstIndex (where: { $0?.id == piece.id }) {
             return Position(x: index / 8, y: index % 8)
         }
-        fatalError()
+        return Position(x: -1, y: -1)
     }
     
     func movePiece(from start: Position, to end: Position) {

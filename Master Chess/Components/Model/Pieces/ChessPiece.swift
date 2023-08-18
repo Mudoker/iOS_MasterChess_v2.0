@@ -23,7 +23,7 @@ enum Player {
 }
 
 // ExpressibleByStringLiteral allows the pieces to be created by string literal
-struct ChessPiece: ExpressibleByStringLiteral {
+struct ChessPiece: ExpressibleByStringLiteral, Identifiable, Hashable {
     let id: String
     var pieceType: PieceType
     let side: Player
