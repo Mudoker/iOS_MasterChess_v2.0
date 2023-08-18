@@ -4,17 +4,19 @@ import Foundation
 import Combine
 import SwiftUI
 
-class ChessBoard {
+class ChessBoard: ObservableObject {
     var currentUser = CurrentUser.shared
-    var piecePositions: CurrentValueSubject<[[ChessPiece?]], Never> = CurrentValueSubject([])
+    @Published var piecePositions: [[ChessPiece?]] = [[]]
 
-    let currentPlayer: CurrentValueSubject<Player, Never> = CurrentValueSubject(.white)
-    let isChecked: CurrentValueSubject<Bool, Never> = CurrentValueSubject(false)
-    var activePieces: [ChessPiece] { piecePositions.value.flatMap { $0 }.compactMap { $0 } }
-    let currentPlayerIsInCheck: CurrentValueSubject<Bool, Never> = CurrentValueSubject(false)
+    @Published var currentPlayer = Player.white
+    @Published var isChecked = false
+    var activePieces: [ChessPiece] {
+            piecePositions.flatMap { $0 }.compactMap { $0 }
+        }
+    @Published var currentPlayerIsInCheck = false
 
-    var whiteTimeLeft: CurrentValueSubject<TimeInterval, Never> = CurrentValueSubject(0) // Initialize with default value
-    var blackTimeLeft: CurrentValueSubject<TimeInterval, Never> = CurrentValueSubject(0) // Initialize with default value
+    @Published var whiteTimeLeft = 0 // Initialize with default value
+    @Published var blackTimeLeft = 0// Initialize with default value
     var cancellables = Set<AnyCancellable>()
     var timer = Timer.publish(every: 1.0, on: .main, in: .common)
     var history: [Move] = []
@@ -33,14 +35,13 @@ class ChessBoard {
     init() {
         // load from saved
         if currentUser.hasActiveGame {
-            whiteTimeLeft = CurrentValueSubject(currentUser.savedGameWhiteTimeLeft)
-            blackTimeLeft = CurrentValueSubject(currentUser.savedGameBlackTimeLeft)
+            whiteTimeLeft = Int(currentUser.savedGameWhiteTimeLeft)
+            blackTimeLeft = Int(currentUser.savedGameBlackTimeLeft)
         } else {
             let initialTimeLimit: TimeInterval = currentUser.rating > 500 ? 10 * 60 : 25 * 60
-            whiteTimeLeft = CurrentValueSubject(initialTimeLimit)
-            blackTimeLeft = CurrentValueSubject(initialTimeLimit)
+            whiteTimeLeft = Int(initialTimeLimit)
+            blackTimeLeft = Int(initialTimeLimit)
         }
-        
     }
 
     // Start new game
@@ -91,13 +92,11 @@ class ChessBoard {
 
         // Set up the initial game state
         if currentUser.hasActiveGame {
-            let loadedPiecePositions = createBoardFromLoad()
-            piecePositions.send(loadedPiecePositions) // Populate piecePositions
-            currentPlayer.value = currentUser.savedGameCurrentPlayer == "w" ? .white : .black
+            piecePositions = createBoardFromLoad() // Populate piecePositions
+            currentPlayer = currentUser.savedGameCurrentPlayer == "w" ? .white : .black
         } else {
-            let initialPiecePositions = createInitialBoard()
-            piecePositions.send(initialPiecePositions) // Populate piecePositions
-            currentPlayer.value = .white
+            piecePositions = createInitialBoard() // Populate piecePositions
+            currentPlayer = .white
         }
 
         // Start the clocks to begin tracking time
@@ -109,14 +108,14 @@ class ChessBoard {
         guard (0 ..< Constant.boardSize).contains(position.y), (0 ..< Constant.boardSize).contains(position.x) else {
             return nil
         }
-        if piecePositions.value != [] {
-            return piecePositions.value[position.y][position.x]
+        if piecePositions != [[]] {
+            return piecePositions[position.y][position.x]
         }
         return ChessPiece(stringLiteral: "bk")
     }
     
     func getPiece(_ piece: ChessPiece) -> Position {
-        if let index = piecePositions.value.flatMap({ $0 }).firstIndex (where: { $0?.id == piece.id }) {
+        if let index = piecePositions.flatMap({ $0 }).firstIndex (where: { $0?.id == piece.id }) {
             return Position(x: index / 8, y: index % 8)
         }
         return Position(x: -1, y: -1)
@@ -126,7 +125,7 @@ class ChessBoard {
         let validMove = allValidMoves.first { $0.from == start && $0.to == end }
         
         if validMove != nil {
-            var updatedPiecePositions = piecePositions.value
+            var updatedPiecePositions = piecePositions
             
             // Move the piece
             let movingPiece = updatedPiecePositions[start.y][start.x]
@@ -134,7 +133,7 @@ class ChessBoard {
             updatedPiecePositions[start.y][start.x] = nil
             
             // Update the piecePositions with the new value
-            piecePositions.send(updatedPiecePositions)
+            piecePositions = updatedPiecePositions
             
             // Update the boardSetup in SavedGame
            
@@ -144,29 +143,28 @@ class ChessBoard {
             }
             
             // Switch to the next player's turn
-            currentPlayer.send(currentPlayer.value == .white ? .black : .white)
-            currentPlayerIsInCheck.send(isKingInCheck(board: piecePositions.value))
+            currentPlayer = currentPlayer == .white ? .black : .white
+            currentPlayerIsInCheck = isKingInCheck(board: piecePositions)
         }
     }
 
 
     func removePiece(at position: Position) {
-        var updatedPiecePositions = piecePositions.value
+        var updatedPiecePositions = piecePositions
         updatedPiecePositions[position.y][position.x] = nil
-        piecePositions.send(updatedPiecePositions)
-        // Update the boardSetup in SavedGame
-        currentUser.savedGameBoardSetup[position.y][position.x] = ""
+        piecePositions = updatedPiecePositions
+
     }
 
     func promotePiece(at position: Position, to type: PieceType) {
-        let getCurrentSide = currentPlayer.value == .white ? "w" : "b"
+        let getCurrentSide = currentPlayer == .white ? "w" : "b"
         let pieceName = getCurrentSide + String(type.rawValue.first!)
         let promotedPiece = ChessPiece(stringLiteral: pieceName)
         
-        var updatedPiecePositions = piecePositions.value
+        var updatedPiecePositions = piecePositions
         removePiece(at: position)
         updatedPiecePositions[position.y][position.x] = promotedPiece
-        piecePositions.send(updatedPiecePositions)
+        piecePositions = updatedPiecePositions
         
         // Unwrap the boardSetup in SavedGame
         currentUser.savedGameBoardSetup[position.y][position.x] = getPiece(at: position)?.pieceName ?? ""
@@ -181,39 +179,39 @@ class ChessBoard {
         // Check for diagonal move
         if deltaX == 1 {
             // Check if there is a piece at the destination and if it belongs to the same player
-            if let destinationPiece = board[end.y][end.x], destinationPiece.side == currentPlayer.value {
+            if let destinationPiece = board[end.y][end.x], destinationPiece.side == currentPlayer {
                 return false
             }
 
             // Pawn can only move one step forward, with direction based on the player
-            return deltaY == (currentPlayer.value == .white ? -1 : 1) && !isKingInCheck(board: tempBoard)
+            return deltaY == (currentPlayer == .white ? -1 : 1) && !isKingInCheck(board: tempBoard)
         }
         
         // Check for vertical move
         if deltaX == 0 {
-            let middleY = start.y + (currentPlayer.value == .white ? 1 : -1)
+            let middleY = start.y + (currentPlayer == .white ? 1 : -1)
             
-            if deltaY == (currentPlayer.value == .white ? 1 : -1) {
+            if deltaY == (currentPlayer == .white ? 1 : -1) {
                 // Check if the destination is empty
                 if board[end.y][end.x] == nil {
                     return !isKingInCheck(board: tempBoard)
                 }
-            } else if deltaY == (currentPlayer.value == .white ? 2 : -2) {
+            } else if deltaY == (currentPlayer == .white ? 2 : -2) {
                 // Check for the initial double move of the pawn
                 if board[end.y][end.x] == nil && board[start.y][middleY] == nil {
                     // Make sure it's the initial move for the pawn
-                    if (currentPlayer.value == .white && start.y == 1) || (currentPlayer.value == .black && start.y == 6) {
+                    if (currentPlayer == .white && start.y == 1) || (currentPlayer == .black && start.y == 6) {
                         return !isKingInCheck(board: tempBoard)
                     }
                 }
             }
         }
         // Check for en passant
-        if deltaX == 1 && deltaY == (currentPlayer.value == .white ? -1 : 1) {
+        if deltaX == 1 && deltaY == (currentPlayer == .white ? -1 : 1) {
             if let lastMove = history.last, lastMove.to.x == end.x {
-                if let piece = board[lastMove.to.y][lastMove.to.x], piece.pieceType == .pawn, piece.side != currentPlayer.value {
-                    if (currentPlayer.value == .white && lastMove.from.y == end.y - 1 && lastMove.to.y == end.y + 1) ||
-                       (currentPlayer.value == .black && lastMove.from.y == end.y + 1 && lastMove.to.y == end.y - 1) {
+                if let piece = board[lastMove.to.y][lastMove.to.x], piece.pieceType == .pawn, piece.side != currentPlayer {
+                    if (currentPlayer == .white && lastMove.from.y == end.y - 1 && lastMove.to.y == end.y + 1) ||
+                       (currentPlayer == .black && lastMove.from.y == end.y + 1 && lastMove.to.y == end.y - 1) {
                         return !isKingInCheck(board: tempBoard)
                     }
                 }
@@ -226,9 +224,9 @@ class ChessBoard {
     func allValidPawnMoves(board: [[ChessPiece?]], from start: Position, history: [Move]) -> [Move]{
         allValidMoves.removeAll()
         let directions: [Position] = [
-            Position(x: 0, y: currentPlayer.value == .white ? -1 : 1), // Forward move
-            Position(x: 1, y: currentPlayer.value == .white ? -1 : 1), // Diagonal right capture
-            Position(x: -1, y: currentPlayer.value == .white ? -1 : 1) // Diagonal left capture
+            Position(x: 0, y: currentPlayer == .white ? -1 : 1), // Forward move
+            Position(x: 1, y: currentPlayer == .white ? -1 : 1), // Diagonal right capture
+            Position(x: -1, y: currentPlayer == .white ? -1 : 1) // Diagonal left capture
         ]
         
         for direction in directions {
@@ -266,7 +264,7 @@ class ChessBoard {
                 tempBoard[end.y][end.x] = tempBoard[start.y][start.x]
                 tempBoard[start.y][start.x] = nil
                 
-                if piecePositions.value[end.y][end.x]?.side == currentPlayer.value {
+                if piecePositions[end.y][end.x]?.side == currentPlayer {
                     return false
                 }
 
@@ -315,7 +313,7 @@ class ChessBoard {
         switch (deltaX, deltaY) {
         case (0...1, 0...1):
             // Check if the destination square is empty or occupied by an opponent's piece
-            if let piece = board[end.y][end.x], piece.side == currentPlayer.value {
+            if let piece = board[end.y][end.x], piece.side == currentPlayer {
                 return false
             }
             
@@ -326,12 +324,12 @@ class ChessBoard {
             return !isKingInCheck(board: tempBoard)
             
         case (2, 0):
-            if !isKingInCheck(board: piecePositions.value) {
+            if !isKingInCheck(board: piecePositions) {
                 let castlingDirection: Int
                 let kingXAfterCastling: Int
                 let emptySquaresX: [Int]
                 
-                if currentPlayer.value == .white {
+                if currentPlayer == .white {
                     castlingDirection = end.x > start.x ? 1 : -1
                     kingXAfterCastling = start.x + (2 * castlingDirection)
                     emptySquaresX = [start.x + castlingDirection, kingXAfterCastling]
@@ -420,8 +418,8 @@ class ChessBoard {
         // Check if any opponent's piece threatens the king's position
         for row in 0..<Constant.boardSize {
             for col in 0..<Constant.boardSize {
-                if let piece = board[row][col], piece.side != currentPlayer.value {
-                    if isValid(board: board, from: Position(x: col, y: row), to: currentPlayer.value == .white ? whiteKingPosition : blackKingPosition) {
+                if let piece = board[row][col], piece.side != currentPlayer {
+                    if isValid(board: board, from: Position(x: col, y: row), to: currentPlayer == .white ? whiteKingPosition : blackKingPosition) {
                         return true
                     }
                 }
@@ -432,9 +430,9 @@ class ChessBoard {
     
     // if king in check and no available move
     func isCheckMate() -> Bool {
-        if isKingInCheck(board: piecePositions.value) {
-            if allValidKingMoves(board: piecePositions.value, from: currentPlayer.value == .white ? whiteKingPosition : blackKingPosition).isEmpty {
-                winner = currentPlayer.value == .white ? .black : .white
+        if isKingInCheck(board: piecePositions) {
+            if allValidKingMoves(board: piecePositions, from: currentPlayer == .white ? whiteKingPosition : blackKingPosition).isEmpty {
+                winner = currentPlayer == .white ? .black : .white
                 return true
             }
         }
@@ -443,8 +441,8 @@ class ChessBoard {
     
     // if king is not in check but no available move
     func isStaleMate() -> Bool {
-        if !isKingInCheck(board: piecePositions.value) {
-            if allValidKingMoves(board: piecePositions.value, from: currentPlayer.value == .white ? whiteKingPosition : blackKingPosition).isEmpty {
+        if !isKingInCheck(board: piecePositions) {
+            if allValidKingMoves(board: piecePositions, from: currentPlayer == .white ? whiteKingPosition : blackKingPosition).isEmpty {
                 return true
             }
         }
@@ -453,8 +451,8 @@ class ChessBoard {
     
     func isInsufficientMaterial() -> Bool {
         // Get the active pieces for both players
-        let currentPlayerPieces = activePieces.filter { $0.side == currentPlayer.value }
-        let opponentPieces = activePieces.filter { $0.side != currentPlayer.value }
+        let currentPlayerPieces = activePieces.filter { $0.side == currentPlayer }
+        let opponentPieces = activePieces.filter { $0.side != currentPlayer }
         var counter = 0
         // since King cannot be captured, 1 piece left = king
         if currentPlayerPieces.count == 1 && opponentPieces.count == 1 {
@@ -532,13 +530,13 @@ class ChessBoard {
     }
     
     func isOutOfTime() -> Bool {
-        if currentPlayer.value == .white {
-            if whiteTimeLeft.value == 0 {
+        if currentPlayer == .white {
+            if whiteTimeLeft == 0 {
                 winner = .black
                 return true
             }
         } else {
-            if blackTimeLeft.value == 0 {
+            if blackTimeLeft == 0 {
                 winner = .white
                 return true
             }
@@ -594,7 +592,7 @@ class ChessBoard {
                 }
                 
                 if let piece = board[currentPosition.y][currentPosition.x] {
-                    if piece.side != currentPlayer.value {
+                    if piece.side != currentPlayer {
                         allValidMoves.append(Move(from: start, to: currentPosition)) // Capture move
                     }
                     break // Stop moving in this direction if a piece is encountered
@@ -656,7 +654,7 @@ class ChessBoard {
                 }
                 
                 if let piece = board[currentPosition.y][currentPosition.x] {
-                    if piece.side != currentPlayer.value {
+                    if piece.side != currentPlayer {
                         allValidMoves.append(Move(from: start, to: currentPosition)) // Capture move
                     }
                     break // Stop moving in this direction if a piece is encountered
@@ -675,11 +673,11 @@ class ChessBoard {
         guard start != end,
               let piece = board[start.y][start.x],
               bounds.contains(end.x) && bounds.contains(end.y),
-              piece.side == currentPlayer.value else {
+              piece.side == currentPlayer else {
             return false
         }
 
-        if let boardPlayer = board[end.y][end.x]?.side, boardPlayer == currentPlayer.value {
+        if let boardPlayer = board[end.y][end.x]?.side, boardPlayer == currentPlayer {
             return false
         }
 
@@ -696,16 +694,16 @@ class ChessBoard {
 //    func validMovementFor(
     func startClocks() {
         timer.sink { [self] _ in
-            let currentPlayer = self.currentPlayer.value
+            let currentPlayer = self.currentPlayer
             let timeLeftKeyPath = currentPlayer == .white ? \ChessBoard.whiteTimeLeft : \ChessBoard.blackTimeLeft
             
-            var newValue = self[keyPath: timeLeftKeyPath].value - 1
+            var newValue = self[keyPath: timeLeftKeyPath] - 1
             newValue = max(newValue, 0) // Ensure the value doesn't go negative
             
             if currentPlayer == .white {
-                self.whiteTimeLeft.send(newValue)
+                self.whiteTimeLeft = newValue
             } else {
-                self.blackTimeLeft.send(newValue)
+                self.blackTimeLeft = newValue
             }
         }
         .store(in: &cancellables)
@@ -715,8 +713,8 @@ class ChessBoard {
         let copiedBoard = ChessBoard()
         
         // Copy properties
-        copiedBoard.piecePositions.value = piecePositions.value
-        copiedBoard.isChecked.value = isChecked.value
+        copiedBoard.piecePositions = piecePositions
+        copiedBoard.isChecked = isChecked
         copiedBoard.kingPosition = kingPosition
         copiedBoard.isWhiteKingMoved = isWhiteKingMoved
         copiedBoard.isWhiteRightRookMoved = isWhiteRightRookMoved
@@ -727,8 +725,8 @@ class ChessBoard {
         // Copy other properties as needed
         
         // Copy time left
-        copiedBoard.whiteTimeLeft.value = whiteTimeLeft.value
-        copiedBoard.blackTimeLeft.value = blackTimeLeft.value
+        copiedBoard.whiteTimeLeft = whiteTimeLeft
+        copiedBoard.blackTimeLeft = blackTimeLeft
         
         return copiedBoard
     }

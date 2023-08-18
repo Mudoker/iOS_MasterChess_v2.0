@@ -26,8 +26,6 @@ struct GameView: View {
             GeometryReader { proxy in
                 VStack {
                     Spacer().frame(height: proxy.size.width / 2.60)
-                    Text("\(activePieces.count)")
-
 
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 8), spacing: 0) {
                         ForEach(0..<8) { y in
@@ -40,6 +38,9 @@ struct GameView: View {
                                         .frame(width: proxy.size.width / 9, height: proxy.size.width / 8)
                                         .offset(self.currentPiece.0 == piece ? self.currentPiece.1 : .zero)
                                         .gesture(self.dragGesture(piece))
+                                        .onTapGesture {
+                                            viewModel.removePiece(at: position)
+                                        }
                                 } else {
                                     Color.clear
                                         .frame(width: proxy.size.width / 8, height: proxy.size.width / 8)
@@ -51,9 +52,6 @@ struct GameView: View {
                 
             }
             
-        }
-        .onAppear {
-            self.viewModel.start()
         }
     }
     

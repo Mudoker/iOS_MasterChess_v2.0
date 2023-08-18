@@ -14,10 +14,10 @@ final class GameViewModel: ObservableObject {
     @Published var blackPlayerName = ""
     var pieces: [ChessPiece] { chessGame.activePieces }
 
-    private var disposables = Set<AnyCancellable>()
      let chessGame: ChessBoard
     private let ai: Mitten
     var gameSetting = Setting()
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         chessGame = ChessBoard()
@@ -25,25 +25,29 @@ final class GameViewModel: ObservableObject {
         ai = Mitten(chessGame: chessGame)
         
         // capture changes in currentPlayer
-        chessGame.currentPlayer
-            .assign(to: \.currentPlayer, on: self)
-            .store(in: &disposables)
+        chessGame.$currentPlayer
+            .sink { [weak self] currentPlayer in
+                self?.currentPlayer = currentPlayer
+            }
+            .store(in: &cancellables)
 
-        // capture changes in piece position
-        chessGame.piecePositions
-            .assign(to: \.board, on: self)
-            .store(in: &disposables)
+        chessGame.$piecePositions
+            .sink { [weak self] piecePositions in
+                self?.board = piecePositions
+            }
+            .store(in: &cancellables)
 
-        // capture time left for both players
-        chessGame.whiteTimeLeft
-            .map { $0.chessyTime() }
-            .assign(to: \.whiteRemainigTime, on: self)
-            .store(in: &disposables)
+        chessGame.$whiteTimeLeft
+            .sink { [weak self] whiteTime in
+                self?.whiteRemainigTime = "\(whiteTime)" // Use directly as Int
+            }
+            .store(in: &cancellables)
 
-        chessGame.blackTimeLeft
-            .map { $0.chessyTime() }
-            .assign(to: \.blackRemainigTime, on: self)
-            .store(in: &disposables)
+        chessGame.$blackTimeLeft
+            .sink { [weak self] blackTime in
+                self?.blackRemainigTime = "\(blackTime)" // Use directly as Int
+            }
+            .store(in: &cancellables)
 
         switch currentUser.settingDifficulty {
             case "hard":
@@ -84,6 +88,9 @@ final class GameViewModel: ObservableObject {
         chessGame.getPiece(at: position)
     }
     
+    func removePiece(at position: Position) {
+        chessGame.removePiece(at: position)
+    }
     // start new game
     func start() {
         currentUser.hasActiveGame = true

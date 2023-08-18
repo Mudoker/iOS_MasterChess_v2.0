@@ -46,8 +46,8 @@
             filePath = "Master Chess/Components/Screens/Game View/GameView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "87"
-            endingLineNumber = "87"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
             landmarkName = "previews"
             landmarkType = "24">
          </BreakpointContent>
