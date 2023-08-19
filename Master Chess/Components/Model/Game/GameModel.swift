@@ -12,9 +12,11 @@ final class GameViewModel: ObservableObject {
     @Published var blackRemainigTime: String = ""
     @Published var whitePlayerName = "Player 1"
     @Published var blackPlayerName = ""
+    @Published var allValidMoves: [Move] = []
+
     var pieces: [ChessPiece] { chessGame.activePieces }
 
-     let chessGame: ChessBoard
+    let chessGame: ChessBoard
     private let ai: Mitten
     var gameSetting = Setting()
     private var cancellables = Set<AnyCancellable>()
@@ -49,6 +51,9 @@ final class GameViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
+        chessGame.$allValidMoves
+            .assign(to: &$allValidMoves)
+        
         switch currentUser.settingDifficulty {
             case "hard":
                 blackPlayerName = "Mitten"
@@ -62,10 +67,32 @@ final class GameViewModel: ObservableObject {
     }
     
     
-    func didMove(move: Move) {
+    func didMove(move: Move, piece: ChessPiece) {
         // trigger when player turn
         guard ai.isThinking == false else { return }
         
+        switch piece.pieceType {
+        case .pawn:
+            allValidMoves = chessGame.allValidPawnMoves(board: chessGame.piecePositions, from: move.from, history: [])
+            chessGame.allValidMoves = allValidMoves
+        case .knight:
+            allValidMoves = chessGame.allValidKnightMoves(board: chessGame.piecePositions, from: move.from)
+            chessGame.allValidMoves = allValidMoves
+        case .king:
+            allValidMoves = chessGame.allValidKingMoves(board: chessGame.piecePositions, from: move.from)
+            chessGame.allValidMoves = allValidMoves
+        case .bishop:
+            allValidMoves = chessGame.allValidBishopMoves(board: chessGame.piecePositions, from: move.from)
+            chessGame.allValidMoves = allValidMoves
+        case .rook:
+            allValidMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions, from: move.from)
+            chessGame.allValidMoves = allValidMoves
+        case .queen:
+            allValidMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions, from: move.from) + chessGame.allValidBishopMoves(board: chessGame.piecePositions, from: move.from)
+            chessGame.allValidMoves = allValidMoves
+        }
+        print(move.from)
+        print(move.to)
         // move a piece
         chessGame.movePiece(from: move.from, to: move.to)
         
@@ -85,7 +112,8 @@ final class GameViewModel: ObservableObject {
     }
 
     func getPiece(at position: Position) -> ChessPiece? {
-        chessGame.getPiece(at: position)
+        print(chessGame.piecePositions)
+        return chessGame.getPiece(at: position)
     }
     
     func removePiece(at position: Position) {
@@ -93,7 +121,7 @@ final class GameViewModel: ObservableObject {
     }
     // start new game
     func start() {
-        currentUser.hasActiveGame = true
+        currentUser.hasActiveGame = false
         chessGame.start()
     }
 }

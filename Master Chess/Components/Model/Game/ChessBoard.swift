@@ -12,26 +12,26 @@ class ChessBoard: ObservableObject {
     @Published var isChecked = false
     var activePieces: [ChessPiece] {
             piecePositions.flatMap { $0 }.compactMap { $0 }
-        }
+    }
     @Published var currentPlayerIsInCheck = false
 
     @Published var whiteTimeLeft = 0 // Initialize with default value
     @Published var blackTimeLeft = 0// Initialize with default value
-    var cancellables = Set<AnyCancellable>()
-    var timer = Timer.publish(every: 1.0, on: .main, in: .common)
-    var history: [Move] = []
-    var kingPosition: Position = Position(x: 4, y: 7)
-    var whiteKingPosition: Position = Position(x: 0, y: 0)
-    var blackKingPosition: Position = Position(x: 0, y: 0)
+    @Published var cancellables = Set<AnyCancellable>()
+    @Published var timer = Timer.publish(every: 1.0, on: .main, in: .common)
+    @Published var history: [Move] = []
+    @Published var kingPosition: Position = Position(x: 4, y: 7)
+    @Published var whiteKingPosition: Position = Position(x: 0, y: 0)
+    @Published var blackKingPosition: Position = Position(x: 0, y: 0)
 
-     var isWhiteKingMoved = false
-     var isWhiteRightRookMoved = false
-     var isWhiteLeftRookMoved = false
-     var isBlackKingMoved = false
-     var isBlackRightRookMoved = false
-     var isBlackLeftRookMoved = false
-    var winner: Player = .white
-     var allValidMoves: [Move] = []
+    @Published var isWhiteKingMoved = false
+    @Published var isWhiteRightRookMoved = false
+    @Published var isWhiteLeftRookMoved = false
+    @Published var isBlackKingMoved = false
+    @Published var isBlackRightRookMoved = false
+    @Published var isBlackLeftRookMoved = false
+    @Published var winner: Player = .white
+    @Published var allValidMoves: [Move] = []
     init() {
         // load from saved
         if currentUser.hasActiveGame {
@@ -51,10 +51,14 @@ class ChessBoard: ObservableObject {
             for (file, pieceCode) in files.enumerated() {
                 if pieceCode != "" {
                     let piece = ChessPiece(stringLiteral: pieceCode)
-                    if pieceCode == "bk" || pieceCode == "wk" {
-                        kingPosition = Position(x: rank, y: file)
+                    if pieceCode == "bk0"{
+                        blackKingPosition = Position(x: rank, y: file)
+                    } else if pieceCode == "wk0" {
+                        whiteKingPosition = Position(x:rank, y: file)
                     }
                     piecePositions[rank][file] = piece
+                } else {
+                    piecePositions[rank][file] = nil
                 }
             }
         }
@@ -67,7 +71,7 @@ class ChessBoard: ObservableObject {
         let unwrappedBoardSetup = currentUser.savedGameBoardSetup
             for (rank, files) in unwrappedBoardSetup.enumerated() {
                 for (file, pieceCode) in files.enumerated() {
-                    if let pieceCode = pieceCode as String? {
+                    if pieceCode != "" {
                         let piece = ChessPiece(stringLiteral: pieceCode)
                         if pieceCode == "bk0"{
                             blackKingPosition = Position(x: rank, y: file)
@@ -75,6 +79,9 @@ class ChessBoard: ObservableObject {
                             whiteKingPosition = Position(x:rank, y: file)
                         }
                         piecePositions[rank][file] = piece
+                    } else {
+                        piecePositions[rank][file] = nil
+
                     }
                 }
         }
@@ -105,25 +112,23 @@ class ChessBoard: ObservableObject {
 
     
     func getPiece(at position: Position) -> ChessPiece? {
-        guard (0 ..< Constant.boardSize).contains(position.y), (0 ..< Constant.boardSize).contains(position.x) else {
-            return nil
-        }
-        if piecePositions != [[]] {
-            return piecePositions[position.y][position.x]
-        }
-        return ChessPiece(stringLiteral: "bk")
+//        if piecePositions.isEmpty {
+//            print("empty")
+//            return nil
+//        }
+        return piecePositions[position.y][position.x]
     }
     
     func getPiece(_ piece: ChessPiece) -> Position {
         if let index = piecePositions.flatMap({ $0 }).firstIndex (where: { $0?.id == piece.id }) {
-            return Position(x: index / 8, y: index % 8)
+            return Position(x: index % 8, y: index / 8)
         }
         return Position(x: -1, y: -1)
     }
     
     func movePiece(from start: Position, to end: Position) {
         let validMove = allValidMoves.first { $0.from == start && $0.to == end }
-        
+        print("triggered")
         if validMove != nil {
             var updatedPiecePositions = piecePositions
             
@@ -137,7 +142,7 @@ class ChessBoard: ObservableObject {
             
             // Update the boardSetup in SavedGame
            
-            if let movingPieceID = movingPiece?.id {
+            if let movingPieceID = movingPiece?.pieceName {
                 currentUser.savedGameBoardSetup[end.y][end.x] = movingPieceID
                 currentUser.savedGameBoardSetup[start.y][start.x] = ""
             }
@@ -145,6 +150,8 @@ class ChessBoard: ObservableObject {
             // Switch to the next player's turn
             currentPlayer = currentPlayer == .white ? .black : .white
             currentPlayerIsInCheck = isKingInCheck(board: piecePositions)
+        } else {
+            print("no move")
         }
     }
 
@@ -170,48 +177,68 @@ class ChessBoard: ObservableObject {
         currentUser.savedGameBoardSetup[position.y][position.x] = getPiece(at: position)?.pieceName ?? ""
     }
     
-    private func validPawnMove(board: [[ChessPiece?]], from start: Position, to end: Position, history: [Move]) -> Bool {
+    func validPawnMove(board: [[ChessPiece?]], from start: Position, to end: Position, history: [Move]) -> Bool {
         let deltaX = abs(start.x - end.x)
         let deltaY = end.y - start.y
+        print(deltaX)
+        print(deltaY)
+
         var tempBoard = board
             tempBoard[end.y][end.x] = tempBoard[start.y][start.x]
             tempBoard[start.y][start.x] = nil
         // Check for diagonal move
         if deltaX == 1 {
-            // Check if there is a piece at the destination and if it belongs to the same player
-            if let destinationPiece = board[end.y][end.x], destinationPiece.side == currentPlayer {
-                return false
+            print("Diagonal")
+            if !history.isEmpty {
+                print("Has history")
+                // Check for en passant
+                if deltaY == (currentPlayer == .white ? -1 : 1) {
+                    print("step 1")
+                    if let lastMove = history.last, lastMove.to.x == end.x {
+                        print("step 2")
+                        print(board[lastMove.to.y][lastMove.to.x]?.pieceName as Any)
+                        print(board)
+                        if let piece = board[lastMove.to.y][lastMove.to.x], piece.pieceType == .pawn, piece.side != currentPlayer {
+                            print("en passant")
+                            if (currentPlayer == .white && lastMove.from.y == end.y - 1 && lastMove.to.y == end.y + 1) ||
+                               (currentPlayer == .black && lastMove.from.y == end.y + 1 && lastMove.to.y == end.y - 1) {
+                                return !isKingInCheck(board: tempBoard)
+                            }
+                        }
+                    }
+                }
             }
-
-            // Pawn can only move one step forward, with direction based on the player
-            return deltaY == (currentPlayer == .white ? -1 : 1) && !isKingInCheck(board: tempBoard)
+            
+            if let destinationPiece = board[end.y][end.x] {
+                // Check if the destination piece belongs to the same player
+                if destinationPiece.side == currentPlayer {
+                    return false
+                }
+                // Print the piece name
+                print("Name: " + destinationPiece.pieceName)
+                // Continue with the rest of your conditions
+                return deltaY == (currentPlayer == .white ? -1 : 1) && !isKingInCheck(board: tempBoard)
+            }
         }
         
         // Check for vertical move
         if deltaX == 0 {
-            let middleY = start.y + (currentPlayer == .white ? 1 : -1)
+            let middleY = start.y + (currentPlayer == .white ? -1 : 1)
             
-            if deltaY == (currentPlayer == .white ? 1 : -1) {
+            if deltaY == (currentPlayer == .white ? -1 : 1) {
+                print("1 moves")
+
                 // Check if the destination is empty
                 if board[end.y][end.x] == nil {
                     return !isKingInCheck(board: tempBoard)
                 }
-            } else if deltaY == (currentPlayer == .white ? 2 : -2) {
+            } else if deltaY == (currentPlayer == .white ? -2 : 2) {
+                print("2 moves")
+
                 // Check for the initial double move of the pawn
-                if board[end.y][end.x] == nil && board[start.y][middleY] == nil {
+                if board[end.y][end.x] == nil && board[middleY][start.x] == nil {
                     // Make sure it's the initial move for the pawn
-                    if (currentPlayer == .white && start.y == 1) || (currentPlayer == .black && start.y == 6) {
-                        return !isKingInCheck(board: tempBoard)
-                    }
-                }
-            }
-        }
-        // Check for en passant
-        if deltaX == 1 && deltaY == (currentPlayer == .white ? -1 : 1) {
-            if let lastMove = history.last, lastMove.to.x == end.x {
-                if let piece = board[lastMove.to.y][lastMove.to.x], piece.pieceType == .pawn, piece.side != currentPlayer {
-                    if (currentPlayer == .white && lastMove.from.y == end.y - 1 && lastMove.to.y == end.y + 1) ||
-                       (currentPlayer == .black && lastMove.from.y == end.y + 1 && lastMove.to.y == end.y - 1) {
+                    if (currentPlayer == .white && start.y == 6) || (currentPlayer == .black && start.y == 1) {
                         return !isKingInCheck(board: tempBoard)
                     }
                 }
@@ -241,6 +268,7 @@ class ChessBoard: ObservableObject {
                 allValidMoves.append(Move(from: start, to: destination))
             }
         }
+        print (allValidMoves)
         return allValidMoves
     }
 

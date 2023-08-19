@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E12737E22A90BF890046AA4B /* Test+Pawn.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12737E12A90BF890046AA4B /* Test+Pawn.swift */; };
+		E12737E42A90C7DC0046AA4B /* Test+ChessBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12737E32A90C7DC0046AA4B /* Test+ChessBoard.swift */; };
 		E14B22FD2A85F3B2003F79DC /* SignUpScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14B22FC2A85F3B2003F79DC /* SignUpScreen.swift */; };
 		E14B23072A862C77003F79DC /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14B23062A862C77003F79DC /* MenuView.swift */; };
 		E14B230A2A86324F003F79DC /* GlassMorphicCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14B23092A86324F003F79DC /* GlassMorphicCard.swift */; };
@@ -61,6 +63,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E12737E12A90BF890046AA4B /* Test+Pawn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+Pawn.swift"; sourceTree = "<group>"; };
+		E12737E32A90C7DC0046AA4B /* Test+ChessBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+ChessBoard.swift"; sourceTree = "<group>"; };
 		E14B22FC2A85F3B2003F79DC /* SignUpScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpScreen.swift; sourceTree = "<group>"; };
 		E14B23062A862C77003F79DC /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		E14B23092A86324F003F79DC /* GlassMorphicCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassMorphicCard.swift; sourceTree = "<group>"; };
@@ -385,6 +389,8 @@
 			children = (
 				E1FB62822A8F300C00823651 /* Test+LoadEnvData.swift */,
 				E1FB62882A8FA19900823651 /* Test+GameModel.swift */,
+				E12737E12A90BF890046AA4B /* Test+Pawn.swift */,
+				E12737E32A90C7DC0046AA4B /* Test+ChessBoard.swift */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -506,7 +512,9 @@
 				E1F7FB222A838EE9005B08D8 /* Master_Chess.xcdatamodeld in Sources */,
 				E1FB62832A8F300C00823651 /* Test+LoadEnvData.swift in Sources */,
 				E14B230A2A86324F003F79DC /* GlassMorphicCard.swift in Sources */,
+				E12737E22A90BF890046AA4B /* Test+Pawn.swift in Sources */,
 				E192A2B12A878F87000139D1 /* ProfileView.swift in Sources */,
+				E12737E42A90C7DC0046AA4B /* Test+ChessBoard.swift in Sources */,
 				E1D782582A8B9B54008B1081 /* Position.swift in Sources */,
 				E17068022A8DE5EE0015860F /* Movement+CoreDataClass.swift in Sources */,
 				E1D782682A8BAC51008B1081 /* Users+CoreDataProperties.swift in Sources */,

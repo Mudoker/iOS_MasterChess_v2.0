@@ -10,15 +10,14 @@ import SwiftUI
 struct GameView: View {
     @EnvironmentObject var currentUser: CurrentUser
     @State private var currentPiece: (ChessPiece?, CGSize) = (nil, .zero)
-    @ObservedObject var viewModel = GameViewModel()
+    @StateObject var viewModel = GameViewModel()
     @State private var isRotatingWhite = true
     @State var show = true
-
+    
     // Replace this with your actual piecesPosition data
     let piecesPosition: [(ChessPiece, Position)] = [
         // Fill in your piecesPosition data here
     ]
-    var activePieces: [ChessPiece] { viewModel.chessGame.piecePositions.value.flatMap { $0 }.compactMap { $0 } }
 
     var body: some View {
         ZStack {
@@ -51,7 +50,9 @@ struct GameView: View {
                 }
                 
             }
-            
+        }
+        .onAppear {
+            self.viewModel.start()
         }
     }
     
@@ -64,14 +65,12 @@ struct GameView: View {
             .onEnded {
                 let finalPosition = self.viewModel.indexOf(piece) + Position($0.translation)
                 let move = Move(from: self.viewModel.indexOf(piece), to: finalPosition)
-                self.viewModel.didMove(move: move)
+                self.viewModel.didMove(move: move, piece: currentPiece.0 ?? ChessPiece(stringLiteral: ""))
 
                 // Reset the currentPiece after the drag gesture ends
                 self.currentPiece = (nil, .zero)
             }
     }
-    
-    
 }
 
 // overide + for adding with cgsize
