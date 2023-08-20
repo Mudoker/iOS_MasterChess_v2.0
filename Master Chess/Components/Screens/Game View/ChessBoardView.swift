@@ -6,18 +6,6 @@ struct ChessBoardView: View {
     let theirCapturedCount: Int = 10
     let isAdmin = true // Set this to true or false based on admin status
     @StateObject var viewModel: GameViewModel
-    var history: [Move] = [
-            Move(from: Position(x: 0, y: 1), to: Position(x: 2, y: 3)),
-            Move(from: Position(x: 1, y: 2), to: Position(x: 2, y: 3)),
-            Move(from: Position(x: 4, y: 4), to: Position(x: 5, y: 5)),
-            Move(from: Position(x: 3, y: 0), to: Position(x: 4, y: 1)),
-            Move(from: Position(x: 7, y: 6), to: Position(x: 6, y: 5)),
-            Move(from: Position(x: 2, y: 1), to: Position(x: 0, y: 0)),
-            Move(from: Position(x: 6, y: 0), to: Position(x: 7, y: 1)),
-            Move(from: Position(x: 3, y: 7), to: Position(x: 4, y: 6)),
-            Move(from: Position(x: 1, y: 5), to: Position(x: 3, y: 4)),
-            Move(from: Position(x: 5, y: 2), to: Position(x: 4, y: 3))
-        ]
  
     let columnLabels = "abcdefghijklmnopqrstuvwxyz"
     
