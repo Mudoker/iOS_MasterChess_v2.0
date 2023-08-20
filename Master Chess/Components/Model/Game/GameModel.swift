@@ -13,8 +13,10 @@ final class GameViewModel: ObservableObject {
     @Published var whitePlayerName = "Player 1"
     @Published var blackPlayerName = ""
     @Published var allValidMoves: [Move] = []
+    @Published var history: [Move] = []
 
     var pieces: [ChessPiece] { chessGame.activePieces }
+    private var disposables = Set<AnyCancellable>()
 
     let chessGame: ChessBoard
     private let ai: Mitten
@@ -33,11 +35,7 @@ final class GameViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
-        chessGame.$piecePositions
-            .sink { [weak self] piecePositions in
-                self?.board = piecePositions
-            }
-            .store(in: &cancellables)
+        chessGame.piecePositions.assign(to: \.board, on: self).store(in: &disposables)
 
         chessGame.$whiteTimeLeft
             .sink { [weak self] whiteTime in
@@ -54,6 +52,9 @@ final class GameViewModel: ObservableObject {
         chessGame.$allValidMoves
             .assign(to: &$allValidMoves)
         
+        chessGame.history.assign(to: \.history, on: self).store(in: &disposables)
+
+        
         switch currentUser.settingDifficulty {
             case "hard":
                 blackPlayerName = "Mitten"
@@ -65,37 +66,47 @@ final class GameViewModel: ObservableObject {
                 blackPlayerName = "Error" // Set a default value if none of the cases match
         }
     }
-    
+    func allMove(from: Position, piece: ChessPiece) {
+        switch piece.pieceType {
+            case .pawn:
+                allValidMoves = chessGame.allValidPawnMoves(board: chessGame.piecePositions.value, from: from, history: [])
+                chessGame.allValidMoves = allValidMoves
+            case .knight:
+                allValidMoves = chessGame.allValidKnightMoves(board: chessGame.piecePositions.value, from: from)
+//                print(chessGame.validKnightMove(board:chessGame.piecePositions.value,from : move.from, to : move.to))/
+                chessGame.allValidMoves = allValidMoves
+            case .king:
+                allValidMoves = chessGame.allValidKingMoves(board: chessGame.piecePositions.value, from: from)
+                chessGame.allValidMoves = allValidMoves
+            case .bishop:
+                allValidMoves = chessGame.allValidBishopMoves(board: chessGame.piecePositions.value, from: from)
+//                print(chessGame.validBishopMove(board:chessGame.piecePositions.value,from : move.from, to : move.to))
+
+                chessGame.allValidMoves = allValidMoves
+            case .rook:
+                allValidMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions.value, from: from)
+//                print(chessGame.validRookMove(board:chessGame.piecePositions.value,from : move.from, to : move.to))
+
+                chessGame.allValidMoves = allValidMoves
+            case .queen:
+                allValidMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions.value, from: from) + chessGame.allValidBishopMoves(board: chessGame.piecePositions.value, from: from)
+                chessGame.allValidMoves = allValidMoves
+        }
+    }
     
     func didMove(move: Move, piece: ChessPiece) {
         // trigger when player turn
         guard ai.isThinking == false else { return }
-        
-        switch piece.pieceType {
-        case .pawn:
-            allValidMoves = chessGame.allValidPawnMoves(board: chessGame.piecePositions, from: move.from, history: [])
-            chessGame.allValidMoves = allValidMoves
-        case .knight:
-            allValidMoves = chessGame.allValidKnightMoves(board: chessGame.piecePositions, from: move.from)
-            chessGame.allValidMoves = allValidMoves
-        case .king:
-            allValidMoves = chessGame.allValidKingMoves(board: chessGame.piecePositions, from: move.from)
-            chessGame.allValidMoves = allValidMoves
-        case .bishop:
-            allValidMoves = chessGame.allValidBishopMoves(board: chessGame.piecePositions, from: move.from)
-            chessGame.allValidMoves = allValidMoves
-        case .rook:
-            allValidMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions, from: move.from)
-            chessGame.allValidMoves = allValidMoves
-        case .queen:
-            allValidMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions, from: move.from) + chessGame.allValidBishopMoves(board: chessGame.piecePositions, from: move.from)
-            chessGame.allValidMoves = allValidMoves
-        }
+        print("From")
         print(move.from)
+        print("to")
+
         print(move.to)
+                
+        allMove(from: move.from, piece: piece)
         // move a piece
         chessGame.movePiece(from: move.from, to: move.to)
-        
+        allValidMoves = []
         // will be updated later (right now AI is black by default)
         if currentPlayer == .black {
             ai.bestMove { move in
@@ -112,8 +123,7 @@ final class GameViewModel: ObservableObject {
     }
 
     func getPiece(at position: Position) -> ChessPiece? {
-        print(chessGame.piecePositions)
-        return chessGame.getPiece(at: position)
+        chessGame.getPiece(at: position)
     }
     
     func removePiece(at position: Position) {

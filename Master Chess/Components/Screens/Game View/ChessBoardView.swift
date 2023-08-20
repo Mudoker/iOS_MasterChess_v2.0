@@ -5,18 +5,20 @@ struct ChessBoardView: View {
     let yourCapturedCount: Int = 7
     let theirCapturedCount: Int = 10
     let isAdmin = true // Set this to true or false based on admin status
+    @StateObject var viewModel: GameViewModel
     var history: [Move] = [
-        Move(from: Position(x: 0, y: 1), to: Position(x: 2, y: 3)),
-        Move(from: Position(x: 1, y: 2), to: Position(x: 2, y: 3)),
-        Move(from: Position(x: 4, y: 4), to: Position(x: 5, y: 5)),
-        Move(from: Position(x: 3, y: 0), to: Position(x: 4, y: 1)),
-        Move(from: Position(x: 7, y: 6), to: Position(x: 6, y: 5)),
-        Move(from: Position(x: 2, y: 1), to: Position(x: 0, y: 0)),
-        Move(from: Position(x: 6, y: 0), to: Position(x: 7, y: 1)),
-        Move(from: Position(x: 3, y: 7), to: Position(x: 4, y: 6)),
-        Move(from: Position(x: 1, y: 5), to: Position(x: 3, y: 4)),
-        Move(from: Position(x: 5, y: 2), to: Position(x: 4, y: 3))
-    ]
+            Move(from: Position(x: 0, y: 1), to: Position(x: 2, y: 3)),
+            Move(from: Position(x: 1, y: 2), to: Position(x: 2, y: 3)),
+            Move(from: Position(x: 4, y: 4), to: Position(x: 5, y: 5)),
+            Move(from: Position(x: 3, y: 0), to: Position(x: 4, y: 1)),
+            Move(from: Position(x: 7, y: 6), to: Position(x: 6, y: 5)),
+            Move(from: Position(x: 2, y: 1), to: Position(x: 0, y: 0)),
+            Move(from: Position(x: 6, y: 0), to: Position(x: 7, y: 1)),
+            Move(from: Position(x: 3, y: 7), to: Position(x: 4, y: 6)),
+            Move(from: Position(x: 1, y: 5), to: Position(x: 3, y: 4)),
+            Move(from: Position(x: 5, y: 2), to: Position(x: 4, y: 3))
+        ]
+ 
     let columnLabels = "abcdefghijklmnopqrstuvwxyz"
     
     func coordinateString(for point: Position) -> String {
@@ -88,6 +90,9 @@ struct ChessBoardView: View {
                     ForEach((0...7).reversed(), id: \.self) { y in
                         HStack(spacing: 0) {
                             ForEach(0...7, id: \.self) { x in
+                                let isAvailableMove = viewModel.allValidMoves.contains { move in
+                                    move.to == Position(x: x, y: y)
+                                }
                                 GlassMorphicCard(
                                     isDarkMode: .constant(!(x + y).isMultiple(of: 2)),
                                     width: proxy.size.width / 8,
@@ -140,8 +145,8 @@ struct ChessBoardView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: proxy.size.width/30) {
-                            ForEach(history.indices, id: \.self) { index in
-                                let move = history[index]
+                            ForEach(viewModel.chessGame.history.value.indices, id: \.self) { index in
+                                let move = viewModel.chessGame.history.value[index]
                                 Rectangle()
                                     .frame(width: proxy.size.width/6, height: proxy.size.width/12)
                                     .foregroundColor(.white.opacity(0.1))
@@ -160,7 +165,8 @@ struct ChessBoardView: View {
                         }
                         .padding()
                     }
-                    
+                    .frame(height: proxy.size.height / 12)
+
                     Spacer()
 
                     HStack (spacing: 20) {
@@ -177,6 +183,7 @@ struct ChessBoardView: View {
                         
                         Button(action: {
                             // Action for New Game
+                            print(viewModel.chessGame.history.value)
                         }) {
                             VStack {
                                 Image(systemName: "flag")
@@ -237,6 +244,6 @@ struct ChessBoardView: View {
 
 struct ChessBoardView_Previews: PreviewProvider {
     static var previews: some View {
-        ChessBoardView()
+        ChessBoardView(viewModel: GameViewModel())
     }
 }

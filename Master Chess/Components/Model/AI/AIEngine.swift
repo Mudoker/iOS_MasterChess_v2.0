@@ -62,18 +62,18 @@ class AIEngine: NSObject, GKGameModel {
                 // return all possible moves for each pieces at different locations
                 switch piece.pieceType {
                     case .pawn:
-                        validMoves = chessGame.allValidPawnMoves(board: chessGame.piecePositions, from: pieceIndex, history: chessGame.history)
+                    validMoves = chessGame.allValidPawnMoves(board: chessGame.piecePositions.value, from: pieceIndex, history: chessGame.history.value)
                     case .knight:
-                        validMoves = chessGame.allValidKnightMoves(board: chessGame.piecePositions, from: pieceIndex)
+                        validMoves = chessGame.allValidKnightMoves(board: chessGame.piecePositions.value, from: pieceIndex)
                     case .king:
-                        validMoves = chessGame.allValidKingMoves(board: chessGame.piecePositions, from: pieceIndex)
+                        validMoves = chessGame.allValidKingMoves(board: chessGame.piecePositions.value, from: pieceIndex)
                     case .rook:
-                        validMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions, from: pieceIndex)
+                        validMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions.value, from: pieceIndex)
                     case .bishop:
-                        validMoves = chessGame.allValidBishopMoves(board: chessGame.piecePositions, from: pieceIndex)
+                        validMoves = chessGame.allValidBishopMoves(board: chessGame.piecePositions.value, from: pieceIndex)
                     case .queen:
-                        let bishopMoves = chessGame.allValidBishopMoves(board: chessGame.piecePositions, from: pieceIndex)
-                        let rookMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions, from: pieceIndex)
+                        let bishopMoves = chessGame.allValidBishopMoves(board: chessGame.piecePositions.value, from: pieceIndex)
+                        let rookMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions.value, from: pieceIndex)
                         validMoves = bishopMoves + rookMoves
                 }
                 

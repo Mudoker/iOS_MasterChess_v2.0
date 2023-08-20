@@ -33,7 +33,7 @@ struct Test_Pawn: View {
         }
         .onAppear {
             chess.currentPlayer = .white
-            chess.piecePositions = chess.createInitialBoard()
+            chess.piecePositions.value = chess.createInitialBoard()
         }
     }
 }

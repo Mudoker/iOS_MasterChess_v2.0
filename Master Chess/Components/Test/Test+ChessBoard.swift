@@ -22,12 +22,12 @@ extension ChessBoard {
         }
 
         // If you also want to check if there's already a piece at the 'to' position
-        guard piecePositions[to.y][to.x] == nil else {
+        guard piecePositions.value[to.y][to.x] == nil else {
             print("There's already a piece at the 'to' position")
             return
         }
         
-        piecePositions[to.y][to.x] = piecePositions[from.y][from.x]
-        piecePositions[from.y][from.x] = nil
+        piecePositions.value[to.y][to.x] = piecePositions.value[from.y][from.x]
+        piecePositions.value[from.y][from.x] = nil
     }
 }
