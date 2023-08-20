@@ -238,9 +238,9 @@ class ChessBoard: ObservableObject {
                 // Check for en passant
                 if deltaY == (currentPlayer == .white ? -1 : 1) {
                     if let lastMove = history.last, lastMove.to.x == end.x {
-                        print(board[lastMove.to.y][lastMove.to.x]?.pieceName as Any)
-                        print(board)
                         if let piece = board[lastMove.to.y][lastMove.to.x], piece.pieceType == .pawn, piece.side != currentPlayer {
+                            print("4")
+
                             if (currentPlayer == .white && lastMove.from.y == end.y - 1 && lastMove.to.y == end.y + 1) ||
                                (currentPlayer == .black && lastMove.from.y == end.y + 1 && lastMove.to.y == end.y - 1) {
                                 return !isKingInCheck(board: tempBoard)
