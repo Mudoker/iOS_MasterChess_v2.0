@@ -86,7 +86,6 @@
 		E1852EAD2A8E4B4E00BD462B /* Setting+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Setting+CoreDataProperties.swift"; path = "../../../../../Downloads/Setting+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		E192A29B2A8737F7000139D1 /* OpenSans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = OpenSans.ttf; sourceTree = "<group>"; };
 		E192A29C2A8737F8000139D1 /* OpenSans_Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = OpenSans_Italic.ttf; sourceTree = "<group>"; };
-		E192A29F2A873845000139D1 /* Master-Chess-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Master-Chess-Info.plist"; sourceTree = SOURCE_ROOT; };
 		E192A2AD2A877759000139D1 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		E192A2B02A878F87000139D1 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		E1C15D3B2A8A207500096FE2 /* How2playScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = How2playScreen.swift; sourceTree = "<group>"; };
@@ -102,6 +101,7 @@
 		E1E3E5242A92201600EE365C /* Users+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Users+CoreDataProperties.swift"; path = "../../../../../Downloads/Users+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		E1E3E5252A92201600EE365C /* SavedGame+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SavedGame+CoreDataProperties.swift"; path = "../../../../../Downloads/SavedGame+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		E1E3E5262A92201600EE365C /* Users+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Users+CoreDataClass.swift"; path = "../../../../../Downloads/Users+CoreDataClass.swift"; sourceTree = "<group>"; };
+		E1E3E52C2A92228E00EE365C /* Master-Chess-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Master-Chess-Info.plist"; sourceTree = "<group>"; };
 		E1F7FB122A838EE7005B08D8 /* Master Chess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Master Chess.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1F7FB152A838EE7005B08D8 /* Master_ChessApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Master_ChessApp.swift; sourceTree = "<group>"; };
 		E1F7FB172A838EE7005B08D8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -237,6 +237,7 @@
 		E1F7FB092A838EE7005B08D8 = {
 			isa = PBXGroup;
 			children = (
+				E1E3E52C2A92228E00EE365C /* Master-Chess-Info.plist */,
 				E1F7FB142A838EE7005B08D8 /* Master Chess */,
 				E1F7FB132A838EE7005B08D8 /* Products */,
 			);
@@ -253,7 +254,6 @@
 		E1F7FB142A838EE7005B08D8 /* Master Chess */ = {
 			isa = PBXGroup;
 			children = (
-				E192A29F2A873845000139D1 /* Master-Chess-Info.plist */,
 				E1F7FB152A838EE7005B08D8 /* Master_ChessApp.swift */,
 				E1F7FB2F2A838F5D005B08D8 /* Assets */,
 				E1F7FB2A2A838F17005B08D8 /* Components */,

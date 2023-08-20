@@ -9,7 +9,6 @@ import SwiftUI
 
 @main
 struct Master_ChessApp: App {
-//    let persistenceController = PersistenceController.shared
     @StateObject private var dataManager = DataManager()
     @StateObject private var currentUser = CurrentUser() // Initialize the CurrentUser instance
 
