@@ -34,6 +34,7 @@ class ChessBoard: ObservableObject {
     @Published var isEnpassant = false
     @Published var winner: Player = .white
     @Published var allValidMoves: [Move] = []
+    @Published var outcome: GameResult = .ongoing
     init() {
         // load from saved
         if currentUser.hasActiveGame {
@@ -496,6 +497,7 @@ class ChessBoard: ObservableObject {
     func isCheckMate() -> Bool {
         if isKingInCheck(board: piecePositions.value) {
             if allValidKingMoves(board: piecePositions.value, from: currentPlayer == .white ? whiteKingPosition : blackKingPosition).isEmpty {
+                outcome = .checkmate
                 winner = currentPlayer == .white ? .black : .white
                 return true
             }
@@ -507,6 +509,7 @@ class ChessBoard: ObservableObject {
     func isStaleMate() -> Bool {
         if !isKingInCheck(board: piecePositions.value) {
             if allValidKingMoves(board: piecePositions.value, from: currentPlayer == .white ? whiteKingPosition : blackKingPosition).isEmpty {
+                outcome = .stalemate
                 return true
             }
         }
@@ -520,8 +523,8 @@ class ChessBoard: ObservableObject {
         var counter = 0
         // since King cannot be captured, 1 piece left = king
         if currentPlayerPieces.count == 1 && opponentPieces.count == 1 {
+            outcome = .insufficientMaterial
             return true
-            
         }
 
         // king + bishop
@@ -530,6 +533,7 @@ class ChessBoard: ObservableObject {
                 if piece.pieceType == .bishop {
                     for oppPiece in opponentPieces {
                         if oppPiece.pieceType == .bishop {
+                            outcome = .insufficientMaterial
                             return true
                         }
                     }
@@ -543,6 +547,7 @@ class ChessBoard: ObservableObject {
                 if piece.pieceType == .knight {
                     for oppPiece in opponentPieces {
                         if oppPiece.pieceType == .knight {
+                            outcome = .insufficientMaterial
                             return true
                         }
                     }
@@ -559,6 +564,7 @@ class ChessBoard: ObservableObject {
             }
             if counter == 2 {
                 if opponentPieces.count == 1 {
+                    outcome = .insufficientMaterial
                     return true
                 } else {
                     counter = 0
@@ -575,6 +581,7 @@ class ChessBoard: ObservableObject {
             }
             if counter == 2 {
                 if currentPlayerPieces.count == 1 {
+                    outcome = .insufficientMaterial
                     return true
                 } else {
                     counter = 0
@@ -588,6 +595,7 @@ class ChessBoard: ObservableObject {
     // check if out of move (for Grand Master rank - 50 moves in total)
     func isOutOfMove() -> Bool {
         if Int(currentUser.savedGameMoveAvailable) <= 0 {
+            outcome = .outOfMove
             return true
         }
         return false
@@ -597,11 +605,13 @@ class ChessBoard: ObservableObject {
         if currentPlayer == .white {
             if whiteTimeLeft == 0 {
                 winner = .black
+                outcome = .outOfTime
                 return true
             }
         } else {
             if blackTimeLeft == 0 {
                 winner = .white
+                outcome = .outOfTime
                 return true
             }
         }
@@ -807,8 +817,11 @@ class ChessBoard: ObservableObject {
 }
 
 enum GameResult {
-    case checkmate(Player)
+    case checkmate
     case stalemate
     case insufficientMaterial
     case fiftyMoveRule
+    case outOfMove
+    case outOfTime
+    case ongoing
 }
