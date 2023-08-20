@@ -2,7 +2,7 @@
 //  Users+CoreDataClass.swift
 //  Master Chess
 //
-//  Created by Quoc Doan Huu on 13/08/2023.
+//  Created by Quoc Doan Huu on 15/08/2023.
 //
 //
 
