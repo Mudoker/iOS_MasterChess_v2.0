@@ -25,8 +25,15 @@ struct ChessBoardView: View {
     }
     
     func formatTime(_ timeString: String) -> String {
-        let formattedTime = timeString.prefix(2) + ":" + timeString.suffix(2)
-        return String(formattedTime)
+        guard let totalSeconds = Int(timeString) else {
+            return ""
+        }
+
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
+
+        let formattedTime = String(format: "%02d:%02d", minutes, seconds)
+        return formattedTime
     }
     
     var body: some View {
@@ -48,21 +55,27 @@ struct ChessBoardView: View {
                             }
                             
                         }
+                        Spacer()
                         VStack (spacing: proxy.size.width/15) {
                             HStack {
                                 Text(formatTime(viewModel.whiteRemainigTime))
                                     .font(.callout)
                                     .foregroundColor(.white)
                                     .padding(10)
-                                    .background(Color.white.opacity(0.5))
+                                    .background(viewModel.currentPlayer == .white ?  Color.white.opacity(0.5) : Color.white.opacity(0.1)
+                                    )
                                     .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/40))
+                                    .frame(width: proxy.size.width / 6.2)
+
                                 Spacer()
                                 Text(formatTime(viewModel.blackRemainigTime))
                                     .font(.callout)
                                     .foregroundColor(.white)
                                     .padding(10)
-                                    .background(Color.white.opacity(0.1))
+                                    .background(viewModel.currentPlayer == .white ?  Color.white.opacity(0.1) : Color.white.opacity(0.5))
                                     .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/40))
+                                    .frame(width: proxy.size.width / 6.2)
+
                             }
                             Text("\(viewModel.currentPlayer == .white ? (viewModel.chessGame.currentUser.username == "test" ? "Mudoker" : "White") : "Black")'s Turn")
                                 .font(.callout)
@@ -74,6 +87,7 @@ struct ChessBoardView: View {
                                 )
                                 .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/40))
                         }
+                        Spacer()
                         VStack(alignment: .trailing) {
                             Image("magnus")
                                 .resizable()

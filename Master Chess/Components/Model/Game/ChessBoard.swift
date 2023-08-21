@@ -44,7 +44,7 @@ class ChessBoard: ObservableObject {
             whiteTimeLeft = Int(currentUser.savedGameWhiteTimeLeft)
             blackTimeLeft = Int(currentUser.savedGameBlackTimeLeft)
         } else {
-            let initialTimeLimit: TimeInterval = currentUser.rating > 500 ? 10 * 60 : 25 * 60
+            let initialTimeLimit: TimeInterval = currentUser.rating > 500 ? 10 * 60 : 20 * 60
             whiteTimeLeft = Int(initialTimeLimit)
             blackTimeLeft = Int(initialTimeLimit)
         }
