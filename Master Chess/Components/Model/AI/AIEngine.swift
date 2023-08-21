@@ -94,6 +94,7 @@ class AIEngine: NSObject, GKGameModel {
 
     func isGameEnd() -> Bool {
         if chessGame.isOutOfMove() || chessGame.isOutOfTime() || chessGame.isCheckMate() || chessGame.isStaleMate() || chessGame.isInsufficientMaterial(){
+            print(chessGame.outcome)
             return true
         }
         return false
