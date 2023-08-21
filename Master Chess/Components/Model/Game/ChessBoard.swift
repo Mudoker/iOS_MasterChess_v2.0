@@ -35,6 +35,9 @@ class ChessBoard: ObservableObject {
     @Published var winner: Player = .white
     @Published var allValidMoves: [Move] = []
     @Published var outcome: GameResult = .ongoing
+    @Published var whiteCaptures: [ChessPiece?] = []
+    @Published var blackCaptures: [ChessPiece?] = []
+
     init() {
         // load from saved
         if currentUser.hasActiveGame {
@@ -137,7 +140,15 @@ class ChessBoard: ObservableObject {
             if let movingPiece = updatedPiecePositions.value[start.y][start.x] {
                 // Move the piece
                 updatedPiecePositions.value[start.y][start.x] = nil
+                if let endPiece = updatedPiecePositions.value[end.y][end.x] {
+                    if currentPlayer == .white {
+                        whiteCaptures.append(endPiece)
+                    } else {
+                        blackCaptures.append(endPiece)
+                    }
+                }
                 updatedPiecePositions.value[end.y][end.x] = movingPiece
+                
                 if movingPiece.pieceType == .king {
                     if movingPiece.side == .white {
                         if start.x == 4 && end.x == 6 {
@@ -154,22 +165,22 @@ class ChessBoard: ObservableObject {
                         whiteKingPosition = Position(x: end.x, y: end.y)
                         kingPosition = whiteKingPosition
                     } else {
+                        if start.x == 4 && end.x == 6 {
+                            updatedPiecePositions.value[0][7] = nil
+                            updatedPiecePositions.value[0][5] = ChessPiece(stringLiteral: "br")
+                            isBlackRightRookMoved = true
+                        } else if start.x == 4 && end.x == 2 {
+                            // Castling to the right for white
+                            updatedPiecePositions.value[0][0] = nil
+                            updatedPiecePositions.value[0][3] = ChessPiece(stringLiteral: "br")
+                            isBlackLeftRookMoved = true
+                        }
                         isBlackKingMoved = true
                         blackKingPosition = Position(x: end.x, y: end.y)
                         kingPosition = blackKingPosition
                     }
                 } else if movingPiece.pieceType == .rook {
                     if movingPiece.side == .white {
-                        if start.x == 4 && end.x == 6 {
-                            updatedPiecePositions.value[7][7] = nil
-                            updatedPiecePositions.value[7][5] = ChessPiece(stringLiteral: "br")
-                            isBlackRightRookMoved = true
-                        } else if start.x == 4 && end.x == 2 {
-                            // Castling to the right for white
-                            updatedPiecePositions.value[7][0] = nil
-                            updatedPiecePositions.value[7][3] = ChessPiece(stringLiteral: "br")
-                            isBlackLeftRookMoved = true
-                        }
                         if start.x == 0 {
                             isWhiteLeftRookMoved = true
                         } else {
@@ -181,6 +192,14 @@ class ChessBoard: ObservableObject {
                         } else {
                             isBlackRightRookMoved = true
                         }
+                    }
+                } else if movingPiece.pieceType == .pawn {
+                    if movingPiece.side == .white && updatedPiecePositions.value[end.y + 1][end.x] != nil {
+                        whiteCaptures.append(updatedPiecePositions.value[end.y + 1][end.x])
+                        updatedPiecePositions.value[end.y + 1][end.x] = nil
+                    } else if movingPiece.side == .black && updatedPiecePositions.value[end.y - 1][end.x] != nil{
+                        whiteCaptures.append(updatedPiecePositions.value[end.y - 1][end.x])
+                        updatedPiecePositions.value[end.y - 1][end.x] = nil
                     }
                 }
                 // Update the piecePositions with the new value
@@ -750,7 +769,7 @@ class ChessBoard: ObservableObject {
         guard start != end,
           let piece = board[start.y][start.x],
           bounds.contains(end.x) && bounds.contains(end.y),
-          piece.side != currentPlayer else {
+          piece.side == currentPlayer else {
           return false
         }
 

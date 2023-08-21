@@ -69,7 +69,7 @@ final class GameViewModel: ObservableObject {
     func allMove(from: Position, piece: ChessPiece) {
         switch piece.pieceType {
             case .pawn:
-                allValidMoves = chessGame.allValidPawnMoves(board: chessGame.piecePositions.value, from: from, history: [])
+            allValidMoves = chessGame.allValidPawnMoves(board: chessGame.piecePositions.value, from: from, history: chessGame.history.value)
                 chessGame.allValidMoves = allValidMoves
             case .knight:
                 allValidMoves = chessGame.allValidKnightMoves(board: chessGame.piecePositions.value, from: from)
@@ -108,13 +108,13 @@ final class GameViewModel: ObservableObject {
         chessGame.movePiece(from: move.from, to: move.to)
         allValidMoves = []
         // will be updated later (right now AI is black by default)
-        if currentPlayer == .black {
-            ai.bestMove { move in
-                if let move = move {
-                    self.chessGame.movePiece(from: move.from, to: move.to)
-                }
-            }
-        }
+//        if currentPlayer == .black {
+//            ai.bestMove { move in
+//                if let move = move {
+//                    self.chessGame.movePiece(from: move.from, to: move.to)
+//                }
+//            }
+//        }
     }
 
     // get current piece index

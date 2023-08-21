@@ -2,8 +2,6 @@ import SwiftUI
 
 struct ChessBoardView: View {
     var currentUser = CurrentUser.shared
-    let yourCapturedCount: Int = 7
-    let theirCapturedCount: Int = 10
     let isAdmin = true // Set this to true or false based on admin status
     @StateObject var viewModel: GameViewModel
     var history: [Move] = [
@@ -24,6 +22,11 @@ struct ChessBoardView: View {
         let xCoordinate = String(columnLabels[columnLabels.index(columnLabels.startIndex, offsetBy: point.x)])
         let yCoordinate = "\(point.y + 1)"
         return "\(xCoordinate)\(yCoordinate)"
+    }
+    
+    func formatTime(_ timeString: String) -> String {
+        let formattedTime = timeString.prefix(2) + ":" + timeString.suffix(2)
+        return String(formattedTime)
     }
     
     var body: some View {
@@ -47,21 +50,21 @@ struct ChessBoardView: View {
                         }
                         VStack (spacing: proxy.size.width/15) {
                             HStack {
-                                Text("04:03")
+                                Text(formatTime(viewModel.whiteRemainigTime))
                                     .font(.callout)
                                     .foregroundColor(.white)
                                     .padding(10)
                                     .background(Color.white.opacity(0.5))
                                     .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/40))
                                 Spacer()
-                                Text("04:03")
+                                Text(formatTime(viewModel.blackRemainigTime))
                                     .font(.callout)
                                     .foregroundColor(.white)
                                     .padding(10)
                                     .background(Color.white.opacity(0.1))
                                     .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/40))
                             }
-                            Text("Mudoker's Turn")
+                            Text("\(viewModel.currentPlayer == .white ? (viewModel.chessGame.currentUser.username == "test" ? "Mudoker" : "White") : "Black")'s Turn")
                                 .font(.callout)
                                 .foregroundColor(.white)
                                 .padding(10)
@@ -103,42 +106,43 @@ struct ChessBoardView: View {
                             }
                         }
                     }
-                    
+
                     HStack {
-                        if yourCapturedCount > 5 {
-                            ForEach(0..<3, id: \.self) { _ in
-                                Image("wr")
+                        if viewModel.chessGame.whiteCaptures.count > 4 {
+                            ForEach(0..<3, id: \.self) { index in
+                                Image(viewModel.chessGame.whiteCaptures[index]?.pieceName ?? "wr")
                                     .resizable()
                                     .frame(width: proxy.size.width/15, height: proxy.size.width/15)
                             }
-                            Text("+\(+yourCapturedCount - 3)")
+                            Text("+\(+viewModel.chessGame.whiteCaptures.count - 3)")
                         } else {
-                            ForEach(0..<yourCapturedCount, id: \.self) { _ in
-                                Image("wr")
+                            ForEach(0..<viewModel.chessGame.whiteCaptures.count, id: \.self) { index in
+                                Image(viewModel.chessGame.whiteCaptures[index]?.pieceName ?? "wr")
                                     .resizable()
                                     .frame(width: proxy.size.width/15, height: proxy.size.width/15)
                             }
-                        
+
                         }
 
                         Spacer()
 
-                        if yourCapturedCount > 5 {
+                        if viewModel.chessGame.blackCaptures.count > 4 {
                             ForEach(0..<3, id: \.self) { _ in
                                 Image("wr")
                                     .resizable()
                                     .frame(width: proxy.size.width/15, height: proxy.size.width/15)
                             }
-                            Text("+\(+yourCapturedCount - 3)")
+                            Text("+\(+viewModel.chessGame.blackCaptures.count - 3)")
                         } else {
-                            ForEach(0..<yourCapturedCount, id: \.self) { _ in
-                                Image("wr")
+                            ForEach(0..<viewModel.chessGame.blackCaptures.count, id: \.self) { index in
+                                Image(viewModel.chessGame.blackCaptures[index]?.pieceName ?? "wr")
                                     .resizable()
                                     .frame(width: proxy.size.width/15, height: proxy.size.width/15)
                             }
-                        
+
                         }
                     }
+                    .frame(height: proxy.size.height/22)
                     .padding(.horizontal)
                     .padding(.vertical)
                     

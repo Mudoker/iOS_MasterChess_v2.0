@@ -23,7 +23,7 @@ class Mitten {
         minMaxStrategist = GKMinmaxStrategist()
         
         // The AI will calculate 8 moves ahead
-        minMaxStrategist.maxLookAheadDepth = 8
+        minMaxStrategist.maxLookAheadDepth = 1
         
         // Make the AI deterministic not random
         minMaxStrategist.randomSource = nil
