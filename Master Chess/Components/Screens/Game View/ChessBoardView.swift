@@ -6,7 +6,18 @@ struct ChessBoardView: View {
     let theirCapturedCount: Int = 10
     let isAdmin = true // Set this to true or false based on admin status
     @StateObject var viewModel: GameViewModel
- 
+    var history: [Move] = [
+            Move(from: Position(x: 0, y: 1), to: Position(x: 2, y: 3)),
+            Move(from: Position(x: 1, y: 2), to: Position(x: 2, y: 3)),
+            Move(from: Position(x: 4, y: 4), to: Position(x: 5, y: 5)),
+            Move(from: Position(x: 3, y: 0), to: Position(x: 4, y: 1)),
+            Move(from: Position(x: 7, y: 6), to: Position(x: 6, y: 5)),
+            Move(from: Position(x: 2, y: 1), to: Position(x: 0, y: 0)),
+            Move(from: Position(x: 6, y: 0), to: Position(x: 7, y: 1)),
+            Move(from: Position(x: 3, y: 7), to: Position(x: 4, y: 6)),
+            Move(from: Position(x: 1, y: 5), to: Position(x: 3, y: 4)),
+            Move(from: Position(x: 5, y: 2), to: Position(x: 4, y: 3))
+        ]
     let columnLabels = "abcdefghijklmnopqrstuvwxyz"
     
     func coordinateString(for point: Position) -> String {
@@ -129,31 +140,38 @@ struct ChessBoardView: View {
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.top)
+                    .padding(.vertical)
                     
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: proxy.size.width/30) {
-                            ForEach(viewModel.chessGame.history.value.indices, id: \.self) { index in
-                                let move = viewModel.chessGame.history.value[index]
-                                Rectangle()
-                                    .frame(width: proxy.size.width/6, height: proxy.size.width/12)
-                                    .foregroundColor(.white.opacity(0.1))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: proxy.size.width/40)
-                                            .stroke(index % 2 == 0 ? Color.blue : Color.clear, lineWidth: proxy.size.width/100)
-                                    )
-                                    .overlay(
-                                        Text("\(coordinateString(for: move.from))\(coordinateString(for: move.to))")
-                                            .multilineTextAlignment(.center)
-                                            .font(.caption)
-                                            .foregroundColor(.white)
-                                    )
-                                    .cornerRadius(proxy.size.width/40)
+                    if viewModel.chessGame.history.value.isEmpty {
+                        Text("Start a move!")
+                            .font(.title2.bold())
+                            .opacity(0.7)
+                            .frame(height: proxy.size.height / 20)
+                    } else {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: proxy.size.width/30) {
+                                ForEach(viewModel.chessGame.history.value.indices, id: \.self) { index in
+                                    let move = viewModel.chessGame.history.value[index]
+                                    Rectangle()
+                                        .frame(width: proxy.size.width/6, height: proxy.size.width/12)
+                                        .foregroundColor(.white.opacity(0.1))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: proxy.size.width/40)
+                                                .stroke(index % 2 == 0 ? Color.blue : Color.clear, lineWidth: proxy.size.width/100)
+                                        )
+                                        .overlay(
+                                            Text("\(coordinateString(for: move.from))\(coordinateString(for: move.to))")
+                                                .multilineTextAlignment(.center)
+                                                .font(.caption)
+                                                .foregroundColor(.white)
+                                        )
+                                        .cornerRadius(proxy.size.width/40)
+                                }
                             }
                         }
                         .padding()
+                        .frame(height: proxy.size.height / 20)
                     }
-                    .frame(height: proxy.size.height / 12)
 
                     Spacer()
 
@@ -164,7 +182,7 @@ struct ChessBoardView: View {
                             VStack {
                                 Image(systemName: "plus.circle")
                                     .resizable()
-                                .frame(width: proxy.size.width/16, height: proxy.size.width/16)
+                                    .frame(width: proxy.size.width/18, height: proxy.size.width/18)
                                 Text("New game")
                             }
                         }
@@ -176,12 +194,13 @@ struct ChessBoardView: View {
                             VStack {
                                 Image(systemName: "flag")
                                     .resizable()
-                                .frame(width: proxy.size.width/16, height: proxy.size.width/16)
+                                    .frame(width: proxy.size.width/18, height: proxy.size.width/18)
                                 Text("Resign")
                             }
                         }
                     }
-                    
+                    Spacer()
+
                     if isAdmin {
                         HStack (spacing: 20) {
                             Button(action: {

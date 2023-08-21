@@ -191,10 +191,9 @@ class ChessBoard: ObservableObject {
                 currentUser.savedGameBoardSetup[start.y][start.x] = ""
                 
                 // Switch to the next player's turn
-//                currentPlayer = (currentPlayer == .white) ? .black : .white
+                currentPlayer = (currentPlayer == .white) ? .black : .white
                 currentPlayerIsInCheck = isKingInCheck(board: piecePositions.value)
                 history.value.append(Move(from: Position(x: start.x, y: start.y), to: Position(x: end.x, y: end.y)))
-                print(history.value)
             } else {
                 print("No piece found at the starting position.")
             }
@@ -240,8 +239,6 @@ class ChessBoard: ObservableObject {
                 if deltaY == (currentPlayer == .white ? -1 : 1) {
                     if let lastMove = history.last, lastMove.to.x == end.x {
                         if let piece = board[lastMove.to.y][lastMove.to.x], piece.pieceType == .pawn, piece.side != currentPlayer {
-                            print("4")
-
                             if (currentPlayer == .white && lastMove.from.y == end.y - 1 && lastMove.to.y == end.y + 1) ||
                                (currentPlayer == .black && lastMove.from.y == end.y + 1 && lastMove.to.y == end.y - 1) {
                                 return !isKingInCheck(board: tempBoard)
@@ -345,7 +342,6 @@ class ChessBoard: ObservableObject {
     // L-shape movement for Knight
     func allValidKnightMoves(board: [[ChessPiece?]], from start: Position) -> [Move] {
         allValidMoves.removeAll()
-        print("Current pos: \(start.y)")
         let possibleMoves: [Position] = [
             Position(x: start.x + 1, y: start.y + 2),
             Position(x: start.x + 1, y: start.y - 2),
@@ -363,7 +359,6 @@ class ChessBoard: ObservableObject {
                 continue
             }
             if validKnightMove(board: board, from: start, to: move) {
-                print("available moves: x = \(move.x) y = \(move.y)")
                 allValidMoves.append(Move(from: start, to: move))
             }
         }
@@ -483,8 +478,7 @@ class ChessBoard: ObservableObject {
         for row in 0..<Constant.boardSize {
             for col in 0..<Constant.boardSize {
                 if let piece = board[row][col], piece.side != currentPlayer {
-                    if isValid(board: board, from: Position(x: col, y: row), to: currentPlayer == .white ? whiteKingPosition : blackKingPosition) {
-                        print("Trigger")
+                    if isValid(board: board, from: Position(x: col, y: row), to: kingPosition) {
                         return true
                     }
                 }
@@ -753,20 +747,19 @@ class ChessBoard: ObservableObject {
 
     func isValid(board: [[ChessPiece?]], from start: Position, to end: Position) -> Bool {
         let bounds = 0..<Constant.boardSize
-        
         guard start != end,
-              let piece = board[start.y][start.x],
-              bounds.contains(end.x) && bounds.contains(end.y),
-              piece.side == currentPlayer else {
-            return false
+          let piece = board[start.y][start.x],
+          bounds.contains(end.x) && bounds.contains(end.y),
+          piece.side != currentPlayer else {
+          return false
         }
 
-        if let boardPlayer = board[end.y][end.x]?.side, boardPlayer == currentPlayer {
-            return false
-        }
-
+//        if let boardPlayer = board[end.y][end.x]?.side, boardPlayer == currentPlayer {
+//            return false
+//        }
+        
         switch piece.pieceType {
-            case .pawn: return validPawnMove(board: board, from: start, to: end, history: [])
+            case .pawn: return validPawnMove(board: board, from: start, to: end, history: history.value)
             case .knight: return validKnightMove(board: board,from: start, to: end)
             case .king: return validKingMove(board: board,from: start, to: end)
             case .rook: return validRookMove(board: board, from: start, to: end)

@@ -16,7 +16,7 @@ struct Test_Pawn: View {
 
             if isMoveDone {
                 let move = [Move(from: Position(x: 0, y: 1), to:  Position(x: 0, y: 3))]  // Specify the actual move coordinates here
-                let isValidPawnMove = chess.validPawnMove(board: piecesLocations, from: Position(x: 1, y: 3), to: Position(x:0, y: 2), history: move)
+                let isValidPawnMove = chess.validPawnMove(board: piecesLocations, from: Position(x: 1, y: 1), to: Position(x:4, y: 7), history: move)
                 let piece = chess.getPiece(at: Position(x: 0, y: 3))
                 Text(piece?.pieceName ?? "ok")
 
