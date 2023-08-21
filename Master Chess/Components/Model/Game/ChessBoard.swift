@@ -194,11 +194,11 @@ class ChessBoard: ObservableObject {
                         }
                     }
                 } else if movingPiece.pieceType == .pawn {
-                    if movingPiece.side == .white && updatedPiecePositions.value[end.y + 1][end.x] != nil {
+                    if movingPiece.side == .white && piecePositions.value[end.y][end.x] != nil {
                         whiteCaptures.append(updatedPiecePositions.value[end.y + 1][end.x])
                         updatedPiecePositions.value[end.y + 1][end.x] = nil
-                    } else if movingPiece.side == .black && updatedPiecePositions.value[end.y - 1][end.x] != nil{
-                        whiteCaptures.append(updatedPiecePositions.value[end.y - 1][end.x])
+                    } else if movingPiece.side == .black && piecePositions.value[end.y][end.x] != nil{
+                        blackCaptures.append(updatedPiecePositions.value[end.y - 1][end.x])
                         updatedPiecePositions.value[end.y - 1][end.x] = nil
                     }
                 }
