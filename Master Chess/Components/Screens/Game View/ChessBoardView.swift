@@ -122,51 +122,61 @@ struct ChessBoardView: View {
                     }
 
                     HStack {
-                        if viewModel.chessGame.whiteCaptures.count > 4 {
+                        let whiteCaptures = viewModel.chessGame.captures.filter { $0.pieceName.starts(with: "b") }
+                        let blackCaptures = viewModel.chessGame.captures.filter { $0.pieceName.starts(with: "w") }
+                        
+                        if whiteCaptures.count > 4 {
                             ForEach(0..<3, id: \.self) { index in
-                                if let pieceName = viewModel.chessGame.whiteCaptures[index]?.pieceName, !pieceName.isEmpty {
-                                    Image(pieceName)
-                                        .resizable()
-                                        .frame(width: proxy.size.width/15, height: proxy.size.width/15)
+                                if index < whiteCaptures.count {
+                                    let pieceName = whiteCaptures[index].pieceName
+                                    if !pieceName.isEmpty {
+                                        Image(pieceName)
+                                            .resizable()
+                                            .frame(width: proxy.size.width/15, height: proxy.size.width/15)
+                                    }
                                 }
                             }
-                            Text("+\(+viewModel.chessGame.whiteCaptures.count - 3)")
+                            Text("+\(whiteCaptures.count - 3)")
                         } else {
-                            ForEach(0..<viewModel.chessGame.whiteCaptures.count, id: \.self) { index in
-                                if let pieceName = viewModel.chessGame.whiteCaptures[index]?.pieceName, !pieceName.isEmpty {
+                            ForEach(whiteCaptures.indices, id: \.self) { index in
+                                let pieceName = whiteCaptures[index].pieceName
+                                if !pieceName.isEmpty {
                                     Image(pieceName)
                                         .resizable()
                                         .frame(width: proxy.size.width/15, height: proxy.size.width/15)
                                 }
                             }
-
                         }
-
+                        
                         Spacer()
-
-                        if viewModel.chessGame.blackCaptures.count > 4 {
+                        
+                        if blackCaptures.count > 4 {
                             ForEach(0..<3, id: \.self) { index in
-                                if let pieceName = viewModel.chessGame.whiteCaptures[index]?.pieceName, !pieceName.isEmpty {
-                                    Image(pieceName)
-                                        .resizable()
-                                        .frame(width: proxy.size.width/15, height: proxy.size.width/15)
+                                if index < blackCaptures.count {
+                                    let pieceName = blackCaptures[index].pieceName
+                                    if !pieceName.isEmpty {
+                                        Image(pieceName)
+                                            .resizable()
+                                            .frame(width: proxy.size.width/15, height: proxy.size.width/15)
+                                    }
                                 }
                             }
-                            Text("+\(+viewModel.chessGame.blackCaptures.count - 3)")
+                            Text("+\(blackCaptures.count - 3)")
                         } else {
-                            ForEach(0..<viewModel.chessGame.blackCaptures.count, id: \.self) { index in
-                                if let pieceName = viewModel.chessGame.whiteCaptures[index]?.pieceName, !pieceName.isEmpty {
+                            ForEach(blackCaptures.indices, id: \.self) { index in
+                                let pieceName = blackCaptures[index].pieceName
+                                if !pieceName.isEmpty {
                                     Image(pieceName)
                                         .resizable()
                                         .frame(width: proxy.size.width/15, height: proxy.size.width/15)
                                 }
                             }
-
                         }
                     }
                     .frame(height: proxy.size.height/22)
                     .padding(.horizontal)
                     .padding(.vertical)
+
                     
                     if viewModel.chessGame.history.value.isEmpty {
                         Text("Start a move!")

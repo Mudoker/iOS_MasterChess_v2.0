@@ -16,7 +16,7 @@ class Mitten {
     
     // is the AI is analyzing
     var isThinking = false
-
+    
     init(chessGame: ChessBoard) {
         self.chessGame = chessGame
         // built in AI
@@ -28,7 +28,7 @@ class Mitten {
         // Make the AI deterministic not random
         minMaxStrategist.randomSource = nil
     }
-
+    
     // find best move
     func bestMove(completion: @escaping (Move?) -> ())  {
         // set to is thiking

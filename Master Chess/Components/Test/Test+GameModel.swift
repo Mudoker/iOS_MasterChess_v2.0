@@ -37,4 +37,4 @@ struct Test_GameModel_Previews: PreviewProvider {
         Test_GameModel()
     }
 }
-	
+

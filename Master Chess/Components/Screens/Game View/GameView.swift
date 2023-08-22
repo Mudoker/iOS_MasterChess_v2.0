@@ -58,7 +58,7 @@ struct GameView: View {
                                                 } else {
                                                     self.currentPiece = (piece, .zero)
                                                     viewModel.allMove(from: Position(x: x, y: y), piece: piece)
-                                                    print(piece.pieceName)
+//                                                    print(piece.pieceName)
                                                 }
                                             } else {
                                                 if let selectedPiece = currentPiece.0 {
@@ -98,7 +98,6 @@ struct GameView: View {
                                             }
                                         }
                                         .frame(width: proxy.size.width / 8, height: proxy.size.width / 8)
-
                                 }
                             }
                         }

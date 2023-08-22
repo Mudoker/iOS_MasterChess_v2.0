@@ -21,7 +21,7 @@ class CurrentUser: ObservableObject {
     @Published var settingMusicEnabled: Bool = false
     @Published var settingSoundEnabled: Bool = false
     @Published var settingDifficulty: String = ""
-
+    
     // Properties from SavedGame
     @Published var savedGameAutoPromotionEnabled: Bool = false
     @Published var savedGameBlackTimeLeft: Double = 0
@@ -40,5 +40,5 @@ class CurrentUser: ObservableObject {
     @Published var savedGameIsBlackRightRookMoved: Bool = false
     @Published var savedGameKingPosition: Int16 = 0
     static let shared = CurrentUser()
-
+    
 }

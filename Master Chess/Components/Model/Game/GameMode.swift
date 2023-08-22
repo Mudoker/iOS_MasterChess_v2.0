@@ -9,14 +9,14 @@ import Foundation
 
 struct GameMode: CustomStringConvertible, Identifiable {
     let id = UUID()
-
+    
     let durationMinutes, timeIncrement: Int
     let mode: Mode
-
+    
     var description: String {
         "\(durationMinutes) min + \(timeIncrement) sec"
     }
-
+    
     enum Mode: String {
         case computer
         case localFriend = "Friend"
