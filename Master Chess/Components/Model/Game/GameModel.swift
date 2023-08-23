@@ -19,15 +19,18 @@ final class GameViewModel: ObservableObject {
     private var disposables = Set<AnyCancellable>()
 
     let chessGame: ChessBoard
-    private let ai: AIBot
+    private let ai1: AIBot
+    private let ai2: AIBot
+
     var gameSetting = Setting()
     private var cancellables = Set<AnyCancellable>()
 
     init() {
         chessGame = ChessBoard()
         // create an AI (Will be updated)
-        ai = AIBot(chessBoard: chessGame)
-        
+        ai1 = AIBot(chessBoard: chessGame, player: .white)
+        ai2 = AIBot(chessBoard: chessGame, player: .black)
+
         // capture changes in currentPlayer
         chessGame.$currentPlayer
             .sink { [weak self] currentPlayer in
@@ -92,42 +95,63 @@ final class GameViewModel: ObservableObject {
     
     func didMove(move: Move, piece: ChessPiece) {
         // trigger when player turn
-        guard ai.isCalculatingMove == false else { return }
+//        guard ai.isCalculatingMove == false else { return }
 
-        allMove(from: move.from, piece: piece)
-        print("Human Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
-        print(piece.pieceName)
-        // move a piece
-        chessGame.movePiece(from: move.from, to: move.to)
-
-        // The promotion is to queen by default
-        if piece.pieceType == .pawn && move.to.y == 0 {
-            chessGame.promotePiece(at: move.to, to: .queen)
-        } else if piece.pieceType == .pawn && move.to.y == 7 {
-            chessGame.promotePiece(at: move.to, to: .queen)
-        }
-
-        allValidMoves = []
+//        allMove(from: move.from, piece: piece)
+//        print("Human Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
+//        print(piece.pieceName)
+//        // move a piece
+//        chessGame.movePiece(from: move.from, to: move.to)
+//
+//        // The promotion is to queen by default
+//        if piece.pieceType == .pawn && move.to.y == 0 {
+//            chessGame.promotePiece(at: move.to, to: .queen)
+//        } else if piece.pieceType == .pawn && move.to.y == 7 {
+//            chessGame.promotePiece(at: move.to, to: .queen)
+//        }
+//
+//        allValidMoves = []
         // will be updated later (right now AI is black by default)
-        if currentPlayer == .black {
-            ai.bestMove { move in
-                if let move = move {
-                    print("AI Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
-                    print(self.chessGame.getPiece(at: Position(x: move.from.x, y: move.from.y))?.pieceName)
-                    // When has value -> move the piece
-                    self.chessGame.movePieceAI(from: move.from, to: move.to)
-                    // The promotion is to queen by default
-                    if let currentAIPiece = self.chessGame.getPiece(at: Position(x: move.from.x, y: move.from.y)) {
-                        if currentAIPiece.pieceType == .pawn && move.to.y == 0 {
-                            self.chessGame.promotePiece(at: move.to, to: .queen)
-                        } else if currentAIPiece.pieceType == .pawn && move.to.y == 7 {
-                            self.chessGame.promotePiece(at: move.to, to: .queen)
+//        while chessGame.outcome == .ongoing {
+            if currentPlayer == .white {
+                ai1.bestMove { move in
+                    if let move = move {
+                        print("AI White Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
+                        // When has value -> move the piece
+                        self.chessGame.movePieceAI(from: move.from, to: move.to)
+                        // The promotion is to queen by default
+                        if let currentAIPiece = self.chessGame.getPiece(at: Position(x: move.from.x, y: move.from.y)) {
+                            if currentAIPiece.pieceType == .pawn && move.to.y == 0 {
+                                self.chessGame.promotePiece(at: move.to, to: .queen)
+                            } else if currentAIPiece.pieceType == .pawn && move.to.y == 7 {
+                                self.chessGame.promotePiece(at: move.to, to: .queen)
+                            }
                         }
+                        self.allValidMoves = []
                     }
-                    self.allValidMoves = []
                 }
             }
-        }
+            // will be updated later (right now AI is black by default)
+            if currentPlayer == .black {
+                ai2.bestMove { move in
+                    if let move = move {
+                        print("AI Black Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
+                        // When has value -> move the piece
+                        self.chessGame.movePieceAI(from: move.from, to: move.to)
+                        // The promotion is to queen by default
+                        if let currentAIPiece = self.chessGame.getPiece(at: Position(x: move.from.x, y: move.from.y)) {
+                            if currentAIPiece.pieceType == .pawn && move.to.y == 0 {
+                                self.chessGame.promotePiece(at: move.to, to: .queen)
+                            } else if currentAIPiece.pieceType == .pawn && move.to.y == 7 {
+                                self.chessGame.promotePiece(at: move.to, to: .queen)
+                            }
+                        }
+                        self.allValidMoves = []
+                    }
+                }
+            }
+//        }
+        
     }
 
     // get current piece index

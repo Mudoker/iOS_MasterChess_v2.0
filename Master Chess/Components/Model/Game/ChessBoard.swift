@@ -322,6 +322,8 @@ class ChessBoard: ObservableObject, NSCopying {
             
         } else {
             print("No piece found at the starting position.")
+            print("Start: \(start.x), \(start.y)")
+            print("End: \(end.x), \(end.y)")
         }
     }
     // Remove a piece at specific location
@@ -366,7 +368,7 @@ class ChessBoard: ObservableObject, NSCopying {
                         if let piece = board[lastMove.to.y][lastMove.to.x], piece.pieceType == .pawn, piece.side != player {
                             if (player == .white && lastMove.from.y == end.y - 1 && lastMove.to.y == end.y + 1) ||
                                 (player == .black && lastMove.from.y == end.y + 1 && lastMove.to.y == end.y - 1) {
-                                return !isKingInCheck(board: tempBoard)
+                                return !isKingInCheck(board: tempBoard, player: currentPlayer)
                             }
                         }
                     }
@@ -380,7 +382,7 @@ class ChessBoard: ObservableObject, NSCopying {
                     return false
                 }
                 
-                return deltaY == (player == .white ? -1 : 1) && !isKingInCheck(board: tempBoard)
+                return deltaY == (player == .white ? -1 : 1) && !isKingInCheck(board: tempBoard, player: currentPlayer)
             }
         }
         
@@ -391,14 +393,14 @@ class ChessBoard: ObservableObject, NSCopying {
             if deltaY == (player == .white ? -1 : 1) {
                 // Check if the destination is empty
                 if board[end.y][end.x] == nil {
-                    return !isKingInCheck(board: tempBoard)
+                    return !isKingInCheck(board: tempBoard, player: currentPlayer)
                 }
             } else if deltaY == (player == .white ? -2 : 2) {
                 // Check for the initial double move of the pawn
                 if board[end.y][end.x] == nil && board[middleY][start.x] == nil {
                     // Make sure it's the initial move for the pawn
                     if (player == .white && start.y == 6) || (player == .black && start.y == 1) {
-                        return !isKingInCheck(board: tempBoard)
+                        return !isKingInCheck(board: tempBoard, player: currentPlayer)
                     }
                 }
             }
@@ -449,7 +451,7 @@ class ChessBoard: ObservableObject, NSCopying {
             }
             
             // if move to that position not lead to king in check
-            if !isKingInCheck(board: tempBoard) {
+            if !isKingInCheck(board: tempBoard, player: currentPlayer) {
                 return true
             }
         } else if deltaX == 2 && deltaY == 1 {
@@ -462,7 +464,7 @@ class ChessBoard: ObservableObject, NSCopying {
                 return false
             }
             
-            if !isKingInCheck(board: tempBoard) {
+            if !isKingInCheck(board: tempBoard, player: currentPlayer) {
                 return true
             }
         }
@@ -513,12 +515,12 @@ class ChessBoard: ObservableObject, NSCopying {
             var tempBoard = board
             tempBoard[end.y][end.x] = tempBoard[start.y][start.x]
             tempBoard[start.y][start.x] = nil
-            return !isKingInCheck(board: tempBoard)
+            return !isKingInCheck(board: tempBoard, player: currentPlayer)
             
         // Castling
         case (2, 0):
             // Do not allow castling if the king is in check
-            if !isKingInCheck(board: piecePositions.value) {
+            if !isKingInCheck(board: piecePositions.value, player: currentPlayer) {
                 let castlingDirection: Int
                 let kingXAfterCastling: Int
                 let emptySquaresX: [Int]
@@ -560,7 +562,7 @@ class ChessBoard: ObservableObject, NSCopying {
                     var tempBoardAfterCastling = board
                     tempBoardAfterCastling[start.y][kingXAfterCastling] = tempBoardAfterCastling[start.y][start.x]
                     tempBoardAfterCastling[start.y][start.x] = nil
-                    return !isKingInCheck(board: tempBoardAfterCastling)
+                    return !isKingInCheck(board: tempBoardAfterCastling, player: currentPlayer)
                 }
             }
             return false
@@ -608,9 +610,9 @@ class ChessBoard: ObservableObject, NSCopying {
     }
     
     // Check if the current King is in check (used for validating the movements of pieces)
-    func isKingInCheck(board: [[ChessPiece?]]) -> Bool {
+    func isKingInCheck(board: [[ChessPiece?]], player: Player) -> Bool {
         // Find the opponent
-        let opponentSide = currentPlayer == .white ? Player.black : Player.white
+        let opponentSide = player == .white ? Player.black : Player.white
         // Find the position of the current player's king
         var kingPosition: Position = Position(x: -1, y: -1) // Initialize with an invalid position
         for y in 0..<board.count {
@@ -735,7 +737,7 @@ class ChessBoard: ObservableObject, NSCopying {
     
     // if king in check and no available move -> lose
     func isCheckMate(player: Player) -> Bool {
-        if isKingInCheck(board: piecePositions.value) {
+        if isKingInCheck(board: piecePositions.value, player: currentPlayer) {
             if allValidKingMoves(board: piecePositions.value, from: player == .white ? whiteKingPosition : blackKingPosition).isEmpty {
                 // finish the game, since this function is check on the current user, if true -> opponent wins
                 outcome = .checkmate
@@ -748,7 +750,7 @@ class ChessBoard: ObservableObject, NSCopying {
     
     // if king is not in check but no available move -> draw
     func isStaleMate(player: Player) -> Bool {
-        if isKingInCheck(board: piecePositions.value) == false {
+        if isKingInCheck(board: piecePositions.value, player: currentPlayer) == false {
             if allValidKingMoves(board: piecePositions.value, from: player == .white ? whiteKingPosition : blackKingPosition).isEmpty {
                 // If stalemate, the game is a draw
                 outcome = .stalemate
@@ -898,7 +900,7 @@ class ChessBoard: ObservableObject, NSCopying {
             tempBoard[start.y][start.x] = nil
             
             // Check if the move results in the king being in check
-            return !isKingInCheck(board: tempBoard)
+            return !isKingInCheck(board: tempBoard, player: currentPlayer)
         }
         
         // If none of the above conditions match, the move is not valid for a rook
@@ -929,7 +931,7 @@ class ChessBoard: ObservableObject, NSCopying {
                     tempBoard[start.y][start.x] = nil
                     
                     // Check and add to available moves
-                    if piece.side != currentPlayer && !isKingInCheck(board: tempBoard) {
+                    if piece.side != currentPlayer && !isKingInCheck(board: tempBoard, player: currentPlayer) {
                         allValidMoves.append(Move(from: start, to: currentPosition)) // Capture move
                     }
                     break // Stop moving in this direction if a piece is encountered
@@ -978,7 +980,7 @@ class ChessBoard: ObservableObject, NSCopying {
             tempBoard[start.y][start.x] = nil
             
             // Check if the move results in the king being in check
-            return !isKingInCheck(board: tempBoard)
+            return !isKingInCheck(board: tempBoard, player: currentPlayer)
         }
         
         // If none of the above conditions match, the move is not valid for a bishop
@@ -1008,7 +1010,7 @@ class ChessBoard: ObservableObject, NSCopying {
                     var tempBoard = board
                     tempBoard[currentPosition.y][currentPosition.x] = tempBoard[start.y][start.x]
                     tempBoard[start.y][start.x] = nil
-                    if piece.side != currentPlayer && !isKingInCheck(board: tempBoard) {
+                    if piece.side != currentPlayer && !isKingInCheck(board: tempBoard, player: currentPlayer) {
                         allValidMoves.append(Move(from: start, to: currentPosition)) // Capture move
                     }
                     break // Stop moving in this direction if a piece is encountered

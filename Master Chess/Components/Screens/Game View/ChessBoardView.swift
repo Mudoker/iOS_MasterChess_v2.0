@@ -214,6 +214,13 @@ struct ChessBoardView: View {
                     HStack (spacing: 20) {
                         Button(action: {
                             // Action for New Game
+                            if viewModel.currentPlayer == .white {
+                                viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "wp"))
+                            } else {
+                                viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "bp"))
+                            }
+                            
+                            
                         }) {
                             VStack {
                                 Image(systemName: "plus.circle")
@@ -221,6 +228,20 @@ struct ChessBoardView: View {
                                     .frame(width: proxy.size.width/18, height: proxy.size.width/18)
                                 Text("New game")
                             }
+                        }
+                        .onAppear {
+                            // Create a Timer that triggers the button action every 10 seconds
+                            let timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { timer in
+                                if viewModel.currentPlayer == .white {
+                                    viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "wp"))
+                                } else {
+                                    viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "bp"))
+                                }
+                            }
+                            
+                            // Make sure to invalidate the timer when the view disappears
+                            // to prevent memory leaks
+                            RunLoop.current.add(timer, forMode: .common)
                         }
                         
                         Button(action: {

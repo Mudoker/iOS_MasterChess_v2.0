@@ -99,18 +99,44 @@ class AIEngine: NSObject, GKGameModel {
     }
     
     func score(for player: GKGameModelPlayer) -> Int {
-        if let aiPlayer = player as? AIPlayer {
-            if player.playerId == 0 {
-                if chessBoard.isCheckMate(player: .white) {
-                    return 1000
-                }
-            }
-            let selfPieces = chessBoard.activePieces.filter { $0.side == aiPlayer.player }.map { $0.pieceType.weight }.reduce(0, +)
-
-            let opponentPieces = chessBoard.activePieces.filter { $0.side != aiPlayer.player }.map { $0.pieceType.weight }.reduce(0, +)
-
-            return selfPieces - opponentPieces
+        guard let aiPlayer = player as? AIPlayer else {
+            return 0
         }
-        return 0
+        
+        let selfPieces = chessBoard.activePieces.filter { $0.side == aiPlayer.player }
+        let opponentPieces = chessBoard.activePieces.filter { $0.side != aiPlayer.player }
+        
+        var score = 0
+        
+        for piece in selfPieces {
+            score += piece.pieceType.weight
+        }
+        
+        for piece in opponentPieces {
+            score -= piece.pieceType.weight
+        }
+        
+        // Try to check the opponent
+        if chessBoard.isKingInCheck(board: chessBoard.piecePositions.value, player: aiPlayer.player == .white ? .black : .white) {
+            score += 500  // Give a high bonus for checkmate
+        }
+        
+        // Try to avoid being check
+        if chessBoard.isKingInCheck(board: chessBoard.piecePositions.value, player: aiPlayer.player) {
+            score -= 500
+        }
+        
+        // Try to avoid moving in to checked mate position at all cost
+        if chessBoard.isCheckMate(player: aiPlayer.player) {
+            score -= 9999
+        }
+        
+        // Try to check mate the opponent at all cost
+        if chessBoard.isCheckMate(player: aiPlayer.player == .white ? .black : .white) {
+            score += 9999
+        }
+        
+        return score
     }
+
 }

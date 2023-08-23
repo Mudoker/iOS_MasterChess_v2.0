@@ -10,8 +10,8 @@ class AIBot {
         return strategist
     } ()
     var isCalculatingMove = false
-    
-    init(chessBoard: ChessBoard) {
+    var player: Player = .white
+    init(chessBoard: ChessBoard, player: Player) {
         self.chessBoard = chessBoard
         
         // Determine maxLookAheadDepth based on user's rank and preference
@@ -50,6 +50,8 @@ class AIBot {
         // The AI will not make any random move -> always choose the best move
         // Optional in this case (consider to ignore this)
         strategist.randomSource = nil
+        
+        self.player = player
     }
     
     func bestMove(completion: @escaping (Move?) -> ()) {
@@ -60,7 +62,7 @@ class AIBot {
 
             self.strategist.gameModel = AIEngine(chessBoard: boardCopy)
 
-            if let aiMove = self.strategist.randomMove(for: AIPlayer.allPlayers[1], fromNumberOfBestMoves: 3) as? AIMove {
+            if let aiMove = self.strategist.bestMove(for: self.player == .black ? AIPlayer.allPlayers[1] : AIPlayer.allPlayers[0]) as? AIMove {
                 DispatchQueue.main.async {
                     self.isCalculatingMove = false
                     completion(aiMove.move)
