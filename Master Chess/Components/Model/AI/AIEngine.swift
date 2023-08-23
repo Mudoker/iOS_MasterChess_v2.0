@@ -4,7 +4,6 @@ import GameplayKit
 class AIEngine: NSObject, GKGameModel {
 
     let chessBoard: ChessBoard
-    let allValidMoves: [Move] = []
     var players: [GKGameModelPlayer]? {
         return AIPlayer.allPlayers
     }
@@ -101,6 +100,11 @@ class AIEngine: NSObject, GKGameModel {
     
     func score(for player: GKGameModelPlayer) -> Int {
         if let aiPlayer = player as? AIPlayer {
+            if player.playerId == 0 {
+                if chessBoard.isCheckMate(player: .white) {
+                    return 1000
+                }
+            }
             let selfPieces = chessBoard.activePieces.filter { $0.side == aiPlayer.player }.map { $0.pieceType.weight }.reduce(0, +)
 
             let opponentPieces = chessBoard.activePieces.filter { $0.side != aiPlayer.player }.map { $0.pieceType.weight }.reduce(0, +)

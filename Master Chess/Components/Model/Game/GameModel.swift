@@ -66,6 +66,7 @@ final class GameViewModel: ObservableObject {
                 blackPlayerName = "Error" // Set a default value if none of the cases match
         }
     }
+    
     func allMove(from: Position, piece: ChessPiece) {
         switch piece.pieceType {
             case .pawn:
@@ -92,26 +93,27 @@ final class GameViewModel: ObservableObject {
     func didMove(move: Move, piece: ChessPiece) {
         // trigger when player turn
         guard ai.isCalculatingMove == false else { return }
-                
+
         allMove(from: move.from, piece: piece)
-        
+        print("Human Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
+        print(piece.pieceName)
         // move a piece
         chessGame.movePiece(from: move.from, to: move.to)
-        
+
         // The promotion is to queen by default
         if piece.pieceType == .pawn && move.to.y == 0 {
             chessGame.promotePiece(at: move.to, to: .queen)
         } else if piece.pieceType == .pawn && move.to.y == 7 {
             chessGame.promotePiece(at: move.to, to: .queen)
         }
-        
-        
+
         allValidMoves = []
         // will be updated later (right now AI is black by default)
         if currentPlayer == .black {
             ai.bestMove { move in
                 if let move = move {
-//                    self.chessGame.allValidMoves.append(move)
+                    print("AI Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
+                    print(self.chessGame.getPiece(at: Position(x: move.from.x, y: move.from.y))?.pieceName)
                     // When has value -> move the piece
                     self.chessGame.movePieceAI(from: move.from, to: move.to)
                     // The promotion is to queen by default

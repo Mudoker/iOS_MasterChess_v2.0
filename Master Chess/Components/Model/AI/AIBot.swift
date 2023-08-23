@@ -9,7 +9,6 @@ class AIBot {
         let strategist = GKMinmaxStrategist()
         return strategist
     } ()
-
     var isCalculatingMove = false
     
     init(chessBoard: ChessBoard) {
@@ -30,22 +29,19 @@ class AIBot {
         /*
          AI will now has 3 levels,
          Beginner < 1000: max depth 1 -> Easy
-         Novice < 1300: max depth 3 -> Easy
-         Intermidiate < 1600: max depth 5 -> Medium
-         Expert < 2000: Max depth 7 -> Medium
-         Master < 2200: Max depth 8 -> Hard
-         Grand Master >= 2200: Max depth 10 -> Hard
-
-         If the current rank is higher but still want to play simpler AI, the value will be set to highest (GM wants to play easy will be 3, Medium will be 7
+         Novice < 1300: max depth 2 -> Easy
+         Intermidiate < 1600: max depth 2 -> Medium
+         Expert < 2000: Max depth 3 -> Medium
+         From Master will be 3 by default
          */
         
         switch userGameDifficulty {
         case "easy":
             maxDepth = userRating < 1000 ? 1 : 2
         case "normal":
-            maxDepth = userRating < 1600 ? 2 : 2
+            maxDepth = userRating < 1600 ? 2 : 3
         case "hard":
-            maxDepth = userRating < 2200 ? 3 : 3
+            maxDepth = 3
         default:
             break
         }
@@ -72,6 +68,4 @@ class AIBot {
             }
         }
     }
-
-
 }

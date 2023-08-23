@@ -228,6 +228,7 @@ class ChessBoard: ObservableObject, NSCopying {
                 
                 // Store move history
                 history.value.append(Move(from: Position(x: start.x, y: start.y), to: Position(x: end.x, y: end.y)))
+                
             } else {
                 print("No piece found at the starting position.")
             }
@@ -313,14 +314,12 @@ class ChessBoard: ObservableObject, NSCopying {
             currentUser.savedGameBoardSetup[end.y][end.x] = currentUser.savedGameBoardSetup[start.y][start.x]
             currentUser.savedGameBoardSetup[start.y][start.x] = ""
             
-            // For every move of user then minus one (Not applicable for AI)
-            availableMoves = currentPlayer == .white ? availableMoves - 1 : availableMoves
+            // Store move history
+            history.value.append(Move(from: Position(x: start.x, y: start.y), to: Position(x: end.x, y: end.y)))
             
             // Switch to the next player's turn
             currentPlayer = (currentPlayer == .white) ? .black : .white
             
-            // Store move history
-            history.value.append(Move(from: Position(x: start.x, y: start.y), to: Position(x: end.x, y: end.y)))
         } else {
             print("No piece found at the starting position.")
         }
@@ -751,7 +750,6 @@ class ChessBoard: ObservableObject, NSCopying {
     func isStaleMate(player: Player) -> Bool {
         if isKingInCheck(board: piecePositions.value) == false {
             if allValidKingMoves(board: piecePositions.value, from: player == .white ? whiteKingPosition : blackKingPosition).isEmpty {
-
                 // If stalemate, the game is a draw
                 outcome = .stalemate
                 return true
