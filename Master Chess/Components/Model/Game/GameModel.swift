@@ -106,18 +106,17 @@ final class GameViewModel: ObservableObject {
     
     func didMove(move: Move, piece: ChessPiece) {
         // trigger when player turn
-        guard ai1.isCalculatingMove == false else { return }
         guard ai2.isCalculatingMove == false else { return }
         
-//                allMove(from: move.from, piece: piece)
-//                print("Human Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
-//                print(piece.pieceName)
-//                // move a piece
-//                chessGame.movePiece(from: move.from, to: move.to)
-        
-                allValidMoves = []
-        // will be updated later (right now AI is black by default)
-        //        while chessGame.outcome == .ongoing {
+////                allMove(from: move.from, piece: piece)
+////                print("Human Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
+////                print(piece.pieceName)
+////                // move a piece
+////                chessGame.movePiece(from: move.from, to: move.to)
+//
+//                allValidMoves = []
+//        // will be updated later (right now AI is black by default)
+//        //        while chessGame.outcome == .ongoing {
         if currentPlayer == .white {
             ai1.bestMove { move in
                 if let move = move {
@@ -132,6 +131,9 @@ final class GameViewModel: ObservableObject {
                 }
             }
         }
+        
+        guard ai1.isCalculatingMove == false else { return }
+
         // will be updated later (right now AI is black by default)
         if currentPlayer == .black {
             ai2.bestMove { move in
