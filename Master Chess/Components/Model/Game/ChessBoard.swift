@@ -153,7 +153,7 @@ class ChessBoard: ObservableObject, NSCopying {
                 updatedPiecePositions.value[start.y][start.x] = nil
                 if let endPiece = piecePositions.value[end.y][end.x] {
                     captures.append(endPiece)
-                } else { // List of captured pieces
+                } else { // List of captured pieces and enpassant
                     let verticalDir = currentPlayer == .white ? 1 : -1
                     if movingPiece.pieceType == .pawn && abs(end.x - start.x) == 1 {
                         if currentPlayer == .white {
@@ -164,7 +164,16 @@ class ChessBoard: ObservableObject, NSCopying {
                         updatedPiecePositions.value[end.y + verticalDir][end.x] = nil
                     }
                 }
-                updatedPiecePositions.value[end.y][end.x] = movingPiece
+                if movingPiece.pieceType == .pawn && (end.y == 7 || end.y == 0) {
+                    if currentPlayer == .white {
+                        updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "wq")
+                    } else {
+                        updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "bq")
+                    }
+                    
+                } else {
+                    updatedPiecePositions.value[end.y][end.x] = movingPiece
+                }
                 
                 // Check if castling
                 if movingPiece.pieceType == .king {
@@ -258,8 +267,17 @@ class ChessBoard: ObservableObject, NSCopying {
                     updatedPiecePositions.value[end.y + verticalDir][end.x] = nil
                 }
             }
-            updatedPiecePositions.value[end.y][end.x] = movingPiece
-            
+            if movingPiece.pieceType == .pawn && (end.y == 7 || end.y == 0) {
+                if currentPlayer == .white {
+                    updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "wq")
+                } else {
+                    updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "bq")
+                }
+                
+            } else {
+                updatedPiecePositions.value[end.y][end.x] = movingPiece
+            }
+
             // Check if castling
             if movingPiece.pieceType == .king {
                 if movingPiece.side == .white {
@@ -324,6 +342,9 @@ class ChessBoard: ObservableObject, NSCopying {
             print("No piece found at the starting position.")
             print("Start: \(start.x), \(start.y)")
             print("End: \(end.x), \(end.y)")
+            print("Current Player for not found")
+            print(currentPlayer)
+            print("-----")
         }
     }
     // Remove a piece at specific location
@@ -335,8 +356,8 @@ class ChessBoard: ObservableObject, NSCopying {
     }
     
     // Promote a pawn when reach the end of board
-    func promotePiece(at position: Position, to type: PieceType) {
-        let getCurrentSide = currentPlayer == .white ? "b" : "w"
+    func promotePiece(at position: Position, to type: PieceType, player: Player) {
+        let getCurrentSide = player == .white ? "w" : "b"
         let pieceName = getCurrentSide + String(type.rawValue.first!)
         let promotedPiece = ChessPiece(stringLiteral: pieceName)
         
@@ -345,8 +366,6 @@ class ChessBoard: ObservableObject, NSCopying {
         updatedPiecePositions[position.y][position.x] = promotedPiece
         piecePositions.value = updatedPiecePositions
         
-        // Unwrap the boardSetup in SavedGame
-        currentUser.savedGameBoardSetup[position.y][position.x] = getPiece(at: position)?.pieceName ?? ""
     }
     
     // Check if a move from A to B of pawn is valid
@@ -737,7 +756,7 @@ class ChessBoard: ObservableObject, NSCopying {
     
     // if king in check and no available move -> lose
     func isCheckMate(player: Player) -> Bool {
-        if isKingInCheck(board: piecePositions.value, player: currentPlayer) {
+        if isKingInCheck(board: piecePositions.value, player: player) {
             if allValidKingMoves(board: piecePositions.value, from: player == .white ? whiteKingPosition : blackKingPosition).isEmpty {
                 // finish the game, since this function is check on the current user, if true -> opponent wins
                 outcome = .checkmate
@@ -750,7 +769,7 @@ class ChessBoard: ObservableObject, NSCopying {
     
     // if king is not in check but no available move -> draw
     func isStaleMate(player: Player) -> Bool {
-        if isKingInCheck(board: piecePositions.value, player: currentPlayer) == false {
+        if isKingInCheck(board: piecePositions.value, player: player) == false {
             if allValidKingMoves(board: piecePositions.value, from: player == .white ? whiteKingPosition : blackKingPosition).isEmpty {
                 // If stalemate, the game is a draw
                 outcome = .stalemate
@@ -854,7 +873,7 @@ class ChessBoard: ObservableObject, NSCopying {
     
     // Out of time -> lose
     func isOutOfTime(player: Player) -> Bool {
-        if currentPlayer == .white {
+        if player == .white {
             print("Out Time")
 
             if whiteTimeLeft <= 0 {

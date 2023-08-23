@@ -17,7 +17,8 @@ struct ChessBoardView: View {
             Move(from: Position(x: 5, y: 2), to: Position(x: 4, y: 3))
         ]
     let columnLabels = "abcdefghijklmnopqrstuvwxyz"
-    
+    @State private var shouldPlaySound = false
+
     func coordinateString(for point: Position) -> String {
         let xCoordinate = String(columnLabels[columnLabels.index(columnLabels.startIndex, offsetBy: point.x)])
         let yCoordinate = "\(point.y + 1)"
@@ -77,7 +78,7 @@ struct ChessBoardView: View {
                                     .frame(width: proxy.size.width / 6.2)
 
                             }
-                            Text("\(viewModel.currentPlayer == .white ? (viewModel.chessGame.currentUser.username == "test" ? "Mudoker" : "White") : "Black")'s Turn")
+                            Text("\(viewModel.currentPlayer == .white ? (viewModel.chessGame.currentUser.username == "test" ? "Mudoker" : "White") : (viewModel.blackPlayerName == "M.Carlsen" ? "Carlsen" : viewModel.blackPlayerName))'s Turn")
                                 .font(.callout)
                                 .foregroundColor(.white)
                                 .padding(10)
@@ -93,8 +94,8 @@ struct ChessBoardView: View {
                                 .resizable()
                                 .frame(width: proxy.size.width/5, height: proxy.size.width/5)
                             VStack (alignment: .trailing) {
-                                Text("M.Carlsen")
-                                Text("Grand Master")
+                                Text(viewModel.blackPlayerName)
+                                Text(viewModel.blackTitle)
                                     .opacity(0.7)
                             }
                             
@@ -219,8 +220,6 @@ struct ChessBoardView: View {
                             } else {
                                 viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "bp"))
                             }
-                            
-                            
                         }) {
                             VStack {
                                 Image(systemName: "plus.circle")
@@ -230,8 +229,8 @@ struct ChessBoardView: View {
                             }
                         }
                         .onAppear {
-                            // Create a Timer that triggers the button action every 10 seconds
-                            let timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { timer in
+//                             Create a Timer that triggers the button action every 10 seconds
+                            let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
                                 if viewModel.currentPlayer == .white {
                                     viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "wp"))
                                 } else {
@@ -239,8 +238,8 @@ struct ChessBoardView: View {
                                 }
                             }
                             
-                            // Make sure to invalidate the timer when the view disappears
-                            // to prevent memory leaks
+//                             Make sure to invalidate the timer when the view disappears
+//                             to prevent memory leaks
                             RunLoop.current.add(timer, forMode: .common)
                         }
                         

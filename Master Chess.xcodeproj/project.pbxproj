@@ -21,6 +21,14 @@
 		AB0A54402A939FCE0030539D /* GameHistory+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0A54322A939FCE0030539D /* GameHistory+CoreDataClass.swift */; };
 		AB0A54412A939FCE0030539D /* Users+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0A54332A939FCE0030539D /* Users+CoreDataProperties.swift */; };
 		AB0A54422A939FCE0030539D /* Achievement+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0A54342A939FCE0030539D /* Achievement+CoreDataClass.swift */; };
+		AB0A544D2A9657970030539D /* castle.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB0A54452A9657970030539D /* castle.mp3 */; };
+		AB0A544E2A9657970030539D /* promote.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB0A54462A9657970030539D /* promote.mp3 */; };
+		AB0A544F2A9657970030539D /* notify.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB0A54472A9657970030539D /* notify.mp3 */; };
+		AB0A54502A9657970030539D /* capture.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB0A54482A9657970030539D /* capture.mp3 */; };
+		AB0A54512A9657970030539D /* move-self.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB0A54492A9657970030539D /* move-self.mp3 */; };
+		AB0A54522A9657970030539D /* game-end.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB0A544A2A9657970030539D /* game-end.mp3 */; };
+		AB0A54532A9657970030539D /* tenseconds.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB0A544B2A9657970030539D /* tenseconds.mp3 */; };
+		AB0A54542A9657970030539D /* illegal.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB0A544C2A9657970030539D /* illegal.mp3 */; };
 		E12737E22A90BF890046AA4B /* Test+Pawn.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12737E12A90BF890046AA4B /* Test+Pawn.swift */; };
 		E12737E42A90C7DC0046AA4B /* Test+ChessBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12737E32A90C7DC0046AA4B /* Test+ChessBoard.swift */; };
 		E14B22FD2A85F3B2003F79DC /* SignUpScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14B22FC2A85F3B2003F79DC /* SignUpScreen.swift */; };
@@ -77,6 +85,14 @@
 		AB0A54322A939FCE0030539D /* GameHistory+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GameHistory+CoreDataClass.swift"; path = "../../../../../Downloads/GameHistory+CoreDataClass.swift"; sourceTree = "<group>"; };
 		AB0A54332A939FCE0030539D /* Users+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Users+CoreDataProperties.swift"; path = "../../../../../Downloads/Users+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		AB0A54342A939FCE0030539D /* Achievement+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Achievement+CoreDataClass.swift"; path = "../../../../../Downloads/Achievement+CoreDataClass.swift"; sourceTree = "<group>"; };
+		AB0A54452A9657970030539D /* castle.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = castle.mp3; sourceTree = "<group>"; };
+		AB0A54462A9657970030539D /* promote.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = promote.mp3; sourceTree = "<group>"; };
+		AB0A54472A9657970030539D /* notify.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = notify.mp3; sourceTree = "<group>"; };
+		AB0A54482A9657970030539D /* capture.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = capture.mp3; sourceTree = "<group>"; };
+		AB0A54492A9657970030539D /* move-self.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "move-self.mp3"; sourceTree = "<group>"; };
+		AB0A544A2A9657970030539D /* game-end.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "game-end.mp3"; sourceTree = "<group>"; };
+		AB0A544B2A9657970030539D /* tenseconds.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tenseconds.mp3; sourceTree = "<group>"; };
+		AB0A544C2A9657970030539D /* illegal.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = illegal.mp3; sourceTree = "<group>"; };
 		E12737E12A90BF890046AA4B /* Test+Pawn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+Pawn.swift"; sourceTree = "<group>"; };
 		E12737E32A90C7DC0046AA4B /* Test+ChessBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+ChessBoard.swift"; sourceTree = "<group>"; };
 		E14B22FC2A85F3B2003F79DC /* SignUpScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpScreen.swift; sourceTree = "<group>"; };
@@ -131,6 +147,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AB0A54432A96561D0030539D /* SFX */ = {
+			isa = PBXGroup;
+			children = (
+				AB0A54482A9657970030539D /* capture.mp3 */,
+				AB0A54452A9657970030539D /* castle.mp3 */,
+				AB0A544A2A9657970030539D /* game-end.mp3 */,
+				AB0A544C2A9657970030539D /* illegal.mp3 */,
+				AB0A54492A9657970030539D /* move-self.mp3 */,
+				AB0A54472A9657970030539D /* notify.mp3 */,
+				AB0A54462A9657970030539D /* promote.mp3 */,
+				AB0A544B2A9657970030539D /* tenseconds.mp3 */,
+			);
+			path = SFX;
+			sourceTree = "<group>";
+		};
+		AB0A54442A9656320030539D /* ThemeSong */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ThemeSong;
+			sourceTree = "<group>";
+		};
 		E14B22FB2A85F397003F79DC /* SignUp Screen */ = {
 			isa = PBXGroup;
 			children = (
@@ -348,6 +386,8 @@
 		E1F7FB2F2A838F5D005B08D8 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				AB0A54442A9656320030539D /* ThemeSong */,
+				AB0A54432A96561D0030539D /* SFX */,
 				E192A29A2A87377D000139D1 /* Fonts */,
 				E1F7FB192A838EE8005B08D8 /* Assets.xcassets */,
 			);
@@ -475,8 +515,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1F7FB312A83900A005B08D8 /* Launch Screen.storyboard in Resources */,
+				AB0A544F2A9657970030539D /* notify.mp3 in Resources */,
 				E1F7FB1D2A838EE9005B08D8 /* Preview Assets.xcassets in Resources */,
+				AB0A54502A9657970030539D /* capture.mp3 in Resources */,
+				AB0A544D2A9657970030539D /* castle.mp3 in Resources */,
+				AB0A54522A9657970030539D /* game-end.mp3 in Resources */,
+				AB0A54532A9657970030539D /* tenseconds.mp3 in Resources */,
+				AB0A54542A9657970030539D /* illegal.mp3 in Resources */,
+				AB0A544E2A9657970030539D /* promote.mp3 in Resources */,
 				E192A29D2A87380A000139D1 /* OpenSans_Italic.ttf in Resources */,
+				AB0A54512A9657970030539D /* move-self.mp3 in Resources */,
 				E1F7FB1A2A838EE8005B08D8 /* Assets.xcassets in Resources */,
 				E192A29E2A87380D000139D1 /* OpenSans.ttf in Resources */,
 			);

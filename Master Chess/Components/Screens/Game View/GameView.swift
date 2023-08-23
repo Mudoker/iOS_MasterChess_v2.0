@@ -93,6 +93,8 @@ struct GameView: View {
                                                     viewModel.didMove(move: move, piece: selectedPiece)
                                                     currentPiece.0 = nil
                                                     self.resetPulsingAnimation()
+                                                } else {
+                                                    viewModel.playSound(sound: "illegal", type: "mp3")
                                                 }
                                             }
                                         }
