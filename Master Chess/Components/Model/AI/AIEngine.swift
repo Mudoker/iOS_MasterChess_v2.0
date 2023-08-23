@@ -1,111 +1,111 @@
-//
-//  AIEngine.swift
-//  Chess
-//
-//  Created by Ivan Ruiz Monjo on 09/05/2020.
-//  Copyright © 2020 Ivan Ruiz Monjo. All rights reserved.
-//
-
 import Foundation
 import GameplayKit
 
 class AIEngine: NSObject, GKGameModel {
-    
-    let chessGame: ChessBoard
-    
+
+    let chessBoard: ChessBoard
+    let allValidMoves: [Move] = []
     var players: [GKGameModelPlayer]? {
         return AIPlayer.allPlayers
     }
     
     var activePlayer: GKGameModelPlayer? {
-        return chessGame.currentPlayer == .white ? AIPlayer.allPlayers[0] : AIPlayer.allPlayers[1]
+        return chessBoard.currentPlayer == .white ? AIPlayer.allPlayers[0] : AIPlayer.allPlayers[1]
     }
     
-    // return a copy of the current AI engine
     func copy(with zone: NSZone? = nil) -> Any {
-        let copy = AIEngine(chessGame: chessGame.copy())
+        let copy = AIEngine(chessBoard: chessBoard.copy() as! ChessBoard)
         copy.setGameModel(self)
         return copy
     }
     
-    init(chessGame: ChessBoard) {
-        self.chessGame = chessGame
+    init(chessBoard: ChessBoard) {
+        self.chessBoard = chessBoard
     }
     
     func setGameModel(_ gameModel: GKGameModel) {
-        if let engine = gameModel as? AIEngine {
-            chessGame.piecePositions = engine.chessGame.piecePositions
-            chessGame.currentPlayer = engine.chessGame.currentPlayer
+        if let board = gameModel as? AIEngine {
+            chessBoard.piecePositions.value = board.chessBoard.piecePositions.value
+            chessBoard.currentPlayer = board.chessBoard.currentPlayer
+            chessBoard.availableMoves = board.chessBoard.availableMoves
         }
     }
-    
+
     func gameModelUpdates(for player: GKGameModelPlayer) -> [GKGameModelUpdate]? {
-        // only generate move for AI
-        if let playerObject = player as? AIPlayer {
-            
-            // stop if the game cannot proceded
-            if isGameEnd() {
-                return nil
-            }
-            
-            // a list of all available moves for the AI
-            var moves = [AIMove]()
-            
-            // get all active pieces on the board
-            let playerPieces = chessGame.activePieces.filter { $0.side == playerObject.player }
-            
-            // calculate all possible move for each piece
-            for piece in playerPieces {
-                let pieceIndex = chessGame.getPiece(piece)
-                let validMoves: [Move]
-                
-                // return all possible moves for each pieces at different locations
-                switch piece.pieceType {
-                case .pawn:
-                    validMoves = chessGame.allValidPawnMoves(board: chessGame.piecePositions.value, from: pieceIndex, history: chessGame.history.value)
-                case .knight:
-                    validMoves = chessGame.allValidKnightMoves(board: chessGame.piecePositions.value, from: pieceIndex)
-                case .king:
-                    validMoves = chessGame.allValidKingMoves(board: chessGame.piecePositions.value, from: pieceIndex)
-                case .rook:
-                    validMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions.value, from: pieceIndex)
-                case .bishop:
-                    validMoves = chessGame.allValidBishopMoves(board: chessGame.piecePositions.value, from: pieceIndex)
-                case .queen:
-                    let bishopMoves = chessGame.allValidBishopMoves(board: chessGame.piecePositions.value, from: pieceIndex)
-                    let rookMoves = chessGame.allValidRookMoves(board: chessGame.piecePositions.value, from: pieceIndex)
-                    validMoves = bishopMoves + rookMoves
-                }
-                
-                // store to moves
-                moves.append(contentsOf: validMoves.map { AIMove(move: $0) })
-            }
-            // if not shuffled, the AI can be easily predicted
-            return moves.shuffled()
+        guard let aiPlayer = player as? AIPlayer else {
+            return nil
+        }
+        if shouldContinueGame(for: aiPlayer) {
+            return generateAvailableMoves(for: aiPlayer)
         }
         return nil
     }
     
     func apply(_ gameModelUpdate: GKGameModelUpdate) {
         if let aiMove = gameModelUpdate as? AIMove {
-            chessGame.movePiece(from: aiMove.move.from, to: aiMove.move.to)
+            chessBoard.movePieceAI(from: aiMove.move.from, to: aiMove.move.to)
         }
     }
     
-    func isGameEnd() -> Bool {
-        if chessGame.isOutOfTime() || chessGame.isCheckMate() || chessGame.isStaleMate() || chessGame.isInsufficientMaterial(){
-            print(chessGame.outcome)
-            return true
+    func shouldContinueGame(for player: AIPlayer) -> Bool {
+        if player.player == .black {
+            if isLoss(for: player) {
+                return false
+            }
+        }
+        return true
+    }
+    
+    func generateAvailableMoves(for player: AIPlayer) -> [AIMove] {
+
+        var moves: [AIMove] = []
+        let playerPieces = chessBoard.activePieces.filter { $0.side == player.player }
+
+        playerPieces.forEach { piece in
+            let pieceIndex = chessBoard.getPiece(piece)
+            let newMoves: [AIMove]
+
+            switch piece.pieceType {
+            case .pawn:
+                let pawnMoves = chessBoard.allValidPawnMoves(board: chessBoard.piecePositions.value, from: pieceIndex, history: chessBoard.history.value)
+                newMoves = pawnMoves.map { AIMove(move: $0) }
+            case .knight:
+                let knightMoves = chessBoard.allValidKnightMoves(board: chessBoard.piecePositions.value, from: pieceIndex)
+                newMoves = knightMoves.map { AIMove(move: $0) }
+            case .king:
+                let kingMoves = chessBoard.allValidKingMoves(board: chessBoard.piecePositions.value, from: pieceIndex)
+                newMoves = kingMoves.map { AIMove(move: $0) }
+            case .rook:
+                let rookMoves = chessBoard.allValidRookMoves(board: chessBoard.piecePositions.value, from: pieceIndex)
+                newMoves = rookMoves.map { AIMove(move: $0) }
+            case .bishop:
+                let bishopMoves = chessBoard.allValidBishopMoves(board: chessBoard.piecePositions.value, from: pieceIndex)
+                newMoves = bishopMoves.map { AIMove(move: $0) }
+            case .queen:
+                let bishopMoves = chessBoard.allValidBishopMoves(board: chessBoard.piecePositions.value, from: pieceIndex)
+                let rookMoves = chessBoard.allValidRookMoves(board: chessBoard.piecePositions.value, from: pieceIndex)
+                newMoves = (bishopMoves + rookMoves).map { AIMove(move: $0) }
+            }
+            moves.append(contentsOf: newMoves)
+        }
+        return moves.shuffled()
+    }
+    
+    // check is black is loss -> check mate
+    func isLoss(for player: GKGameModelPlayer) -> Bool {
+        if player.playerId == 0 {
+            return chessBoard.isCheckMate(player: .black)
         }
         return false
     }
     
-    // calculate the current score of each player (based on piece's weigtht)
     func score(for player: GKGameModelPlayer) -> Int {
-        if let player = player as? AIPlayer {
-            let selfPieces = chessGame.activePieces.filter { $0.side == player.player }.map { $0.pieceType.weight }.reduce(0,+)
-            let otherPieces = chessGame.activePieces.filter { $0.side != player.player }.map { $0.pieceType.weight }.reduce(0,+)
-            return selfPieces - otherPieces
+        if let aiPlayer = player as? AIPlayer {
+            let selfPieces = chessBoard.activePieces.filter { $0.side == aiPlayer.player }.map { $0.pieceType.weight }.reduce(0, +)
+
+            let opponentPieces = chessBoard.activePieces.filter { $0.side != aiPlayer.player }.map { $0.pieceType.weight }.reduce(0, +)
+
+            return selfPieces - opponentPieces
         }
         return 0
     }

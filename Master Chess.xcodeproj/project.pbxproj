@@ -30,7 +30,7 @@
 		E170680A2A8DEEC40015860F /* TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17068092A8DEEC40015860F /* TimeInterval.swift */; };
 		E170680C2A8DF2270015860F /* ChessBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170680B2A8DF2270015860F /* ChessBoardView.swift */; };
 		E17068122A8E1F500015860F /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17068112A8E1F500015860F /* GameModel.swift */; };
-		E17068152A8E20580015860F /* AI+Mitten.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17068142A8E20580015860F /* AI+Mitten.swift */; };
+		E17068152A8E20580015860F /* AIBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17068142A8E20580015860F /* AIBot.swift */; };
 		E17068172A8E241E0015860F /* AIEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17068162A8E241E0015860F /* AIEngine.swift */; };
 		E17068192A8E24610015860F /* AIPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17068182A8E24610015860F /* AIPlayer.swift */; };
 		E170681C2A8E24A80015860F /* AIMove.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170681B2A8E24A80015860F /* AIMove.swift */; };
@@ -86,7 +86,7 @@
 		E17068092A8DEEC40015860F /* TimeInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeInterval.swift; sourceTree = "<group>"; };
 		E170680B2A8DF2270015860F /* ChessBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessBoardView.swift; sourceTree = "<group>"; };
 		E17068112A8E1F500015860F /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
-		E17068142A8E20580015860F /* AI+Mitten.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AI+Mitten.swift"; sourceTree = "<group>"; };
+		E17068142A8E20580015860F /* AIBot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIBot.swift; sourceTree = "<group>"; };
 		E17068162A8E241E0015860F /* AIEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIEngine.swift; sourceTree = "<group>"; };
 		E17068182A8E24610015860F /* AIPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPlayer.swift; sourceTree = "<group>"; };
 		E170681B2A8E24A80015860F /* AIMove.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIMove.swift; sourceTree = "<group>"; };
@@ -166,7 +166,7 @@
 		E17068132A8E1FF70015860F /* AI */ = {
 			isa = PBXGroup;
 			children = (
-				E17068142A8E20580015860F /* AI+Mitten.swift */,
+				E17068142A8E20580015860F /* AIBot.swift */,
 				E17068162A8E241E0015860F /* AIEngine.swift */,
 				E17068182A8E24610015860F /* AIPlayer.swift */,
 				E170681B2A8E24A80015860F /* AIMove.swift */,
@@ -520,7 +520,7 @@
 				E1F7FB3F2A83AA4E005B08D8 /* WelcomeScreen.swift in Sources */,
 				E15A2CEA2A84EC5600688B6E /* DataManager.swift in Sources */,
 				E1D7825C2A8B9C16008B1081 /* GameMode.swift in Sources */,
-				E17068152A8E20580015860F /* AI+Mitten.swift in Sources */,
+				E17068152A8E20580015860F /* AIBot.swift in Sources */,
 				E14B22FD2A85F3B2003F79DC /* SignUpScreen.swift in Sources */,
 				E1D7825E2A8B9CFC008B1081 /* ChessBoard.swift in Sources */,
 				AB0A54412A939FCE0030539D /* Users+CoreDataProperties.swift in Sources */,

@@ -1,21 +1,17 @@
+// https://www.youtube.com/watch?v=53uMIUUhLwk&t=176s
 import Foundation
 
 import GameplayKit
 
+// Set up AI player
 class AIPlayer: NSObject, GKGameModelPlayer {
     var playerId: Int
-    
     let player: Player
     
     static var allPlayers = [AIPlayer(player: .white), AIPlayer(player: .black)]
-    
-    // set the side for AI based on user side
+
     var opponent: AIPlayer {
-        if player == .white {
-            return AIPlayer.allPlayers[1]
-        } else {
-            return AIPlayer.allPlayers[0]
-        }
+        return player == .white ? AIPlayer.allPlayers[1] : AIPlayer.allPlayers[0]
     }
     
     init(player: Player) {

@@ -17,10 +17,10 @@ class CurrentUser: ObservableObject {
     // Properties from Setting
     @Published var settingAutoPromotionEnabled: Bool = false
     @Published var settingIsDarkMode: Bool = false
-    @Published var settingLanguage: String = ""
+    @Published var settingLanguage: String = "language"
     @Published var settingMusicEnabled: Bool = false
     @Published var settingSoundEnabled: Bool = false
-    @Published var settingDifficulty: String = ""
+    @Published var settingDifficulty: String = "hard"
     
     // Properties from SavedGame
     @Published var savedGameAutoPromotionEnabled: Bool = false

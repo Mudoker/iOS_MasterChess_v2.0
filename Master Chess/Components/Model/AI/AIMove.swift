@@ -8,6 +8,7 @@
 
 import GameplayKit
 
+// Game model update is the move
 class AIMove: NSObject, GKGameModelUpdate {
     let move: Move
     var value: Int = 0
