@@ -395,7 +395,7 @@ class ChessBoard: ObservableObject, NSCopying {
         let getCurrentSide = player == .white ? "w" : "b"
         let pieceName = getCurrentSide + String(type.rawValue.first!)
         let promotedPiece = ChessPiece(stringLiteral: pieceName)
-        var updatedPiecePositions = piecePositions
+        let updatedPiecePositions = piecePositions
         updatedPiecePositions.value[position.y][position.x] = promotedPiece
         piecePositions = updatedPiecePositions
     }
