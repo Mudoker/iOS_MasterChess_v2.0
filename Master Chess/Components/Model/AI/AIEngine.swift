@@ -116,24 +116,24 @@ class AIEngine: NSObject, GKGameModel {
             score -= piece.pieceType.weight
         }
         
-        let checkmateBonus = 500
-        let avoidCheckPenalty = -500
-        let avoidCheckedMatePenalty = -9999
+        let checkOpponentBonus = 500
+        let checkPenalty = -500
+        let checkedMatePenalty = -9999
         let checkmateOpponentBonus = 9999
         
         // Try to check the opponent
         if chessBoard.isKingInCheck(board: chessBoard.piecePositions.value, player: aiPlayer.player == .white ? .black : .white) {
-            score += checkmateBonus
+            score += checkOpponentBonus
         }
         
         // Try to avoid being checked
         if chessBoard.isKingInCheck(board: chessBoard.piecePositions.value, player: aiPlayer.player) {
-            score += avoidCheckPenalty
+            score += checkPenalty
         }
         
         // Try to avoid moving into a checkmate position at all cost
         if chessBoard.isCheckMate(player: aiPlayer.player) {
-            score += avoidCheckedMatePenalty
+            score += checkedMatePenalty
         }
         
         // Try to checkmate the opponent at all costs
