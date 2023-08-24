@@ -358,6 +358,20 @@ class ChessBoard: ObservableObject, NSCopying {
             // Switch to the next player's turn
             currentPlayer = (currentPlayer == .white) ? .black : .white
             
+            if isCheckMate(player: currentPlayer) {
+                print(outcome)
+            } else if isStaleMate(player: currentPlayer) {
+                print(outcome)
+            } else if isOutOfMove(player: currentPlayer) {
+                print(outcome)
+            } else if isOutOfTime(player: currentPlayer) {
+                print(outcome)
+            } else if isInsufficientMaterial(player: currentPlayer) {
+                print(outcome)
+            } else {
+                print(outcome)
+            }
+            
         } else {
             print("No piece found at the starting position.")
             print("Start: \(start.x), \(start.y)")
@@ -385,7 +399,6 @@ class ChessBoard: ObservableObject, NSCopying {
         removePiece(at: position)
         updatedPiecePositions[position.y][position.x] = promotedPiece
         piecePositions.value = updatedPiecePositions
-        
     }
     
     // Check if a move from A to B of pawn is valid
@@ -652,6 +665,23 @@ class ChessBoard: ObservableObject, NSCopying {
             }
         }
         
+        // Check for threats from opponent's pawn
+        let pawnDirection = opponentSide == .white ? 1 : -1
+        let pawnOffsets: [(dx: Int, dy: Int)] = [(1, pawnDirection), (-1, pawnDirection)]
+        for offset in pawnOffsets {
+            let x = kingPosition.x + offset.dx
+            let y = kingPosition.y + offset.dy
+            
+            if y >= 0 && y < board.count && x >= 0 && x < board[y].count {
+                if let piece = board[y][x] {
+                    // Validate if there is a opponent pawn
+                    if piece.side == opponentSide && piece.pieceType == .pawn {
+                        return true
+                    }
+                }
+            }
+        }
+        
         // Horizontal and vertical threats (Rooks and Queen)
         let directions: [(dx: Int, dy: Int)] = [(1, 0), (-1, 0), (0, 1), (0, -1)]
         for dir in directions {
@@ -677,19 +707,6 @@ class ChessBoard: ObservableObject, NSCopying {
             }
         }
         
-        // Diagonal threats from opponent pawns
-        let pawnThreats: [(dx: Int, dy: Int)] = [(1, 1), (-1, 1)]
-        for threat in pawnThreats {
-            let x = kingPosition.x + threat.dx
-            let y = kingPosition.y + threat.dy
-
-            if y >= 0 && y < board.count && x >= 0 && x < board[y].count {
-                if let piece = board[y][x], piece.side == opponentSide && piece.pieceType == .pawn {
-                    print("king in check by pawn")
-                    return true
-                }
-            }
-        }
         
         // Diagonal threats (Bishops & Queen & Bishop)
         let diagonalDirections: [(dx: Int, dy: Int)] = [(1, 1), (-1, 1), (1, -1), (-1, -1)]
@@ -731,23 +748,6 @@ class ChessBoard: ObservableObject, NSCopying {
                 if let piece = board[y][x] {
                     // Validate if there is a opponent knight
                     if piece.side == opponentSide && piece.pieceType == .knight {
-                        return true
-                    }
-                }
-            }
-        }
-        
-        // Check for threats from opponent's pawn
-        let pawnDirection = opponentSide == .white ? 1 : -1
-        let pawnOffsets: [(dx: Int, dy: Int)] = [(1, pawnDirection), (-1, pawnDirection)]
-        for offset in pawnOffsets {
-            let x = kingPosition.x + offset.dx
-            let y = kingPosition.y + offset.dy
-            
-            if y >= 0 && y < board.count && x >= 0 && x < board[y].count {
-                if let piece = board[y][x] {
-                    // Validate if there is a opponent pawn
-                    if piece.side == opponentSide && piece.pieceType == .pawn {
                         return true
                     }
                 }
