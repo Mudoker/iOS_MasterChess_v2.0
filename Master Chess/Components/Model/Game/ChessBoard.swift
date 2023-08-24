@@ -34,13 +34,14 @@ class ChessBoard: ObservableObject, NSCopying {
     @Published var outcome: GameResult = .ongoing
     @Published var captures: [ChessPiece] = []
     @Published var availableMoves = 0
+    @Published var promoteType: PieceType = .queen
     init() {
         // load from saved
         if currentUser.hasActiveGame {
             whiteTimeLeft = Int(currentUser.savedGameWhiteTimeLeft)
             blackTimeLeft = Int(currentUser.savedGameBlackTimeLeft)
         } else {
-            let initialTimeLimit: TimeInterval = currentUser.rating > 500 ? 10 * 60 : 20 * 60
+            let initialTimeLimit: TimeInterval = currentUser.rating > 500 ? 15 * 60 : 25 * 60
             whiteTimeLeft = Int(initialTimeLimit)
             blackTimeLeft = Int(initialTimeLimit)
         }
@@ -394,11 +395,9 @@ class ChessBoard: ObservableObject, NSCopying {
         let getCurrentSide = player == .white ? "w" : "b"
         let pieceName = getCurrentSide + String(type.rawValue.first!)
         let promotedPiece = ChessPiece(stringLiteral: pieceName)
-        
-        var updatedPiecePositions = piecePositions.value
-        removePiece(at: position)
-        updatedPiecePositions[position.y][position.x] = promotedPiece
-        piecePositions.value = updatedPiecePositions
+        var updatedPiecePositions = piecePositions
+        updatedPiecePositions.value[position.y][position.x] = promotedPiece
+        piecePositions = updatedPiecePositions
     }
     
     // Check if a move from A to B of pawn is valid
