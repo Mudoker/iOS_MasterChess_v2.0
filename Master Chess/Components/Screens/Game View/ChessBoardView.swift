@@ -18,7 +18,6 @@ struct ChessBoardView: View {
         ]
     let columnLabels = "abcdefghijklmnopqrstuvwxyz"
     @State private var shouldPlaySound = false
-
     func coordinateString(for point: Position) -> String {
         let xCoordinate = String(columnLabels[columnLabels.index(columnLabels.startIndex, offsetBy: point.x)])
         let yCoordinate = "\(point.y + 1)"
@@ -57,7 +56,7 @@ struct ChessBoardView: View {
                             
                         }
                         Spacer()
-                        VStack (spacing: proxy.size.width/15) {
+                        VStack (spacing: proxy.size.width/30) {
                             HStack {
                                 Text(formatTime(viewModel.whiteRemainigTime))
                                     .font(.callout)
@@ -76,8 +75,8 @@ struct ChessBoardView: View {
                                     .background(viewModel.currentPlayer == .white ?  Color.white.opacity(0.1) : Color.white.opacity(0.5))
                                     .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/40))
                                     .frame(width: proxy.size.width / 6.2)
-
                             }
+                            
                             Text("\(viewModel.currentPlayer == .white ? (viewModel.chessGame.currentUser.username == "test" ? "Mudoker" : "White") : (viewModel.blackPlayerName == "M.Carlsen" ? "Carlsen" : viewModel.blackPlayerName))'s Turn")
                                 .font(.callout)
                                 .foregroundColor(.white)
@@ -86,7 +85,14 @@ struct ChessBoardView: View {
                                     RoundedRectangle(cornerRadius: proxy.size.width/40)
                                         .stroke(Color.blue, lineWidth: proxy.size.width/100) // Adding stroke color and width
                                 )
-                                .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/40))
+                                .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/35))
+                            
+                            if viewModel.currentPlayer == .white {
+                                Text(String(viewModel.chessGame.availableMoves) + " moves left")
+                                    .frame(height: proxy.size.width / 20)
+                            } else {
+                                Text("Unlimited moves")
+                            }
                         }
                         Spacer()
                         VStack(alignment: .trailing) {
@@ -181,9 +187,9 @@ struct ChessBoardView: View {
                     
                     if viewModel.chessGame.history.value.isEmpty {
                         Text("Start a move!")
-                            .font(.title2.bold())
+                            .font(.title3.bold())
                             .opacity(0.7)
-                            .frame(height: proxy.size.height / 20)
+                            .frame(height: proxy.size.height / 18)
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: proxy.size.width/30) {
@@ -228,20 +234,20 @@ struct ChessBoardView: View {
                                 Text("New game")
                             }
                         }
-                        .onAppear {
-//                             Create a Timer that triggers the button action every 10 seconds
-                            let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-                                if viewModel.currentPlayer == .white {
-                                    viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "wp"))
-                                } else {
-                                    viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "bp"))
-                                }
-                            }
-                            
-//                             Make sure to invalidate the timer when the view disappears
-//                             to prevent memory leaks
-                            RunLoop.current.add(timer, forMode: .common)
-                        }
+//                        .onAppear {
+////                             Create a Timer that triggers the button action every 10 seconds
+//                            let timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { timer in
+//                                if viewModel.currentPlayer == .white {
+//                                    viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "wp"))
+//                                } else {
+//                                    viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "bp"))
+//                                }
+//                            }
+//                            
+////                             Make sure to invalidate the timer when the view disappears
+////                             to prevent memory leaks
+//                            RunLoop.current.add(timer, forMode: .common)
+//                        }
                         
                         Button(action: {
                             // Action for New Game

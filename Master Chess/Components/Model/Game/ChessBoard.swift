@@ -121,7 +121,7 @@ class ChessBoard: ObservableObject, NSCopying {
             currentPlayer = .white
             
             // Limit 30 moves for grandmaster and 50 for master
-            availableMoves = currentUser.rating >= 2400 ? 30 : currentUser.rating >= 2000 ? 50 : 1000000
+            availableMoves = currentUser.rating >= 2400 ? 30 : currentUser.rating >= 2000 ? 50 : 100
         }
         
         // Start the clocks to begin tracking time
@@ -144,6 +144,10 @@ class ChessBoard: ObservableObject, NSCopying {
     
     func movePiece(from start: Position, to end: Position) {
         if allValidMoves.first(where: { $0.from == start && $0.to == end }) != nil {
+            guard start.isValid && end.isValid else {
+                print("invalid")
+                return
+            }
             // Create a copy of piecePositions
             let updatedPiecePositions = piecePositions
             
@@ -238,6 +242,19 @@ class ChessBoard: ObservableObject, NSCopying {
                 // Store move history
                 history.value.append(Move(from: Position(x: start.x, y: start.y), to: Position(x: end.x, y: end.y)))
                 
+                if isCheckMate(player: currentPlayer) {
+                    print(outcome)
+                } else if isStaleMate(player: currentPlayer) {
+                    print(outcome)
+                } else if isOutOfMove(player: currentPlayer) {
+                    print(outcome)
+                } else if isOutOfTime(player: currentPlayer) {
+                    print(outcome)
+                } else if isInsufficientMaterial(player: currentPlayer) {
+                    print(outcome)
+                } else {
+                    print(outcome)
+                }
             } else {
                 print("No piece found at the starting position.")
             }
@@ -247,6 +264,9 @@ class ChessBoard: ObservableObject, NSCopying {
     }
     
     func movePieceAI(from start: Position, to end: Position) {
+        guard start.isValid && end.isValid else {
+                return
+        }
         // Create a copy of piecePositions
         let updatedPiecePositions = piecePositions
         
@@ -370,6 +390,9 @@ class ChessBoard: ObservableObject, NSCopying {
     
     // Check if a move from A to B of pawn is valid
     func validPawnMove(board: [[ChessPiece?]], from start: Position, to end: Position, history: [Move], player: Player) -> Bool {
+        guard start.isValid && end.isValid else {
+                return false
+        }
         let deltaX = abs(start.x - end.x)
         let deltaY = end.y - start.y
         // Simulate the movement (to check if after the movement will left the current king in check)
@@ -455,6 +478,9 @@ class ChessBoard: ObservableObject, NSCopying {
     
     // L-shape movement for Knight
     func validKnightMove(board: [[ChessPiece?]],from start: Position, to end: Position, player: Player) -> Bool {
+        guard start.isValid && end.isValid else {
+                return false
+        }
         let deltaX = abs(end.x - start.x)
         let deltaY = abs(end.y - start.y)
         
@@ -520,11 +546,19 @@ class ChessBoard: ObservableObject, NSCopying {
     
     // Validate king move
     private func validKingMove(board: [[ChessPiece?]], from start: Position, to end: Position, player: Player) -> Bool {
+        guard start.isValid && end.isValid else {
+            return false
+        }
+        
         let deltaX = abs(start.x - end.x)
         let deltaY = abs(start.y - end.y)
         
         switch (deltaX, deltaY) {
         case (0...1, 0...1):
+            guard end.isValid else {
+                return false
+            }
+            
             // Check if the destination square is empty or occupied by an opponent's piece
             if let piece = board[end.y][end.x], piece.side == player {
                 return false
@@ -538,57 +572,32 @@ class ChessBoard: ObservableObject, NSCopying {
             
         // Castling
         case (2, 0):
-            // Do not allow castling if the king is in check
-            if !isKingInCheck(board: piecePositions.value, player: currentPlayer) {
-                let castlingDirection: Int
-                let kingXAfterCastling: Int
-                let emptySquaresX: [Int]
-                
-                if player == .white {
-                    castlingDirection = end.x > start.x ? 1 : -1
-                    kingXAfterCastling = start.x + (2 * castlingDirection)
-                    emptySquaresX = [start.x + castlingDirection, kingXAfterCastling]
-                    
-                    // Only allow castling when the king or corresponding rook has not moved
-                    if castlingDirection == 1 {
-                        if isWhiteKingMoved || isWhiteRightRookMoved {
-                            return false
-                        }
-                    } else {
-                        if isWhiteKingMoved || isWhiteLeftRookMoved {
-                            return false
-                        }
-                    }
-                } else { // currentPlayer.value == .black
-                    castlingDirection = end.x > start.x ? 1 : -1
-                    kingXAfterCastling = start.x + (2 * castlingDirection)
-                    emptySquaresX = [start.x + castlingDirection, kingXAfterCastling]
-                    
-                    if castlingDirection == 1 {
-                        if isBlackKingMoved || isBlackRightRookMoved {
-                            return false
-                        }
-                    } else {
-                        if isBlackKingMoved || isBlackLeftRookMoved {
-                            return false
-                        }
-                    }
-                }
-                
-                // Check if the squares between the king and the rook are empty
-                if emptySquaresX.allSatisfy({ board[start.y][$0] == nil }) {
-                    // Simulate the movement
-                    var tempBoardAfterCastling = board
-                    tempBoardAfterCastling[start.y][kingXAfterCastling] = tempBoardAfterCastling[start.y][start.x]
-                    tempBoardAfterCastling[start.y][start.x] = nil
-                    return !isKingInCheck(board: tempBoardAfterCastling, player: currentPlayer)
-                }
+            guard start.isValid && end.isValid else {
+                return false
             }
-            return false
+            
+            if isKingInCheck(board: piecePositions.value, player: currentPlayer) {
+                return false
+            }
+            let castlingDirection = end.x > start.x ? 1 : -1
+            let kingXAfterCastling = start.x + (2 * castlingDirection)
+            let emptySquaresX = Array(stride(from: start.x + castlingDirection, to: kingXAfterCastling, by: castlingDirection))
+            
+            guard emptySquaresX.allSatisfy({ $0 < 8 && board[start.y][$0] == nil }) else {
+                return false
+            }
+            
+            let kingMoved = player == .white ? isWhiteKingMoved : isBlackKingMoved
+            let leftRookMoved = player == .white ? isWhiteLeftRookMoved : isBlackLeftRookMoved
+            let rightRookMoved = player == .white ? isWhiteRightRookMoved : isBlackRightRookMoved
+            
+            return !kingMoved && !(leftRookMoved && rightRookMoved)
+            
         default:
             return false
         }
     }
+
     
     // All moves for king
     func allValidKingMoves(board: [[ChessPiece?]], from start: Position) -> [Move]{
@@ -668,7 +677,21 @@ class ChessBoard: ObservableObject, NSCopying {
             }
         }
         
-        // Diagonal threats (Bishops & Queen)
+        // Diagonal threats from opponent pawns
+        let pawnThreats: [(dx: Int, dy: Int)] = [(1, 1), (-1, 1)]
+        for threat in pawnThreats {
+            let x = kingPosition.x + threat.dx
+            let y = kingPosition.y + threat.dy
+
+            if y >= 0 && y < board.count && x >= 0 && x < board[y].count {
+                if let piece = board[y][x], piece.side == opponentSide && piece.pieceType == .pawn {
+                    print("king in check by pawn")
+                    return true
+                }
+            }
+        }
+        
+        // Diagonal threats (Bishops & Queen & Bishop)
         let diagonalDirections: [(dx: Int, dy: Int)] = [(1, 1), (-1, 1), (1, -1), (-1, -1)]
         for dir in diagonalDirections {
             var x = kingPosition.x + dir.dx
@@ -767,15 +790,44 @@ class ChessBoard: ObservableObject, NSCopying {
         return false
     }
     
-    // if king is not in check but no available move -> draw
     func isStaleMate(player: Player) -> Bool {
         if isKingInCheck(board: piecePositions.value, player: player) == false {
-            if allValidKingMoves(board: piecePositions.value, from: player == .white ? whiteKingPosition : blackKingPosition).isEmpty {
-                // If stalemate, the game is a draw
-                outcome = .stalemate
-                return true
+            // Get all pieces of the current player
+            let playerPieces = activePieces.filter { $0.side == player }
+            
+            // Iterate through all pieces to check if any move is valid
+            for piece in playerPieces {
+                let pieceIndex = getPiece(piece)
+                
+                // Get available moves for the piece
+                let validMoves: [Move]
+                switch piece.pieceType {
+                case .pawn:
+                    validMoves = allValidPawnMoves(board: piecePositions.value, from: pieceIndex, history: history.value)
+                case .knight:
+                    validMoves = allValidKnightMoves(board: piecePositions.value, from: pieceIndex)
+                case .king:
+                    validMoves = allValidKingMoves(board: piecePositions.value, from: pieceIndex)
+                case .rook:
+                    validMoves = allValidRookMoves(board: piecePositions.value, from: pieceIndex)
+                case .bishop:
+                    validMoves = allValidBishopMoves(board: piecePositions.value, from: pieceIndex)
+                case .queen:
+                    let bishopMoves = allValidBishopMoves(board: piecePositions.value, from: pieceIndex)
+                    let rookMoves = allValidRookMoves(board: piecePositions.value, from: pieceIndex)
+                    validMoves = bishopMoves + rookMoves
+                }
+                
+                // Check if any valid move can be made
+                if validMoves.count > 0 {
+                    return false
+                }
             }
+            
+            // If no piece has valid moves, the player is in stalemate
+            return true
         }
+        
         return false
     }
     
@@ -874,8 +926,6 @@ class ChessBoard: ObservableObject, NSCopying {
     // Out of time -> lose
     func isOutOfTime(player: Player) -> Bool {
         if player == .white {
-            print("Out Time")
-
             if whiteTimeLeft <= 0 {
                 winner = .black
                 outcome = .outOfTime
@@ -883,8 +933,6 @@ class ChessBoard: ObservableObject, NSCopying {
             }
         } else {
             if blackTimeLeft <= 0 {
-                print("Out Time")
-
                 winner = .white
                 outcome = .outOfTime
                 return true
@@ -894,6 +942,9 @@ class ChessBoard: ObservableObject, NSCopying {
     }
     
     func validRookMove(board: [[ChessPiece?]], from start: Position, to end: Position, player: Player) -> Bool {
+        guard start.isValid && end.isValid else {
+                return false
+        }
         let deltaX = abs(start.x - end.x)
         let deltaY = abs(start.y - end.y)
         
@@ -964,6 +1015,9 @@ class ChessBoard: ObservableObject, NSCopying {
     
     // Validate bishop move
     func validBishopMove(board: [[ChessPiece?]], from start: Position, to end: Position) -> Bool {
+        guard start.isValid && end.isValid else {
+                return false
+        }
         let deltaX = abs(start.x - end.x)
         let deltaY = abs(start.y - end.y)
         
