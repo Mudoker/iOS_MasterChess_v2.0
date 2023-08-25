@@ -12,7 +12,7 @@ enum PieceType: String {
         case .knight, .bishop: return 3
         case .rook: return 5
         case .queen: return 9
-        case .king: return 1000
+        case .king: return 0 // King cannot be captured -> value of 0
         }
     }
 }
