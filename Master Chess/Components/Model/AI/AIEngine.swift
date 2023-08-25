@@ -47,16 +47,13 @@ class AIEngine: NSObject, GKGameModel {
     }
     
     func shouldContinueGame(for player: AIPlayer) -> Bool {
-        if player.player == .black {
-            if isLoss(for: player) {
-                return false
-            }
+        if isWin(for: player) || isLoss(for: player) {
+            return false //the game ends
         }
         return true
     }
     
     func generateAvailableMoves(for player: AIPlayer) -> [AIMove] {
-
         var moves: [AIMove] = []
         let playerPieces = chessBoard.activePieces.filter { $0.side == player.player }
 
@@ -90,10 +87,20 @@ class AIEngine: NSObject, GKGameModel {
         return moves.shuffled()
     }
     
-    // check is black is loss -> check mate
+    // Implement the isLoss function
     func isLoss(for player: GKGameModelPlayer) -> Bool {
-        if player.playerId == 0 {
-            return chessBoard.isCheckMate(player: .black)
+        if let aiPlayer = player as? AIPlayer {
+            // Check if the AI's king is in a loss position (checkmate)
+            return chessBoard.isCheckmate(player: aiPlayer.player)
+        }
+        return false
+    }
+
+    // check is black is loss -> check mate
+    func isWin(for player: GKGameModelPlayer) -> Bool {
+        if let aiPlayer = player as? AIPlayer {
+            // Check if the opponent is in a loss position (checkmate)
+            return isLoss(for: aiPlayer.opponent)
         }
         return false
     }
