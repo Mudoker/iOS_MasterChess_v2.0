@@ -143,6 +143,4 @@ class AIEngine: NSObject, GKGameModel {
         
         return score
     }
-
-
 }
