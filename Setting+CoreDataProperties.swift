@@ -2,7 +2,7 @@
 //  Setting+CoreDataProperties.swift
 //  Master Chess
 //
-//  Created by Quoc Doan Huu on 13/08/2023.
+//  Created by quoc on 28/08/2023.
 //
 //
 
@@ -17,12 +17,14 @@ extension Setting {
     }
 
     @NSManaged public var autoPromotionEnabled: Bool
+    @NSManaged public var difficulty: String?
     @NSManaged public var isDarkMode: Bool
+    @NSManaged public var isSystemTheme: Bool
     @NSManaged public var language: String?
     @NSManaged public var musicEnabled: Bool
     @NSManaged public var soundEnabled: Bool
-    @NSManaged public var difficulty: String?
     @NSManaged public var source: Users?
+    
     public var unwrappedAutoPromotionEnabled: Bool {
         autoPromotionEnabled
     }
@@ -49,6 +51,11 @@ extension Setting {
     public var unwrappedSource: Users? {
         source
     }
+    
+    public var unwrappedIsSystemTheme: Bool {
+        isSystemTheme
+    }
+
 }
 
 extension Setting : Identifiable {

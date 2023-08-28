@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct Move: Equatable {
+struct Move: Equatable, Hashable {
     var from, to: Position
 }

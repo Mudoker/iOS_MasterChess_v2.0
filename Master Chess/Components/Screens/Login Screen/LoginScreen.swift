@@ -164,6 +164,7 @@ struct LoginView: View {
                                     
                                     // Properties from Setting
                                     CurrentUser.shared.settingAutoPromotionEnabled = users[index].userSettings?.autoPromotionEnabled ?? false
+                                    CurrentUser.shared.settingIsSystemTheme = users[index].userSettings?.isSystemTheme ?? false
                                     CurrentUser.shared.settingIsDarkMode = users[index].userSettings?.isDarkMode ?? false
                                     CurrentUser.shared.settingLanguage = users[index].userSettings?.language ?? ""
                                     CurrentUser.shared.settingMusicEnabled = users[index].userSettings?.musicEnabled ?? false

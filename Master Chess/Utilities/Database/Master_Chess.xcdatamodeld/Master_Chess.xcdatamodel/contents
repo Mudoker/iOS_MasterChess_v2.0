@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F66" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F82" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Achievement" representedClassName=".Achievement" syncable="YES">
         <attribute name="category" optional="YES" attributeType="String"/>
         <attribute name="des" optional="YES" attributeType="String"/>
@@ -63,6 +63,7 @@
         <attribute name="autoPromotionEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="difficulty" optional="YES" attributeType="String"/>
         <attribute name="isDarkMode" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isSystemTheme" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="language" optional="YES" attributeType="String"/>
         <attribute name="musicEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="soundEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>

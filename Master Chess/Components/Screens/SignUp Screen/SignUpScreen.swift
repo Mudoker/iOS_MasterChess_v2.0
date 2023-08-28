@@ -83,7 +83,7 @@ struct SignUpScreen: View {
                             setting.musicEnabled = selectedSound
                             setting.soundEnabled = selectedSFX
                             setting.difficulty = selectedDifficulty
-                            
+                            setting.isSystemTheme = selectedTheme == 3 ? true : false
                             let gameStats = GameStats(context: viewContext)
                             let gameHistory = GameHistory(context: viewContext)
                             let gameAchievement = Achievement(context: viewContext)
@@ -314,7 +314,7 @@ struct Register2: View {
             Text ("Choose a theme preference")
                 .bold()
             HStack (spacing: 20) {
-                ForEach(1...2, id: \.self) { i in
+                ForEach(1...3, id: \.self) { i in
                     Button(action: {
                         selectedTheme = i
                     })
@@ -324,7 +324,7 @@ struct Register2: View {
                             .aspectRatio(contentMode: .fit)
                             .background(
                                 Rectangle()
-                                    .foregroundColor(selectedTheme == i ? i == 1 ? .yellow : .purple : .gray)
+                                    .foregroundColor(selectedTheme == i ? i == 1 ? .yellow : i == 2 ? .purple : .blue : .gray)
                                     .opacity(selectedTheme == i ? 1 : 0.5)
                                     .cornerRadius(10)
                             )

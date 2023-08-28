@@ -29,6 +29,7 @@ struct ChessPiece: ExpressibleByStringLiteral, Identifiable, Hashable {
     let side: Player
     let imageView: String
     let pieceName: StringLiteralType
+    var isInvalidMove = false
     init(stringLiteral value: String) {
         guard value.count == 2 else {
             preconditionFailure("Invalid string literal length")

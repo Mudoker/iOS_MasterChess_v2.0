@@ -3,18 +3,21 @@
 import Foundation
 import Combine
 import SwiftUI
+import AVFoundation
 
 class ChessBoard: ObservableObject, NSCopying {
     var currentUser = CurrentUser.shared
     var piecePositions: CurrentValueSubject<[[ChessPiece?]], Never> = CurrentValueSubject([])
-    
+    var audioPlayer = AVAudioPlayer()
     @Published var currentPlayer = Player.white
     @Published var isChecked = false
     var activePieces: [ChessPiece] {
         piecePositions.value.flatMap { $0 }.compactMap { $0 }
     }
     @Published var currentPlayerIsInCheck = false
-    
+    var isSoundPlayed = false
+    // Calculate the rating change based on game result, player ratings, and difficulty
+    let ratingChange = RatingCalculator.shared
     @Published var whiteTimeLeft = 0 // Initialize with default value
     @Published var blackTimeLeft = 0// Initialize with default value
     @Published var cancellables = Set<AnyCancellable>()
@@ -95,7 +98,6 @@ class ChessBoard: ObservableObject, NSCopying {
     func start() {
         // Clean up any existing cancellables
         cancellables.removeAll()
-        
         // Create a timer that publishes every 1.0 seconds on the main thread in a common mode
         timer = Timer.publish(every: 1.0, on: .main, in: .common)
         timer.connect().store(in: &cancellables)
@@ -120,13 +122,13 @@ class ChessBoard: ObservableObject, NSCopying {
             
             // White starts first
             currentPlayer = .white
-            
             // Limit 30 moves for grandmaster and 50 for master
             availableMoves = currentUser.rating >= 2400 ? 30 : currentUser.rating >= 2000 ? 50 : 100
         }
         
         // Start the clocks to begin tracking time
         startClocks()
+//        playSound(sound: "game-start", type: "mp3")
     }
     
     func getPiece(at position: Position) -> ChessPiece? {
@@ -156,30 +158,26 @@ class ChessBoard: ObservableObject, NSCopying {
             if let movingPiece = updatedPiecePositions.value[start.y][start.x] {
                 // Move the piece
                 updatedPiecePositions.value[start.y][start.x] = nil
+                // Check for capture
                 if let endPiece = piecePositions.value[end.y][end.x] {
                     captures.append(endPiece)
+                    playSound(sound: "capture", type: "mp3")
+                    isSoundPlayed = true
                 } else { // List of captured pieces and enpassant
                     let verticalDir = currentPlayer == .white ? 1 : -1
+                    // if there is no capture at the destination but pawn still move diagonally -> en passant
                     if movingPiece.pieceType == .pawn && abs(end.x - start.x) == 1 {
                         if currentPlayer == .white {
                             captures.append(ChessPiece(stringLiteral: "bp"))
                         } else {
                             captures.append(ChessPiece(stringLiteral: "wp"))
                         }
+                        playSound(sound: "capture", type: "mp3")
+                        isSoundPlayed = true
                         updatedPiecePositions.value[end.y + verticalDir][end.x] = nil
                     }
-                }
-                if movingPiece.pieceType == .pawn && (end.y == 7 || end.y == 0) {
-                    if currentPlayer == .white {
-                        updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "wq")
-                    } else {
-                        updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "bq")
-                    }
                     
-                } else {
-                    updatedPiecePositions.value[end.y][end.x] = movingPiece
                 }
-                
                 // Check if castling
                 if movingPiece.pieceType == .king {
                     if movingPiece.side == .white {
@@ -211,6 +209,8 @@ class ChessBoard: ObservableObject, NSCopying {
                         blackKingPosition = Position(x: end.x, y: end.y)
                         kingPosition = blackKingPosition
                     }
+                    playSound(sound: "castle", type: "mp3")
+                    isSoundPlayed = true
                 } else if movingPiece.pieceType == .rook { // Turn on or off Castling
                     if movingPiece.side == .white {
                         if start.x == 0 {
@@ -226,6 +226,27 @@ class ChessBoard: ObservableObject, NSCopying {
                         }
                     }
                 }
+                
+                // Must update to allow custom promotion
+                if movingPiece.pieceType == .pawn && (end.y == 7 || end.y == 0) {
+                    if currentPlayer == .white {
+                        updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "wq")
+                    } else {
+                        updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "bq")
+                    }
+                    if !isSoundPlayed {
+                        playSound(sound: "promote", type: "mp3")
+                        isSoundPlayed = true
+                    }
+                } else {
+                    updatedPiecePositions.value[end.y][end.x] = movingPiece
+                    if !isSoundPlayed {
+                        playSound(sound: "move-self", type: "mp3")
+                        isSoundPlayed = true
+                    }
+                }
+                
+                
                 
                 // Update the piecePositions with the new value
                 piecePositions = updatedPiecePositions
@@ -243,19 +264,25 @@ class ChessBoard: ObservableObject, NSCopying {
                 // Store move history
                 history.value.append(Move(from: Position(x: start.x, y: start.y), to: Position(x: end.x, y: end.y)))
                 
-                if isCheckMate(player: currentPlayer) {
+                if isCheckMate(player: currentPlayer) || isStaleMate(player: currentPlayer) ||
+                   isOutOfMove(player: currentPlayer) || isOutOfTime(player: currentPlayer) ||
+                   isInsufficientMaterial(player: currentPlayer) {
+                    playSound(sound: "game-end", type: "mp3")
                     print(outcome)
-                } else if isStaleMate(player: currentPlayer) {
-                    print(outcome)
-                } else if isOutOfMove(player: currentPlayer) {
-                    print(outcome)
-                } else if isOutOfTime(player: currentPlayer) {
-                    print(outcome)
-                } else if isInsufficientMaterial(player: currentPlayer) {
-                    print(outcome)
+                    if winner == .white {
+                        currentUser.rating += ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: outcome, difficulty: currentUser.settingDifficulty)
+                        print(ratingChange)
+                    } else {
+                        currentUser.rating -= ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: outcome, difficulty: currentUser.settingDifficulty)
+                        if currentUser.rating < 0 {
+                            currentUser.rating = 0
+                        }
+                        print(ratingChange)
+                    }
                 } else {
                     print(outcome)
                 }
+                isSoundPlayed = false
             } else {
                 print("No piece found at the starting position.")
             }
@@ -294,7 +321,6 @@ class ChessBoard: ObservableObject, NSCopying {
                 } else {
                     updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "bq")
                 }
-                
             } else {
                 updatedPiecePositions.value[end.y][end.x] = movingPiece
             }
@@ -358,20 +384,6 @@ class ChessBoard: ObservableObject, NSCopying {
             
             // Switch to the next player's turn
             currentPlayer = (currentPlayer == .white) ? .black : .white
-            
-            if isCheckMate(player: currentPlayer) {
-                print(outcome)
-            } else if isStaleMate(player: currentPlayer) {
-                print(outcome)
-            } else if isOutOfMove(player: currentPlayer) {
-                print(outcome)
-            } else if isOutOfTime(player: currentPlayer) {
-                print(outcome)
-            } else if isInsufficientMaterial(player: currentPlayer) {
-                print(outcome)
-            } else {
-                print(outcome)
-            }
             
         } else {
             print("No piece found at the starting position.")
@@ -584,6 +596,7 @@ class ChessBoard: ObservableObject, NSCopying {
             
         // Castling
         case (2, 0):
+            print("Castle")
             guard start.isValid && end.isValid else {
                 return false
             }
@@ -592,11 +605,45 @@ class ChessBoard: ObservableObject, NSCopying {
                 return false
             }
             let castlingDirection = end.x > start.x ? 1 : -1
-            let kingXAfterCastling = start.x + (2 * castlingDirection)
-            let emptySquaresX = Array(stride(from: start.x + castlingDirection, to: kingXAfterCastling, by: castlingDirection))
             
-            guard emptySquaresX.allSatisfy({ $0 < 8 && board[start.y][$0] == nil }) else {
-                return false
+            var x = start.x + castlingDirection
+            if castlingDirection == 1 {
+                while x < 7 {
+                    // Check for pieces in between
+                    if getPiece(at: Position(x: x, y: end.y)) != nil {
+                        return false
+                    }
+                    
+                    // Simulate the movement
+                    var tempBoard = board
+                    tempBoard[end.y][x] = tempBoard[start.y][start.x]
+                    tempBoard[start.y][start.x] = nil
+                    
+                    // if king pass through a position in check
+                    if isKingInCheck(board: tempBoard, player: currentPlayer) {
+                        return false
+                    }
+                    
+                    x += castlingDirection
+                }
+            } else {
+                while x > 0 {
+                    if getPiece(at: Position(x: x, y: end.y)) != nil {
+                        return false
+                    }
+                    
+                    // Simulate the movement
+                    var tempBoard = board
+                    tempBoard[end.y][x] = tempBoard[start.y][start.x]
+                    tempBoard[start.y][start.x] = nil
+                    
+                    // if king pass through a position in check
+                    if isKingInCheck(board: tempBoard, player: currentPlayer) {
+                        return false
+                    }
+                    
+                    x += castlingDirection
+                }
             }
             
             let kingMoved = player == .white ? isWhiteKingMoved : isBlackKingMoved
@@ -824,6 +871,7 @@ class ChessBoard: ObservableObject, NSCopying {
             }
             
             // If no piece has valid moves, the player is in stalemate
+            outcome = .stalemate
             return true
         }
         
@@ -912,8 +960,7 @@ class ChessBoard: ObservableObject, NSCopying {
     func isOutOfMove(player: Player) -> Bool {
 
         if player == .white && availableMoves <= 0 {
-            print("Out Move")
-
+            print (availableMoves)
             outcome = .outOfMove
             // User is white by default
             winner = .black
@@ -1128,6 +1175,17 @@ class ChessBoard: ObservableObject, NSCopying {
         copy.history.value = history.value
         copy.allValidMoves = allValidMoves
         return copy
+    }
+    
+    func playSound(sound: String, type: String) {
+        if let path = Bundle.main.path(forResource: sound, ofType: type) {
+            do {
+                audioPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: path))
+                audioPlayer.play()
+            } catch {
+                print("Fail to play song")
+            }
+        }
     }
 }
 

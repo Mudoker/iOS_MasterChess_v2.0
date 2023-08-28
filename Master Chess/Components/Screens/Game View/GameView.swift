@@ -14,18 +14,19 @@ struct GameView: View {
     @State private var isRotatingWhite = true
     @State var show = true
     @State private var pulsingScale: CGFloat = 1.0
-
+    @State private var isVibrating = false
+    @State private var imageScale = 1.0
     private func startPulsingAnimation() {
         withAnimation(Animation.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
             pulsingScale = 1.1
         }
     }
-
+    
     private func resetPulsingAnimation() {
         pulsingScale = 1.0
     }
-
-
+    
+    
     var body: some View {
         ZStack {
             ChessBoardView(viewModel: viewModel)
@@ -37,24 +38,25 @@ struct GameView: View {
                             ForEach(0..<8) { x in
                                 let currentPosition = Position(x: x, y: y)
                                 let isMoveValid = viewModel.allValidMoves.contains { move in
-                                   return move.to == currentPosition
-                               }
+                                    return move.to == currentPosition
+                                }
                                 if let piece = viewModel.getPiece(at: currentPosition) {
-                                    Image(piece.imageView)
+                                    let isCurrentPiece = currentPiece.0 == piece
+                                    let pieceImage = Image(piece.imageView)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: proxy.size.width / 9, height: proxy.size.width / 8)
                                         .overlay(
                                             Circle()
                                                 .fill(isMoveValid ? Color.blue.opacity(0.8) : .clear)
-                                                .frame(width: isMoveValid ? 16 : 0, height: isMoveValid ? 16 : 0)  // Adjust the size of the inner circle
+                                                .frame(width: isMoveValid ? 16 : 0, height: isMoveValid ? 16 : 0)
                                         )
-                                        .offset(self.currentPiece.0 == piece ? self.currentPiece.1 : .zero)
+                                        .offset(isCurrentPiece ? self.currentPiece.1 : .zero)
                                         .onTapGesture {
-                                            if piece.side == viewModel.currentPlayer {  // Check if the piece's side is white
-                                                if self.currentPiece.0 == piece {
+                                            if piece.side == viewModel.currentPlayer {
+                                                if isCurrentPiece {
                                                     self.currentPiece.0 = nil
-                                                    viewModel.allValidMoves = [] // Clear available moves when tapping again
+                                                    viewModel.allValidMoves = []
                                                 } else {
                                                     self.currentPiece = (piece, .zero)
                                                     viewModel.allMove(from: Position(x: x, y: y), piece: piece)
@@ -71,19 +73,26 @@ struct GameView: View {
                                             }
                                         }
                                         .gesture(self.dragGesture(piece))
-                                        .zIndex(self.currentPiece.0 == piece ? 1 : 0) // Higher zIndex for the current piece
-                                        
+                                        .zIndex(isCurrentPiece ? 1 : 0)
+                                    
+                                    if isVibrating && piece == currentPiece.0{
+                                        pieceImage.vibratingShaking()
+                                    } else {
+                                        pieceImage
+                                    }
                                 } else {
                                     let currentPosition = Position(x: x, y: y)
                                     let isMoveValid = viewModel.allValidMoves.contains { move in
-                                       return move.to == currentPosition
-                                   }
+                                        return move.to == currentPosition
+                                    }
                                     Rectangle()
                                         .foregroundColor(.clear)
                                         .overlay(
-                                            Circle()
-                                                .fill(isMoveValid ? Color.blue.opacity(0.8) : .clear)
-                                                .frame(width: isMoveValid ? 16 : 0, height: isMoveValid ? 16 : 0)  // Adjust the size of the inner circle
+                                            ZStack {
+                                                if isMoveValid {
+                                                    PulsingView()
+                                                }
+                                            }
                                         )
                                         .contentShape(Rectangle())
                                         .onTapGesture {
@@ -93,7 +102,9 @@ struct GameView: View {
                                                     viewModel.didMove(move: move, piece: selectedPiece)
                                                     currentPiece.0 = nil
                                                     self.resetPulsingAnimation()
+                                                    isVibrating = false
                                                 } else {
+                                                    isVibrating = true
                                                     viewModel.playSound(sound: "illegal", type: "mp3")
                                                 }
                                             }
@@ -112,18 +123,18 @@ struct GameView: View {
     }
     
     private func dragGesture(_ piece: ChessPiece) -> some Gesture {
-            DragGesture()
-                .onChanged { dragValue in
-                    self.currentPiece = (piece, dragValue.translation)
-                    self.viewModel.objectWillChange.send()
-                }
-                .onEnded { dragValue in
-                    let finalPosition = self.viewModel.indexOf(piece) + Position(dragValue.translation)
-                    let move = Move(from: self.viewModel.indexOf(piece), to: finalPosition)
-                    viewModel.allMove(from: move.from, piece: piece)
-                    self.viewModel.didMove(move: move, piece: currentPiece.0 ?? ChessPiece(stringLiteral: ""))
-                    self.currentPiece = (nil, .zero)
-                }
+        DragGesture()
+            .onChanged { dragValue in
+                self.currentPiece = (piece, dragValue.translation)
+                self.viewModel.objectWillChange.send()
+            }
+            .onEnded { dragValue in
+                let finalPosition = self.viewModel.indexOf(piece) + Position(dragValue.translation)
+                let move = Move(from: self.viewModel.indexOf(piece), to: finalPosition)
+                viewModel.allMove(from: move.from, piece: piece)
+                self.viewModel.didMove(move: move, piece: currentPiece.0 ?? ChessPiece(stringLiteral: ""))
+                self.currentPiece = (nil, .zero)
+            }
     }
 }
 
@@ -131,6 +142,7 @@ struct GameView: View {
 func +(lhs: CGSize, rhs: CGSize) -> CGSize {
     return CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height)
 }
+
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {

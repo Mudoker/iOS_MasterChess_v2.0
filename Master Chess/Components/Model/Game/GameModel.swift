@@ -47,6 +47,9 @@ final class GameViewModel: ObservableObject {
                 self?.whiteRemainigTime = "\(whiteTime)" // Use directly as Int
                 if whiteTime <= 10 {
                     self?.playSound(sound: "tenseconds", type: "mp3")
+                    if whiteTime == 0 {
+                        self?.chessGame.outcome = .outOfTime
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -109,7 +112,7 @@ final class GameViewModel: ObservableObject {
 //        guard ai1.isCalculatingMove == false else { return }
 //
 //        guard ai2.isCalculatingMove == false else { return }
-
+//
                 allMove(from: move.from, piece: piece)
                 print("Human Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
                 print(piece.pieceName)
@@ -142,7 +145,7 @@ final class GameViewModel: ObservableObject {
 //                    print("AI Black Move: before \(move.from.x), \(move.from.y)")
 //                    // When has value -> move the piece
 //                    self.chessGame.movePieceAI(from: move.from, to: move.to)
-//                    self.playSound(sound: "move-self", type: "mp3")
+//                    self.playSound(sound: "move-opponent", type: "mp3")
 //                    print("AI Black Move: after \(move.to.x), \(move.to.y)")
 //                    print("------")
 //                    self.allValidMoves = []

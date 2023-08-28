@@ -11,7 +11,9 @@ import SwiftUI
 struct Master_ChessApp: App {
     @StateObject private var dataManager = DataManager()
     @StateObject private var currentUser = CurrentUser() // Initialize the CurrentUser instance
-
+    init() {
+//        SoundPlayer.startBackGroundMusic()
+    }
     var body: some Scene {
         WindowGroup {
             GameView()

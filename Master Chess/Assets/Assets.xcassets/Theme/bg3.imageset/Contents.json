@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "pixel-art-illustration-gear-icon-pixelated-gear-gear-settings-icon-pixelated-for-the-pixel-art-game-and-icon-for-website-and-video-game-old-school-retro-vector-removebg-preview-2@1x.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "pixel-art-illustration-gear-icon-pixelated-gear-gear-settings-icon-pixelated-for-the-pixel-art-game-and-icon-for-website-and-video-game-old-school-retro-vector-removebg-preview-2@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "pixel-art-illustration-gear-icon-pixelated-gear-gear-settings-icon-pixelated-for-the-pixel-art-game-and-icon-for-website-and-video-game-old-school-retro-vector-removebg-preview-2@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
