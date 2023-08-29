@@ -76,7 +76,7 @@ struct GameView: View {
                                         .zIndex(isCurrentPiece ? 1 : 0)
                                     
                                     if isVibrating && piece == currentPiece.0{
-                                        pieceImage.vibratingShaking()
+                                        pieceImage.vibratingShaking(deadline: 1)
                                     } else {
                                         pieceImage
                                     }

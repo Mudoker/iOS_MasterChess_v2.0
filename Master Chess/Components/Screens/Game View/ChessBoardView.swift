@@ -45,19 +45,45 @@ struct ChessBoardView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Image("profile1")
-                                .resizable()
-                                .frame(width: proxy.size.width/5, height: proxy.size.width/5)
-                            VStack (alignment: .leading) {
-                                Text("Mudoker")
-                                Text("Grand Master")
-                                    .opacity(0.7)
+                    ZStack {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Image(currentUser.profilePicture ?? "profile1")
+                                    .resizable()
+                                    .frame(width: proxy.size.width/5, height: proxy.size.width/5)
+                                VStack (alignment: .leading) {
+                                    Text(currentUser.username ?? "Mudoker")
+                                    
+                                    if CurrentUser.shared.rating < 800 {
+                                        Text("Newbie")
+                                    } else if CurrentUser.shared.rating < 1300 {
+                                        Text("Pro")
+                                    } else if CurrentUser.shared.rating < 1600 {
+                                        Text("Master")
+                                    } else {
+                                        Text("Grand Master")
+                                    }
+                                }
+                                
                             }
-                            
+                            Spacer()
+
+                            VStack(alignment: .trailing) {
+                                Image(viewModel.blackPlayerName == "M.Carlsen" ? "magnus" : viewModel.blackPlayerName)
+                                    .resizable()
+                                    .frame(width: proxy.size.width/5, height: proxy.size.width/5)
+                                VStack (alignment: .trailing) {
+                                    Text(viewModel.blackPlayerName)
+                                    Text(viewModel.blackTitle)
+                                        .opacity(0.7)
+                                }
+                                
+                            }
                         }
-                        Spacer()
+                        .frame(height: proxy.size.width/3)
+                        .padding(.horizontal, 8)
+                        .padding(.bottom, proxy.size.width/20)
+                        
                         VStack (spacing: proxy.size.width/30) {
                             HStack {
                                 Text(formatTime(viewModel.whiteRemainigTime))
@@ -69,7 +95,6 @@ struct ChessBoardView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: proxy.size.width/40))
                                     .frame(width: proxy.size.width / 6)
                                 
-                                Spacer()
                                 Text(formatTime(viewModel.blackRemainigTime))
                                     .font(.callout)
                                     .foregroundColor(.white)
@@ -83,6 +108,8 @@ struct ChessBoardView: View {
                                 RoundedRectangle(cornerRadius: proxy.size.width/40)
                                     .stroke(Color.blue, lineWidth: proxy.size.width/100)
                                     .background(Color.clear) // Set the background to clear to capture touches
+                                    .frame(width: proxy.size.width / 2.6, height: proxy.size.width / 8)
+                                
                                 
                                 Text("\(viewModel.currentPlayer == .white ? (viewModel.chessGame.currentUser.username == "test" ? "Mudoker" : "White") : (viewModel.blackPlayerName == "M.Carlsen" ? "Carlsen" : viewModel.blackPlayerName))'s Turn")
                                     .font(.callout)
@@ -110,22 +137,7 @@ struct ChessBoardView: View {
                                 Text("Unlimited moves")
                             }
                         }
-                        Spacer()
-                        VStack(alignment: .trailing) {
-                            Image("magnus")
-                                .resizable()
-                                .frame(width: proxy.size.width/5, height: proxy.size.width/5)
-                            VStack (alignment: .trailing) {
-                                Text(viewModel.blackPlayerName)
-                                Text(viewModel.blackTitle)
-                                    .opacity(0.7)
-                            }
-                            
-                        }
                     }
-                    .frame(height: proxy.size.width/3)
-                    .padding(.horizontal)
-                    .padding(.bottom, proxy.size.width/20)
                     ForEach((0...7).reversed(), id: \.self) { y in
                         HStack(spacing: 0) {
                             ForEach(0...7, id: \.self) { x in
@@ -252,7 +264,6 @@ struct ChessBoardView: View {
                     
                     HStack (spacing: 20) {
                         Button(action: {
-                            // Action for New Game
                             if viewModel.currentPlayer == .white {
                                 viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "wp"))
                             } else {
@@ -282,8 +293,6 @@ struct ChessBoardView: View {
                         //                        }
                         
                         Button(action: {
-                            // Action for New Game
-                            print(viewModel.chessGame.history.value)
                         }) {
                             VStack {
                                 Image(systemName: "flag")
@@ -298,7 +307,6 @@ struct ChessBoardView: View {
                     if isAdmin {
                         HStack (spacing: 20) {
                             Button(action: {
-                                // Action for New Game
                                 viewModel.chessGame.outcome = .checkmate
                                 viewModel.chessGame.winner = .white
                             }) {
@@ -312,8 +320,6 @@ struct ChessBoardView: View {
                             }
                             
                             Button(action: {
-                                // Action for New Game
-                                // Action for New Game
                                 viewModel.chessGame.outcome = .stalemate
                             }) {
                                 VStack {
@@ -326,9 +332,9 @@ struct ChessBoardView: View {
                             }
                             
                             Button(action: {
-                                // Action for New Game
                                 viewModel.chessGame.outcome = .checkmate
-                                viewModel.chessGame.winner = .black                            }) {
+                                viewModel.chessGame.winner = .black
+                            }) {
                                     VStack {
                                         Text("Force Lose")
                                             .frame(width: proxy.size.width / 4, height: proxy.size.width / 10)

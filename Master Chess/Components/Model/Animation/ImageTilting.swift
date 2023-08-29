@@ -3,6 +3,7 @@ import SwiftUI
 struct VibratingShakingModifier: ViewModifier {
     @State private var isAnimating = false
     @State private var imageScale = 1.0
+    var deadline: TimeInterval = 1
     
     func body(content: Content) -> some View {
         content
@@ -19,7 +20,7 @@ struct VibratingShakingModifier: ViewModifier {
                     withAnimation(.spring(response: 0.5, dampingFraction: 1)) {
                         if !isAnimating {
                             isAnimating.toggle()
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + deadline) {
                                 isAnimating = false
                                 imageScale = 1.0
                             }
@@ -32,8 +33,8 @@ struct VibratingShakingModifier: ViewModifier {
 }
 
 extension View {
-    func vibratingShaking() -> some View {
-        self.modifier(VibratingShakingModifier())
+    func vibratingShaking(deadline: TimeInterval) -> some View {
+        self.modifier(VibratingShakingModifier(deadline: deadline))
     }
 }
 
@@ -43,7 +44,7 @@ struct ShakingView: View {
         Image(systemName: "star.fill")
             .resizable()
             .frame(width: 50, height: 50)
-            .vibratingShaking()
+            .vibratingShaking(deadline: 1)
     }
 }
 

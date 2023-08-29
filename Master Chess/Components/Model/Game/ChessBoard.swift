@@ -18,6 +18,7 @@ class ChessBoard: ObservableObject, NSCopying {
     var isSoundPlayed = false
     // Calculate the rating change based on game result, player ratings, and difficulty
     let ratingChange = RatingCalculator.shared
+    var currentRating = 0
     @Published var whiteTimeLeft = 0 // Initialize with default value
     @Published var blackTimeLeft = 0// Initialize with default value
     @Published var cancellables = Set<AnyCancellable>()
@@ -48,6 +49,7 @@ class ChessBoard: ObservableObject, NSCopying {
             whiteTimeLeft = Int(initialTimeLimit)
             blackTimeLeft = Int(initialTimeLimit)
         }
+        currentRating = currentUser.rating
     }
     
     // Start new game
