@@ -216,7 +216,7 @@ struct LoginView: View {
                         }
                         .navigationDestination(
                             isPresented: $isMenuView) {
-                                GameView()
+                                TabBar()
                                     .navigationBarBackButtonHidden(true)
                         }
                             
@@ -279,6 +279,9 @@ struct LoginView: View {
                             .bold()
                             .foregroundColor(.black)
                             if loginStatus != "Login Successfully!" {
+                                Text("Wrong Username or Password")
+                                    .foregroundColor(.black)
+
                                 Text("Please try again")
                                 .foregroundColor(.black)
                             }

@@ -73,14 +73,14 @@ struct Welcome_Screen: View {
                     .navigationDestination(
                         isPresented: $isLogin // trigger the navigation
                     ) {
-//                        if username != "" {
-//                            TabBar()
-//                                .navigationBarBackButtonHidden(true)
-//                        } else {
+                        if username != "" {
+                            TabBar()
+                                .navigationBarBackButtonHidden(true)
+                        } else {
                             LoginView()
                                 .environmentObject(currentUser)
                                 .navigationBarBackButtonHidden(true)
-//                        }
+                        }
                     }
                     
                     Button {
