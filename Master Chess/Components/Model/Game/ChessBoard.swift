@@ -6,6 +6,8 @@ import SwiftUI
 import AVFoundation
 
 class ChessBoard: ObservableObject, NSCopying {
+    @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.username, ascending: true)], animation: .default) private var users: FetchedResults<Users>
     var currentUser = CurrentUser.shared
     var piecePositions: CurrentValueSubject<[[ChessPiece?]], Never> = CurrentValueSubject([])
     var audioPlayer = AVAudioPlayer()
@@ -39,19 +41,12 @@ class ChessBoard: ObservableObject, NSCopying {
     @Published var captures: [ChessPiece] = []
     @Published var availableMoves = 0
     @Published var promoteType: PieceType = .queen
-    init() {
-        // load from saved
-        if currentUser.hasActiveGame {
-            whiteTimeLeft = Int(currentUser.savedGameWhiteTimeLeft)
-            blackTimeLeft = Int(currentUser.savedGameBlackTimeLeft)
-        } else {
-            let initialTimeLimit: TimeInterval = currentUser.rating > 500 ? 15 * 60 : 25 * 60
-            whiteTimeLeft = Int(initialTimeLimit)
-            blackTimeLeft = Int(initialTimeLimit)
-        }
-        currentRating = currentUser.rating
-    }
+    @Published var isPromotion = false
+    @Published var isEnpassant = false
     
+    func getUserWithUsername(_ username: String) -> Users? {
+        return users.first { $0.username == username }
+    }
     // Start new game
     func createInitialBoard() -> [[ChessPiece?]] {
         var piecePositions = Array(repeating: Array<ChessPiece?>(repeating: nil, count: Constant.boardSize), count: Constant.boardSize)
@@ -109,11 +104,30 @@ class ChessBoard: ObservableObject, NSCopying {
             // Load board from saved
             piecePositions.value = createBoardFromLoad() // Populate piecePositions
             
-            // find current player
-            currentPlayer = currentUser.savedGameCurrentPlayer == "w" ? .white : .black
+            if let currentUserr = getUserWithUsername(currentUser.username ?? "") {
+                let savedGame = currentUserr.savedGame // Get the saved game from currentUserr
+
+//                currentUser.savedGameBoardSetup = savedGame?.boardSetup ?? [[]]
+//                currentUser.savedGameAutoPromotionEnabled = savedGame?.autoPromotionEnabled ?? false
+//                currentUser.savedGameBlackTimeLeft = savedGame?.blackTimeLeft ?? 0
+//                currentUser.savedGameWhiteTimeLeft = savedGame?.whiteTimeLeft ?? 0
+//                currentUser.savedGameCurrentPlayer = savedGame?.currentPlayer ?? "w"
+//                currentUser.savedGameDifficulty = savedGame?.difficulty ?? "easy"
+//                currentUser.savedGameIsBlackKingMoved = savedGame?.isBlackKingMoved ?? false
+//                currentUser.savedGameIsWhiteKingMoved = savedGame?.isWhiteKingMoved ?? false
+//                currentUser.savedGameIsWhiteLeftRookMoved = savedGame?.isWhiteLeftRookMoved ?? false
+//                currentUser.savedGameIsWhiteRightRookMoved = savedGame?.isWhiteRightRookMoved ?? false
+//                currentUser.savedGameIsBlackLeftRookMoved = savedGame?.isBlackLeftRookMoved ?? false
+//                currentUser.savedGameIsBlackRightRookMoved = savedGame?.isBlackRightRookMoved ?? false
+                
+                if let histories = savedGame?.unwrappedHistory {
+                    history.value = convertMovementsToMoves(movements: histories)
+                }
+            }
+            whiteTimeLeft = Int(currentUser.savedGameWhiteTimeLeft)
+            blackTimeLeft = Int(currentUser.savedGameBlackTimeLeft)
+
             
-            // moves left for Grandmaster
-            availableMoves = Int(currentUser.savedGameMoveAvailable)
             
         } else {
             // Create new board
@@ -125,12 +139,15 @@ class ChessBoard: ObservableObject, NSCopying {
             // White starts first
             currentPlayer = .white
             // Limit 30 moves for grandmaster and 50 for master
-            availableMoves = currentUser.rating >= 2400 ? 30 : currentUser.rating >= 2000 ? 50 : 100
+            availableMoves = currentUser.rating >= 1600 ? 30 : currentUser.rating >= 1300 ? 40 : 100
+            let initialTimeLimit: TimeInterval = currentUser.rating > 1300 ? 10 * 60 : 25 * 60
+            whiteTimeLeft = Int(initialTimeLimit)
+            blackTimeLeft = Int(initialTimeLimit)
         }
-        
+        currentRating = currentUser.rating
         // Start the clocks to begin tracking time
         startClocks()
-//        playSound(sound: "game-start", type: "mp3")
+        playSound(sound: "game-start", type: "mp3")
     }
     
     func getPiece(at position: Position) -> ChessPiece? {
@@ -232,13 +249,13 @@ class ChessBoard: ObservableObject, NSCopying {
                 // Must update to allow custom promotion
                 if movingPiece.pieceType == .pawn && (end.y == 7 || end.y == 0) {
                     if currentPlayer == .white {
-                        updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "wq")
+                        if currentUser.settingAutoPromotionEnabled {
+                            isPromotion = true
+                        } else {
+                            updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "wq")
+                        }
                     } else {
                         updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "bq")
-                    }
-                    if !isSoundPlayed {
-                        playSound(sound: "promote", type: "mp3")
-                        isSoundPlayed = true
                     }
                 } else {
                     updatedPiecePositions.value[end.y][end.x] = movingPiece
@@ -257,29 +274,47 @@ class ChessBoard: ObservableObject, NSCopying {
                 currentUser.savedGameBoardSetup[end.y][end.x] = currentUser.savedGameBoardSetup[start.y][start.x]
                 currentUser.savedGameBoardSetup[start.y][start.x] = ""
                 
+                
                 // For every move of user then minus one (Not applicable for AI)
                 availableMoves = currentPlayer == .white ? availableMoves - 1 : availableMoves
                 
                 // Switch to the next player's turn
                 currentPlayer = (currentPlayer == .white) ? .black : .white
-                
+                currentUser.savedGameCurrentPlayer = currentPlayer == .black ? "b" : "w"
                 // Store move history
                 history.value.append(Move(from: Position(x: start.x, y: start.y), to: Position(x: end.x, y: end.y)))
+                
+                if let currentUsername = currentUser.username {
+                    if let currentUserr = getUserWithUsername(currentUsername) {
+                        currentUserr.savedGame?.boardSetup = currentUser.savedGameBoardSetup
+                        currentUserr.savedGame?.autoPromotionEnabled = currentUser.savedGameAutoPromotionEnabled
+                        currentUserr.savedGame?.blackTimeLeft = currentUser.savedGameBlackTimeLeft
+                        currentUserr.savedGame?.whiteTimeLeft = currentUser.savedGameWhiteTimeLeft
+                        currentUserr.savedGame?.currentPlayer = currentUser.savedGameCurrentPlayer
+                        currentUserr.savedGame?.difficulty = currentUser.savedGameDifficulty
+                        currentUserr.savedGame?.isBlackKingMoved = currentUser.savedGameIsBlackKingMoved
+                        currentUserr.savedGame?.isWhiteKingMoved = currentUser.savedGameIsWhiteKingMoved
+                        currentUserr.savedGame?.isWhiteLeftRookMoved = currentUser.savedGameIsWhiteLeftRookMoved
+                        currentUserr.savedGame?.isWhiteRightRookMoved = currentUser.savedGameIsWhiteRightRookMoved
+                        currentUserr.savedGame?.isBlackLeftRookMoved = currentUser.savedGameIsBlackLeftRookMoved
+                        currentUserr.savedGame?.isBlackRightRookMoved = currentUser.savedGameIsBlackRightRookMoved
+                        currentUserr.savedGame?.kingPosition = currentUser.savedGameKingPosition
+                        convertIntegerOffsetsToMovements(integerOffsetsList: convertHistoryToIntegerOffsets(history: history.value))
+                    }
+                }
+                
                 
                 if isCheckMate(player: currentPlayer) || isStaleMate(player: currentPlayer) ||
                    isOutOfMove(player: currentPlayer) || isOutOfTime(player: currentPlayer) ||
                    isInsufficientMaterial(player: currentPlayer) {
                     playSound(sound: "game-end", type: "mp3")
-                    print(outcome)
                     if winner == .white {
                         currentUser.rating += ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: outcome, difficulty: currentUser.settingDifficulty)
-                        print(ratingChange)
                     } else {
                         currentUser.rating -= ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: outcome, difficulty: currentUser.settingDifficulty)
                         if currentUser.rating < 0 {
                             currentUser.rating = 0
                         }
-                        print(ratingChange)
                     }
                 } else {
                     print(outcome)
@@ -387,6 +422,25 @@ class ChessBoard: ObservableObject, NSCopying {
             // Switch to the next player's turn
             currentPlayer = (currentPlayer == .white) ? .black : .white
             
+            if let currentUsername = currentUser.username {
+                if let currentUserr = getUserWithUsername(currentUsername) {
+                    currentUserr.savedGame?.boardSetup = currentUser.savedGameBoardSetup
+                    currentUserr.savedGame?.autoPromotionEnabled = currentUser.savedGameAutoPromotionEnabled
+                    currentUserr.savedGame?.blackTimeLeft = currentUser.savedGameBlackTimeLeft
+                    currentUserr.savedGame?.whiteTimeLeft = currentUser.savedGameWhiteTimeLeft
+                    currentUserr.savedGame?.currentPlayer = currentUser.savedGameCurrentPlayer
+                    currentUserr.savedGame?.difficulty = currentUser.savedGameDifficulty
+                    currentUserr.savedGame?.isBlackKingMoved = currentUser.savedGameIsBlackKingMoved
+                    currentUserr.savedGame?.isWhiteKingMoved = currentUser.savedGameIsWhiteKingMoved
+                    currentUserr.savedGame?.isWhiteLeftRookMoved = currentUser.savedGameIsWhiteLeftRookMoved
+                    currentUserr.savedGame?.isWhiteRightRookMoved = currentUser.savedGameIsWhiteRightRookMoved
+                    currentUserr.savedGame?.isBlackLeftRookMoved = currentUser.savedGameIsBlackLeftRookMoved
+                    currentUserr.savedGame?.isBlackRightRookMoved = currentUser.savedGameIsBlackRightRookMoved
+                    currentUserr.savedGame?.kingPosition = currentUser.savedGameKingPosition
+                    convertIntegerOffsetsToMovements(integerOffsetsList: convertHistoryToIntegerOffsets(history: history.value))
+                }
+            }
+            
         } else {
             print("No piece found at the starting position.")
             print("Start: \(start.x), \(start.y)")
@@ -431,12 +485,14 @@ class ChessBoard: ObservableObject, NSCopying {
             if !history.isEmpty {
                 // Check for en passant
                 if deltaY == (player == .white ? -1 : 1) {
-                    // En passant
                     if let lastMove = history.last, lastMove.to.x == end.x {
                         if let piece = board[lastMove.to.y][lastMove.to.x], piece.pieceType == .pawn, piece.side != player {
                             if (player == .white && lastMove.from.y == end.y - 1 && lastMove.to.y == end.y + 1) ||
                                 (player == .black && lastMove.from.y == end.y + 1 && lastMove.to.y == end.y - 1) {
-                                return !isKingInCheck(board: tempBoard, player: currentPlayer)
+                                if !isKingInCheck(board: tempBoard, player: currentPlayer) {
+                                    isEnpassant = true
+                                    return true
+                                }
                             }
                         }
                     }
@@ -1189,6 +1245,100 @@ class ChessBoard: ObservableObject, NSCopying {
             }
         }
     }
+    
+    // Convert the move history to Integer to store in CoreData
+    func convertHistoryToIntegerOffsets(history: [Move]) -> [[Int]] {
+        var integerOffsets: [[Int]] = []
+        
+        for move in history {
+            let startX = move.from.x + 1
+            let startY = move.from.y + 1
+            let endX = move.to.x + 1
+            let endY = move.to.y + 1
+            
+            let startValue = startX * 10 + startY
+            let endValue = endX * 10 + endY
+            
+            integerOffsets.append([startValue, endValue])
+        }
+        
+        return integerOffsets
+    }
+    
+    func convertMovementsToMoves(movements: [Movement]) -> [Move] {
+        var moves: [Move] = []
+        
+        for movement in movements {
+            let startValue = Int(movement.start)
+            let endValue = Int(movement.end)
+            
+            let startX = (startValue - 1) / 10
+            let startY = (startValue - 1) % 10
+            let endX = (endValue - 1) / 10
+            let endY = (endValue - 1) % 10
+            
+            let from = Position(x: startX, y: startY)
+            let to = Position(x: endX, y: endY)
+            
+            let move = Move(from: from, to: to)
+            moves.append(move)
+        }
+        
+        return moves
+    }
+    
+    func convertMovementToMoves(movement: Movement) -> Move {
+        
+        let startValue = Int(movement.start)
+        let endValue = Int(movement.end)
+        
+        let startX = (startValue - 1) / 10
+        let startY = (startValue - 1) % 10
+        let endX = (endValue - 1) / 10
+        let endY = (endValue - 1) % 10
+        
+        let from = Position(x: startX, y: startY)
+        let to = Position(x: endX, y: endY)
+        
+        let move = Move(from: from, to: to)
+        
+        return move
+    }
+
+    func convertIntegerOffsetsToMovements(integerOffsetsList: [[Int]]) {
+        for integerOffsets in integerOffsetsList {
+            guard integerOffsets.count >= 2 else {
+                // Each integerOffsets array should have at least 2 values
+                continue
+            }
+            
+            let startValue = integerOffsets[0]
+            let endValue = integerOffsets[1]
+            
+            let startX = (startValue - 1) / 10
+            let startY = (startValue - 1) % 10
+            let endX = (endValue - 1) / 10
+            let endY = (endValue - 1) % 10
+            
+            let newMovement = Movement(context: viewContext)
+            newMovement.start = Int16(startX * 10 + startY)
+            newMovement.end = Int16(endX * 10 + endY)
+            if let currentUsername = currentUser.username {
+                if let currentUserr = getUserWithUsername(currentUsername) {
+                    currentUserr.savedGame?.addToHistory(newMovement)
+                }
+            }
+        }
+        
+        do {
+            try viewContext.save()
+        } catch {
+            // Handle the error
+            print("Error saving movements to Core Data: \(error)")
+        }
+    }
+
+    
 }
 
 // Result

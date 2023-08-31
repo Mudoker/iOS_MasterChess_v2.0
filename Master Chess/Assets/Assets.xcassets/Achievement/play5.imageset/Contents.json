@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "tactics_newbie.85063a2f@1x.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "tactics_newbie.85063a2f@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "tactics_newbie.85063a2f@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -11,22 +11,14 @@ struct ProfileView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.username, ascending: true)], animation: .default) private var users: FetchedResults<Users>
     @EnvironmentObject var currentUserr: CurrentUser
-
-    @State private var selectedLanguage = "English"
-    @State private var selectedSound = false
-    @State private var selectedSFX = false
-    @State private var selectedAP = false
-    @State private var selectedTheme = false
-    @State var isConfirmLogOut: Bool = false
-    @State var isLogOut: Bool = false
-    @State private var newPassword = ""
-    @State private var newUsername = ""
-    @State private var isConfirmButtonEnabled = false
-    @State private var isChangesMade = false
-    @State var selectedDifficulty = "easy"
     @AppStorage("userName") var username = "Mudoker"
     @State private var isUsernameTakenAlertPresented = false
-
+    @State private var showAllItems = false
+    
+    var columns: [GridItem] {
+        [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+    }
+    
     func isUsernameAvailable(_ newUsername: String) -> Bool {
         let isTaken = users.contains { user in
             user.unwrappedUsername == newUsername
@@ -39,327 +31,249 @@ struct ProfileView: View {
         dateFormatter.dateFormat = "MM / dd / yyyy"
         return dateFormatter.string(from: date)
     }
-
-    private func updateConfirmButtonState() {
-        isConfirmButtonEnabled = isChangesMade
-    }
+    
     func getUserWithUsername(_ username: String) -> Users? {
         return users.first { $0.username == username }
     }
-
+    
     var body: some View {
         GeometryReader { proxy in
             VStack {
                 let currentUser = getUserWithUsername(username)
-                HStack {
-                    Image(currentUser?.unwrappedProfilePicture ?? "chess")
-                        .background(.gray.opacity(0.4))
-                        .clipShape(Circle())
-                    Spacer()
-                    VStack(spacing: 5) {
-                        Text(currentUser?.unwrappedUsername ?? "ok")
-                            .font(.custom("OpenSans", size: 40))
-
-                        if let userID = currentUser?.unwrappedUserID {
-                            Text("#\(userID)")
-                                .font(.caption2)
-                                .multilineTextAlignment(.center)
-                        } else {
-                            Text("#000")
-                                .font(.caption2)
-                                .multilineTextAlignment(.center)
-                        }
-
-                        Text("Join date: \(formatDate(currentUser?.unwrappedJoinDate ?? Date()))")
-                            .font(.caption)
-
-                        if let userRating = currentUser?.rating {
-                            Text("Rating: \(String(userRating))")
-                                .font(.caption)
-                        } else {
-                            Text("Rating: 0")
-                                .font(.caption)
-                        }
-                    }
-                }
                 ScrollView (showsIndicators: false) {
-                    HStack(spacing: 20) {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundColor(Color.gray.opacity(0.5))
-                            .frame(width: proxy.size.width / 4, height: proxy.size.height / 8)
-                            .overlay(
-                                VStack {
-                                    if let totalGames = currentUser?.unwrappedUserStats.totalGames {
-                                        Text(String(totalGames))
-                                            .foregroundColor(.white)
-                                            .bold()
-                                            .font(.title2)
-                                    } else {
-                                        Text("0")
-                                            .foregroundColor(.white)
-                                            .bold()
-                                            .font(.title2)
-                                    }
-
-                                    Text("Games")
+                    
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Circle()
+                                .fill(.pink.opacity(0.4))
+                                .frame(width: proxy.size.width / 2.5)
+                                .overlay(
+                                    Image(currentUser?.profilePicture ?? "profile1")
+                                        .resizable()
+                                        .frame(width: proxy.size.width / 3, height: proxy.size.width / 3)
+                                        .overlay(
+                                            ZStack {
+                                                Circle()
+                                                    .fill( CurrentUser.shared.username == username ? Color.green : .gray)
+                                                    .frame(width: proxy.size.width / 18)
+                                                    .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
+                                                Circle()
+                                                    .stroke(Color.black, lineWidth: 3)
+                                                    .frame(width: proxy.size.width / 18)
+                                                    .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
+                                                
+                                            }
+                                        )
+                                )
+                            
+                            Spacer()
+                        }
+                        
+                        Text(currentUser?.username ?? "Mudoker")
+                            .font(.title)
+                            .bold()
+                        VStack {
+                            if currentUser?.rating ?? 2000 < 800 {
+                                Text("Newbie")
+                                    .font(.title3)
+                                    .bold()
+                            } else if currentUser?.rating ?? 2000 < 1300 {
+                                Text("Pro")
+                                    .font(.title3)
+                                    .bold()
+                                
+                            } else if currentUser?.rating ?? 2000 < 1600 {
+                                Text("Master")
+                                    .font(.title3)
+                                    .bold()
+                                
+                            } else {
+                                Text("Grand Master")
+                                    .font(.title3)
+                                    .bold()
+                            }
+                            
+                            HStack {
+                                Text("Join date: ")
+                                Text(formatDate(currentUser?.joinDate ?? Date()))
+                            }
+                        }
+                        .padding(.bottom, 5)
+                        
+                        HStack (spacing: 20) {
+                            Spacer()
+                            VStack {
+                                if let totalGames = currentUser?.unwrappedUserStats.totalGames {
+                                    Text(String(totalGames))
                                         .foregroundColor(.white)
-                                        .font(.caption)
-                                }
-                            )
-
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundColor(Color.gray.opacity(0.5))
-                            .frame(width: proxy.size.width / 4, height: proxy.size.height / 8)
-                            .overlay(
-                                VStack {
-                                    if let winrate = currentUser?.unwrappedUserStats.winRate {
-                                        Text("\(String(winrate))%")
-                                            .foregroundColor(.white)
-                                            .bold()
-                                            .font(.title2)
-                                    } else {
-                                        Text("0%")
-                                            .foregroundColor(.white)
-                                            .bold()
-                                            .font(.title2)
-                                    }
-                                    Text("Win rate")
+                                        .font(.largeTitle)
+                                        .bold()
+                                } else {
+                                    Text("0")
                                         .foregroundColor(.white)
-                                        .font(.caption)
+                                        .font(.largeTitle)
+                                        .bold()
                                 }
-                            )
-
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundColor(Color.gray.opacity(0.5))
-                            .frame(width: proxy.size.width / 4, height: proxy.size.height / 8)
-                            .overlay(
-                                VStack {
-                                    if let rank = currentUser?.ranking {
-                                        Text(String(rank))
-                                            .foregroundColor(.white)
-                                            .bold()
-                                            .font(.title2)
-                                    } else {
-                                        Text("0")
-                                            .foregroundColor(.white)
-                                            .bold()
-                                            .font(.title2)
-                                    }
-
-                                    Text("Rank")
+                                
+                                Text("Games")
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .font(.callout)
+                            }
+                            
+                            Spacer()
+                            
+                            VStack {
+                                if let winrate = currentUser?.unwrappedUserStats.winRate {
+                                    Text("\(String(winrate))%")
                                         .foregroundColor(.white)
-                                        .font(.caption)
+                                        .font(.largeTitle)
+                                        .bold()
+                                } else {
+                                    Text("0%")
+                                        .foregroundColor(.white)
+                                        .font(.largeTitle)
+                                        .bold()
                                 }
-                            )
+                                Text("Win rate")
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .font(.callout)
+                            }
+                            
+                            Spacer()
+                            
+                            VStack {
+                                if let rating = currentUser?.rating {
+                                    Text(String(rating))
+                                        .foregroundColor(.white)
+                                        .font(.largeTitle)
+                                        .bold()
+                                } else {
+                                    Text("0")
+                                        .foregroundColor(.white)
+                                        .font(.largeTitle)
+                                        .bold()
+                                }
+                                
+                                Text("Ratings")
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .font(.callout)
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        
                     }
                     
-                    Section(header: Text("Achievements").font(.title2.bold())) {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            LazyHStack(spacing: 10) {
-                                ForEach(0..<20, id: \.self) { index in
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .foregroundColor(index % 2 == 0 ? Color.blue : Color.green)
-                                        .frame(width: proxy.size.width / 4, height: proxy.size.height / 8)
-                                        .overlay(
-                                            Text("Win: \(index * 5)")
-                                                .foregroundColor(.white)
-                                                .font(.headline)
-                                        )
+                    HStack (alignment: .firstTextBaseline) {
+                        Text("Achievements")
+                            .font(.largeTitle)
+                            .bold()
+                        
+                        Spacer()
+                        Button(action: {
+                            withAnimation {
+                                showAllItems.toggle()
+                            }
+                        }) {
+                            Text(showAllItems ? "Show Less" : "Show All")
+                                .foregroundColor(.white)
+                                .font(.title3)
+                            
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top)
+                    
+                    if let achievements = currentUser?.unwrappedAchievements {
+                        
+                        LazyVGrid(columns: columns, spacing: 16) {
+                            ForEach(achievements, id: \.self) { achivement in
+                                VStack {
+                                    Image(achivement.icon ?? "rank1")
+                                        .resizable()
+                                        .frame(width: proxy.size.width / 4, height: proxy.size.width / 4)
+                                    Text(achivement.title ?? "Top 1")
+                                        .font(.title)
+                                        .bold()
+                                    
+                                    Text(achivement.des ?? "Top 1 on the leaderboard!")
+                                        .font(.callout)
+                                        .bold()
+                                        .opacity(0.7)
                                 }
                             }
                         }
-                        .frame(height: proxy.size.height / 8)
+                        .padding(.horizontal)
+                        
+                        
+                    } else {
+                        Text("No available achievement")
+                    }
+                    
+                    
+                    HStack {
+                        Text("History")
+                            .font(.largeTitle)
+                            .bold()
                         Spacer()
-                        Section(header: Text("User settings").font(.title2.bold())) {
-                            VStack(spacing: 20) {
-                                VStack(spacing: 10) {
-                                    RoundedRectangle(cornerRadius: 10)
-                                    .foregroundColor(Color.gray.opacity(0.2))
-                                    .overlay(
-                                        TextField("New Username", text: $newUsername)
-                                            .foregroundColor(.white)
-                                            .padding()
-                                            .disableAutocorrection(true)
-                                            .textInputAutocapitalization(.never)
-
-                                            .onChange(of: newUsername) { _ in
-                                                isChangesMade = true
-                                                updateConfirmButtonState()
-                                            }
-                                    )
-                                
-                                RoundedRectangle(cornerRadius: 10)
-                                    .foregroundColor(Color.gray.opacity(0.2))
-                                    .overlay(
-                                        TextField("New Password", text: $newPassword)
-                                            .foregroundColor(.white)
-                                            .padding()
-                                            .disableAutocorrection(true)
-                                            .textInputAutocapitalization(.never)
-
-                                            .onChange(of: newPassword) { _ in
-                                                isChangesMade = true
-                                                updateConfirmButtonState()
-                                            }
-                                    )
-                                }
-                                .preferredColorScheme(.dark)
-                                .frame(height: proxy.size.height / 8)
-                                
-                                Toggle("Auto Promotion Enabled", isOn: $selectedAP)
-                                    .foregroundColor(.white)
-                                    .onChange(of: selectedAP) { _ in
-                                        isChangesMade = true
-                                        updateConfirmButtonState()
-                                    }
-                                    .onAppear {
-                                        let autoPromotionEnabled = currentUser?.unwrappedUserSetting.unwrappedAutoPromotionEnabled ?? false
-                                            selectedAP = autoPromotionEnabled
-                                    }
-                                
-                                Toggle("Dark Mode", isOn: $selectedTheme)
-                                    .foregroundColor(.white)
-                                    .onChange(of: selectedTheme) { _ in
-                                        isChangesMade = true
-                                        updateConfirmButtonState()
-                                    }
-                                    .onAppear {
-                                        let isDarkMode = currentUser?.unwrappedUserSetting.unwrappedIsDarkMode ?? false
-
-                                        selectedTheme = isDarkMode
-                                    }
-                                
-                                Toggle("Music Enabled", isOn: $selectedSound)
-                                    .foregroundColor(.white)
-                                    .onChange(of: selectedSound) { _ in
-                                        isChangesMade = true
-                                        updateConfirmButtonState()
-                                    }
-                                    .onAppear {
-                                        let isMusicOn = currentUser?.unwrappedUserSetting.unwrappedMusicEnabled ?? false
-
-                                        selectedSound = isMusicOn
-                                    }
-                                
-                                Toggle("Sound Enabled", isOn: $selectedSFX)
-                                    .foregroundColor(.white)
-                                    .onChange(of: selectedSFX) { _ in
-                                        isChangesMade = true
-                                        updateConfirmButtonState()
-                                    }
-                                    .onAppear {
-                                        let isSoundOn = currentUser?.unwrappedUserSetting.unwrappedSoundEnabled ?? false
-
-                                        selectedSFX = isSoundOn
-                                    }
-                                
-                                Text("Language").bold()
-                                Picker("Language", selection: $selectedLanguage) {
-                                    Text("English").tag("English")
-                                    Text("Vietnamese").tag("Vietnamese")
-                                }
-                                .pickerStyle(SegmentedPickerStyle())
-                                .preferredColorScheme(.dark)
-                                .onAppear {
-                                    let language = currentUser?.unwrappedUserSetting.unwrappedLanguage ?? ""
-
-                                    selectedLanguage = language
-                                }
-                                
-                                Text("Difficulty").bold()
-                                Picker("Difficulty", selection: $selectedDifficulty) {
-                                    Text("Newbie").tag("easy")
-                                    Text("Intermediate").tag("normal")
-                                    Text("Advanced").tag("hard")
-                                }
-                                .pickerStyle(SegmentedPickerStyle())
-                                .preferredColorScheme(.dark)
-                                .onAppear {
-                                    let difficulty = currentUser?.unwrappedUserSetting.unwrappedDifficulty ?? ""
-
-                                    selectedDifficulty = difficulty
-                                }
-                                
-                                VStack {
-                                    
-                                    Button("Confirm Change") {
-                                        if newUsername != "" {
-                                            if isUsernameAvailable(newUsername) {
-                                                isUsernameTakenAlertPresented = false
-                                                currentUser?.username = newUsername
-                                                newUsername = ""
-                                            } else {
-                                                isUsernameTakenAlertPresented = true
-                                            }
-                                        }
-                                        if newPassword != "" {
-                                            currentUser?.password = newPassword
-                                            newPassword = ""
-
-                                        }
-                                        currentUser?.userSettings?.autoPromotionEnabled = selectedAP
-                                        currentUser?.userSettings?.isDarkMode = selectedTheme
-                                        currentUser?.userSettings?.soundEnabled = selectedSFX
-                                        currentUser?.userSettings?.musicEnabled = selectedSound
-                                        currentUser?.userSettings?.difficulty = selectedDifficulty
-                                        currentUser?.userSettings?.difficulty = selectedDifficulty
-
-                                        try? viewContext.save()
-                                        isConfirmButtonEnabled = false
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(isConfirmButtonEnabled ? Color.blue : Color.gray)
-                                    .foregroundColor(.white)
-                                    .font(.headline)
-                                    .cornerRadius(10)
-                                    .disabled(!isConfirmButtonEnabled)
-                                    .alert(isPresented: $isUsernameTakenAlertPresented) {
-                                        Alert(
-                                            title: Text("Username Taken"),
-                                            message: Text("The selected username is already taken. Please choose a different username."),
-                                            dismissButton: .default(Text("OK"))
-                                        )
-                                    }
-                                    
-                                    Button {
-                                        isConfirmLogOut.toggle()
-                                    } label: {
-                                        ZStack {
-                                            Text("Sign out")
-                                                .foregroundColor(.red)
+                    }
+                    .padding(.horizontal)
+                    
+                    if let histories = currentUser?.unwrappedGameHistory {
+                        ForEach(histories, id: \.self) { history in
+                            Capsule()
+                                .fill(.gray.opacity(0.3))
+                                .frame(width: proxy.size.width/1.2,height: proxy.size.width/5)
+                                .overlay(
+                                    HStack {
+                                        Text(formatDate(history.unwrappedDatePlayed))
+                                            .font(.callout)
+                                            .bold()
+                                        Spacer()
+                                        
+                                        Image(history.unwrappedOpponentUsername == "M.Carlsen" ? "magnus" : history.unwrappedOpponentUsername == "Nobita" ? "nobita" : "mitten")
+                                            .resizable()
+                                            .frame(width: proxy.size.width / 10, height: proxy.size.width / 12)
+                                            .background(
+                                                Circle()
+                                                    .foregroundColor(.white)
+                                            )
+                                        
+                                        
+                                        VStack(alignment: .leading) {
+                                            Text(history.unwrappedOpponentUsername)
                                                 .bold()
-                                                .font(.title3)
+                                            Text("Easy")
+                                        }
+                                        
+                                        Spacer()
+                                        VStack {
+                                            Text(history.unwrappedOutcome)
+                                                .font(.title2)
+                                                .foregroundColor(.green)
+                                                .bold()
+                                            
+                                            Text(String(history.unwrappedUserRatingChange))
+                                                .bold()
+                                                .opacity(0.7)
+                                                .foregroundColor(history.unwrappedOutcome == "Win" ? .green : history.unwrappedOutcome == "Draw" ? .yellow : .red)
                                         }
                                         
                                     }
-                                    .alert(isPresented: $isConfirmLogOut) {
-                                        Alert(
-                                            title: Text("Confirmation"),
-                                            message: Text("Are you sure you want to sign out?"),
-                                            primaryButton: .destructive(Text("Sign out")) {
-                                                isLogOut = true
-                                                username = ""
-                                            },
-                                            secondaryButton: .cancel(Text("Cancel"))
-                                        )
-                                    }
-                                    .navigationDestination(isPresented: $isLogOut) {
-                                        LoginView()
-                                            .navigationBarBackButtonHidden(true)
-                                    }
-                                }
-                                .padding(.top)
-                            }
-                            .padding()
+                                        .padding(.horizontal)
+                                )
                         }
+                    }else {
+                        Spacer()
+                        Text("No available history")
                     }
-             }
-                    VStack {
-                    }.frame(height: 30)
+                    
+                }
+                VStack {
+                }.frame(height: 30)
                 
             }
-            .padding(.horizontal)
         }
         .foregroundColor(.white)
         .background(Color(red: 0.00, green: 0.09, blue: 0.18))

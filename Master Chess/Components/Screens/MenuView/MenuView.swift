@@ -6,7 +6,7 @@ struct MenuView: View {
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.username, ascending: true)], animation: .default) private var users: FetchedResults<Users>
     @AppStorage("userName") var username = "Mudoker"
     @State private var isSheetPresented = true
-
+    @State var showToast = false
     func getUserWithUsername(_ username: String) -> Users? {
         return users.first { $0.username == username }
     }
@@ -18,6 +18,8 @@ struct MenuView: View {
     }
     
     @State var how2playView = false
+    @State var gameView = false
+
     var body: some View {
         GeometryReader { proxy in
             NavigationStack {
@@ -63,7 +65,9 @@ struct MenuView: View {
                         }
                         
                         HStack (spacing: 15) {
-                            Button(action: {}) {
+                            Button(action: {
+                                gameView.toggle()
+                            }) {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 16)
                                         .fill(Color.gray.opacity(0.7))
@@ -110,6 +114,9 @@ struct MenuView: View {
                                     }
                                     .frame(width: proxy.size.width/2.5, height: proxy.size.height/2.5)
                                 }
+                            }
+                            .fullScreenCover(isPresented: $gameView){
+                                GameView()
                             }
                             
                             VStack {
@@ -267,9 +274,18 @@ struct MenuView: View {
                     }
                     .frame(width: proxy.size.width)
                     .padding(.top)
+                    
+                    if showToast {
+                        AchievementView(isContentVisible: showToast)
+                    }
                 }
                 .frame(width: proxy.size.width)
                 .foregroundColor(.white)
+                .onAppear {
+                    withAnimation(.easeInOut) {
+                        showToast = true
+                    }
+                }
             }
             
         }

@@ -293,6 +293,8 @@ struct ChessBoardView: View {
                         //                        }
                         
                         Button(action: {
+                            viewModel.chessGame.outcome = .checkmate
+                            viewModel.chessGame.winner = .black
                         }) {
                             VStack {
                                 Image(systemName: "flag")

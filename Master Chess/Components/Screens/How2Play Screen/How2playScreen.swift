@@ -36,21 +36,11 @@ struct How2playScreen: View {
     
     let winCondition = "The game is won by putting the opponent's king in checkmate, in other words, the king is under attack and cannot escape. You can also win if your opponent resigns, runs out of time or exceeds the number of moves."
     
-    let masterConstraints = "If players are in rank Master (rating > 500), they will have a time limit of 15 minutes for the entire game. This adds urgency and encourages quick decision-making."
+    let masterConstraints = "If players are in rank Master (rating > 1300), they will have a time limit of 10 minutes for the entire game. This adds urgency and encourages quick decision-making."
     
-    let grandMasterConstraints = "For those Grandmasters (rating > 1000), there's a limit on the number of moves. Players must carefully plan their strategies as they're restricted in their available moves."
+    let grandMasterConstraints = "For those Grandmasters (rating > 1600), there's a limit on the number of moves (30 moves in total). Players must carefully plan their strategies as they're restricted in their available moves."
     
-    let pointsCal = [
-        "Win: x * winrate",
-        "Loss: -y / winrate",
-        "Draw: (x * winrate) / 2"
-    ]
-    
-    let xAndY = [
-        "Hard Mode: x = 100, y = 70",
-        "Normal Mode: x = 70, y = 50",
-        "Easy Mode: x = 50, y = 30"
-    ]
+ 
     var body: some View {
         GeometryReader { proxy in
             ZStack {
@@ -75,6 +65,16 @@ struct How2playScreen: View {
                                     .opacity(0.7)
                             }
                             .listStyle(InsetGroupedListStyle())
+                            
+                            HStack {
+                                Image("chessboard1")
+                                    .resizable()
+                                    .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                Spacer()
+                                Image("chessboard2")
+                                    .resizable()
+                                    .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                            }
                         }
                         
                         Section(header: Text("How to move").font(.title2).bold()) {
@@ -83,13 +83,53 @@ struct How2playScreen: View {
                                 Text("• " + move)
                                     .opacity(0.7)
                             }
-                        
+                            VStack {
+                                HStack {
+                                    Image("pawnmove")
+                                        .resizable()
+                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                    Spacer()
+                                    Image("knightmove")
+                                        .resizable()
+                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                }
+                                HStack {
+                                    Image("rookmove")
+                                        .resizable()
+                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                    Spacer()
+                                    Image("bishopmove")
+                                        .resizable()
+                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                }
+                                
+                                HStack {
+                                    Image("queenmove")
+                                        .resizable()
+                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                    Spacer()
+                                    Image("kingmove")
+                                        .resizable()
+                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                }
+                            }
                         }
                         
                         Section(header: Text("How to win").font(.title2).bold()) {
                             Text (winCondition)
                                 .font(.body)
                                 .opacity(0.7)
+                            
+                            HStack {
+                                Image("gamewin")
+                                    .resizable()
+                                    .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                Spacer()
+                                Image("gameloss")
+                                    .resizable()
+                                    .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                            }
+
                         }
                         
                         Section(header: Text("Master Rank Constraints").font(.title2).bold()) {
@@ -105,24 +145,36 @@ struct How2playScreen: View {
                         }
                         
                         Section(header: Text("Score Calculation").font(.title2).bold()) {
-                            Text ("In the game, points are awarded based on overall performance:")
+                            Text("In the game, points are awarded based on expected and final performance:")
                                 .font(.body)
                                 .opacity(0.7)
+                                .padding(.bottom, 10) // Add some spacing after the first Text
                             
-                            ForEach(pointsCal, id: \.self) { point in
-                                Text("• " + point)
-                                    .opacity(0.7)
-                            }
-                            
-                            Text("Meanwhile:")
+                            Text("RatingChange = KFactor * DifficultyMultiplier * (ActualOutcome - ExpectedOutcome)")
+                                .padding(.bottom, 5) // Add some spacing after the second Text
                                 .opacity(0.7)
-                            ForEach(xAndY, id: \.self) { score in
-                                Text("• " + score)
-                                    .opacity(0.7)
-                            }
+
+                            Text("ExpectedOutcome = 1 / (1 + 10^((OpponentRating - PlayerRating) / 400))")
+                                .padding(.bottom, 10) // Add some spacing after the third Text
+                                .opacity(0.7)
+
+                            Text("""
+                            Where:
+
+                            • RatingChange is the calculated change in the player's rating.
+                            • KFactor represents a constant that governs the sensitivity of rating changes.
+                            • DifficultyMultiplier adjusts the impact of difficulty levels on the rating change.
+                            • ActualOutcome signifies the actual game outcome's impact on the rating change.
+                            • ExpectedOutcome predicts the likelihood of a player's victory based on Elo's probability estimation.
+                            """)
+                            .opacity(0.7)
+
                         }
+
+
+
                     }
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal)
                 }
                 .frame(height: proxy.size.height - 20)
             }

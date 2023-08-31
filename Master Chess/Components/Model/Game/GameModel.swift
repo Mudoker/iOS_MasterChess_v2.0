@@ -16,6 +16,7 @@ final class GameViewModel: ObservableObject {
     @Published var history: [Move] = []
     @Published var blackPlayerProfile = ""
     @Published var blackTitle = ""
+    @Published var isPromotion = false
     var audioPlayer = AVAudioPlayer()
     var pieces: [ChessPiece] { chessGame.activePieces }
     private var disposables = Set<AnyCancellable>()
@@ -37,6 +38,13 @@ final class GameViewModel: ObservableObject {
         chessGame.$currentPlayer
             .sink { [weak self] currentPlayer in
                 self?.currentPlayer = currentPlayer
+            }
+            .store(in: &cancellables)
+        
+        // capture changes in currentPlayer
+        chessGame.$isPromotion
+            .sink { [weak self] isPromotion in
+                self?.isPromotion = isPromotion
             }
             .store(in: &cancellables)
         
@@ -109,49 +117,49 @@ final class GameViewModel: ObservableObject {
     
     func didMove(move: Move, piece: ChessPiece) {
         // trigger when player turn
-//        guard ai1.isCalculatingMove == false else { return }
-//
-//        guard ai2.isCalculatingMove == false else { return }
-//
-                allMove(from: move.from, piece: piece)
-                print("Human Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
-                print(piece.pieceName)
-                // move a piece
-                chessGame.movePiece(from: move.from, to: move.to)
+        guard ai1.isCalculatingMove == false else { return }
 
-                allValidMoves = []
+        guard ai2.isCalculatingMove == false else { return }
+////
+//                allMove(from: move.from, piece: piece)
+//                print("Human Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
+//                print(piece.pieceName)
+//                // move a piece
+//                chessGame.movePiece(from: move.from, to: move.to)
+//
+//                allValidMoves = []
 //        // will be updated later (right now AI is black by default)
-//        if currentPlayer == .white {
-//            ai1.bestMove { move in
-//                if let move = move {
-//                    print("AI White Move: before \(move.from.x), \(move.from.y)")
-//
-//                    // When has value -> move the piece
-//                    self.chessGame.movePieceAI(from: move.from, to: move.to)
-//                    self.playSound(sound: "move-self", type: "mp3")
-//
-//                    print("AI White Move: after \(move.to.x), \(move.to.y)")
-//                    print("------")
-//                    self.allValidMoves = []
-//                }
-//            }
-//        }
-//
-//
-//        // will be updated later (right now AI is black by default)
-//        if currentPlayer == .black {
-//            ai2.bestMove { move in
-//                if let move = move {
-//                    print("AI Black Move: before \(move.from.x), \(move.from.y)")
-//                    // When has value -> move the piece
-//                    self.chessGame.movePieceAI(from: move.from, to: move.to)
-//                    self.playSound(sound: "move-opponent", type: "mp3")
-//                    print("AI Black Move: after \(move.to.x), \(move.to.y)")
-//                    print("------")
-//                    self.allValidMoves = []
-//                }
-//            }
-//        }
+        if currentPlayer == .white {
+            ai1.bestMove { move in
+                if let move = move {
+                    print("AI White Move: before \(move.from.x), \(move.from.y)")
+
+                    // When has value -> move the piece
+                    self.chessGame.movePieceAI(from: move.from, to: move.to)
+                    self.playSound(sound: "move-self", type: "mp3")
+
+                    print("AI White Move: after \(move.to.x), \(move.to.y)")
+                    print("------")
+                    self.allValidMoves = []
+                }
+            }
+        }
+
+
+        // will be updated later (right now AI is black by default)
+        if currentPlayer == .black {
+            ai2.bestMove { move in
+                if let move = move {
+                    print("AI Black Move: before \(move.from.x), \(move.from.y)")
+                    // When has value -> move the piece
+                    self.chessGame.movePieceAI(from: move.from, to: move.to)
+                    self.playSound(sound: "move-opponent", type: "mp3")
+                    print("AI Black Move: after \(move.to.x), \(move.to.y)")
+                    print("------")
+                    self.allValidMoves = []
+                }
+            }
+        }
     }
     
     // get current piece index
@@ -168,7 +176,6 @@ final class GameViewModel: ObservableObject {
     }
     // start new game
     func start() {
-        currentUser.hasActiveGame = false
         chessGame.start()
     }
     

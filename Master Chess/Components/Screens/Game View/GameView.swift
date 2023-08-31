@@ -16,6 +16,10 @@ struct GameView: View {
     @State private var pulsingScale: CGFloat = 1.0
     @State private var isVibrating = false
     @State private var imageScale = 1.0
+    @State var isShowPromotionModal = false
+    @State private var selectedPiece = ""
+    @State private var isAnimating = false
+    var isDark = false
     private func startPulsingAnimation() {
         withAnimation(Animation.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
             pulsingScale = 1.1
@@ -28,11 +32,10 @@ struct GameView: View {
     
     
     var body: some View {
-        ZStack {
-            ChessBoardView(viewModel: viewModel)
-            GeometryReader { proxy in
+        GeometryReader { proxy in
+            ZStack {
+                ChessBoardView(viewModel: viewModel)
                 VStack {
-                    Spacer().frame(height: proxy.size.width / 2.60)
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 8), spacing: 0) {
                         ForEach(0..<8) { y in
                             ForEach(0..<8) { x in
@@ -114,7 +117,15 @@ struct GameView: View {
                             }
                         }
                     }
+                    Spacer().frame(height: proxy.size.width / 6)
+                    
                 }
+            }
+            if viewModel.chessGame.isPromotion {
+                PromotionModal(viewModel: viewModel)
+            }
+            if viewModel.chessGame.outcome != .ongoing {
+                ModalView(viewModel: viewModel)
             }
         }
         .onAppear {
@@ -142,7 +153,6 @@ struct GameView: View {
 func +(lhs: CGSize, rhs: CGSize) -> CGSize {
     return CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height)
 }
-
 
 struct GameView_Previews: PreviewProvider {
     static var previews: some View {

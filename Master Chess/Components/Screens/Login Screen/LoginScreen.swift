@@ -177,8 +177,6 @@ struct LoginView: View {
                                     CurrentUser.shared.savedGameBoardSetup = users[index].savedGame?.boardSetup ?? []
                                     CurrentUser.shared.savedGameCurrentPlayer = users[index].savedGame?.currentPlayer ?? ""
                                     CurrentUser.shared.savedGameDifficulty = users[index].savedGame?.difficulty ?? ""
-                                    CurrentUser.shared.savedGameIsCheck = users[index].savedGame?.isCheck ?? false
-                                    CurrentUser.shared.savedGameLanguage = users[index].savedGame?.language ?? ""
                                     CurrentUser.shared.savedGameMoveAvailable = users[index].savedGame?.moveAvailable ?? 0
                                     CurrentUser.shared.savedGameWhiteTimeLeft = users[index].savedGame?.whiteTimeLeft ?? 0
                                     CurrentUser.shared.savedGameIsWhiteKingMoved = users[index].savedGame?.isWhiteKingMoved ?? false
