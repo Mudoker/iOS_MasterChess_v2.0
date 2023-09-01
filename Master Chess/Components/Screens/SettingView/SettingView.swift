@@ -10,7 +10,7 @@ import SwiftUI
 struct SettingView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.username, ascending: true)], animation: .default) private var users: FetchedResults<Users>
-    @EnvironmentObject var currentUserr: CurrentUser
+    var currentUserr = CurrentUser.shared
     @State private var selectedLanguage = "English"
     @State private var selectedSound = false
     @State private var selectedSFX = false
@@ -47,19 +47,21 @@ struct SettingView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            GeometryReader { proxy in
+        GeometryReader { proxy in
+            
+            NavigationView {
+                
                 let currentUser = getUserWithUsername(username)
                 VStack (alignment: .center) {
                     HStack {
                         Text("Settings")
                             .font(.largeTitle)
                             .bold()
-                        .padding(.horizontal)
+                            .padding(.horizontal)
                         Spacer()
                     }
-                    
                     ScrollView(showsIndicators: false) {
+                        
                         Button(action: {
                             withAnimation {
                                 isShowProfile.toggle()
@@ -98,6 +100,10 @@ struct SettingView: View {
                             .padding(.horizontal)
                             .frame(height: proxy.size.width/3.5)
                             .background(.gray.opacity(0.2))
+                        }
+                        .navigationDestination(isPresented: $isShowProfile) {
+                            ProfileView(currentUser: currentUser ?? Users())
+                                .navigationBarBackButtonHidden(false)
                         }
                         .padding(.bottom)
                         
@@ -188,6 +194,11 @@ struct SettingView: View {
                                         selectedTheme = theme == true ? "dark" : "light"
                                     }
                                 }
+                                .onChange(of: selectedTheme) { _ in
+                                    isChangesMade = true
+                                    updateConfirmButtonState()
+                                }
+
                                 .padding([.bottom, .horizontal])
                                 Text("Language")
                                     .padding(.top)
@@ -202,6 +213,10 @@ struct SettingView: View {
                                     let language = currentUser?.unwrappedUserSetting.unwrappedLanguage ?? "English"
                                     
                                     selectedLanguage = language
+                                }
+                                .onChange(of: selectedLanguage) { _ in
+                                    isChangesMade = true
+                                    updateConfirmButtonState()
                                 }
                                 .padding([.bottom, .horizontal])
                                 
@@ -237,6 +252,10 @@ struct SettingView: View {
                                     
                                     selectedDifficulty = difficulty
                                 }
+                                .onChange(of: selectedDifficulty) { _ in
+                                    isChangesMade = true
+                                    updateConfirmButtonState()
+                                }
                                 .padding([.bottom, .horizontal])
                                 
                             }
@@ -264,8 +283,14 @@ struct SettingView: View {
                                     currentUser?.userSettings?.soundEnabled = selectedSFX
                                     currentUser?.userSettings?.musicEnabled = selectedSound
                                     currentUser?.userSettings?.difficulty = selectedDifficulty
-                                    currentUser?.userSettings?.difficulty = selectedDifficulty
                                     
+                                    currentUserr.settingAutoPromotionEnabled = selectedAP
+                                    currentUserr.settingIsSystemTheme = selectedTheme == "system" ? true : false
+                                    currentUserr.settingIsDarkMode = selectedTheme == "light" ? false : true
+                                    currentUserr.settingSoundEnabled = selectedSFX
+                                    currentUserr.settingMusicEnabled = selectedSound
+                                    currentUserr.settingDifficulty = selectedDifficulty
+
                                     try? viewContext.save()
                                     isConfirmButtonEnabled = false
                                 }
@@ -313,17 +338,13 @@ struct SettingView: View {
                                 .padding(.top, 6)
                             }
                             .padding(.top)
-                            
                         }
                     }
                 }
-                .navigationDestination(isPresented: $isShowProfile) {
-                    ProfileView()
-                }
-                .frame(maxWidth: .infinity)
+                .foregroundColor(.white)
+                .background(Color(red: 0.00, green: 0.09, blue: 0.18))
             }
-            .foregroundColor(.white)
-            .background(Color(red: 0.00, green: 0.09, blue: 0.18))
+            
         }
     }
 }

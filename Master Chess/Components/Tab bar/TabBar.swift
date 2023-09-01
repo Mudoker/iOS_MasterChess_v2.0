@@ -16,8 +16,8 @@ struct TabBar: View {
                 SettingView()
             }
             .tag(1)
-            .toolbarBackground(Color.clear, for: .tabBar)
-            
+            .toolbarBackground(.hidden, for: .tabBar)
+
         }
         .overlay(alignment: .bottom) {
             CustomTabbar(tabSelection: $tabSelection)

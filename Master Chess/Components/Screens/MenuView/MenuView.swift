@@ -3,7 +3,7 @@ import SwiftUI
 struct MenuView: View {
     @State private var currentTime = Date()
     @Environment(\.managedObjectContext) private var viewContext
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.username, ascending: true)], animation: .default) private var users: FetchedResults<Users>
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.rating, ascending: true)], animation: .default) private var users: FetchedResults<Users>
     @AppStorage("userName") var username = "Mudoker"
     @State private var isSheetPresented = true
     @State var showToast = false
@@ -17,39 +17,48 @@ struct MenuView: View {
         return dateFormatter.string(from: date)
     }
     
+    var user = CurrentUser.shared
+    @State var achievementImage = ""
+    @State var achievementDes = ""
+    
+    @State var leaderBoard = false
     @State var how2playView = false
     @State var gameView = false
-
+    
     var body: some View {
+        
         GeometryReader { proxy in
-            NavigationStack {
+            NavigationView {
+                
                 ZStack {
                     let currentUser = getUserWithUsername(username)
-
+                    
                     Color(red: 0.00, green: 0.09, blue: 0.18)
-                    .ignoresSafeArea()
+                        .ignoresSafeArea()
                     
                     VStack(alignment: .leading) {
                         HStack {
                             VStack(alignment: .leading) {
                                 Text(getFormattedDate())
-                                    
+                                
                                     .frame(height: proxy.size.width/100)
                                     .padding(.leading)
-                        
+                                
                                 Text(greeting(for: currentTime))
                                     .font(.title2)
                                     .frame(height: proxy.size.width/10)
                                     .bold()
                                     .padding(.leading)
                             }
-                        
+                            
                             Spacer()
-                        
+                            
                             HStack {
-                                Text("Rank: \(String(currentUser?.ranking ?? 0))")
+                                Text("Rating: \(String(currentUser?.rating ?? 0))")
                                     .font(.caption)
-                                Button(action: {}) {
+                                Button(action: {
+                                    leaderBoard.toggle()
+                                }) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 16)
                                             .fill(Color.gray.opacity(0.7))
@@ -59,32 +68,39 @@ struct MenuView: View {
                                             .frame(width: proxy.size.width/16, height: proxy.size.width/16)
                                     }
                                 }
+                                .navigationDestination(isPresented: $leaderBoard) {
+                                    LeaderBoard()
+                                        .navigationBarBackButtonHidden(false)
+                                }
                             }
                             .padding(.horizontal)
-
+                            
                         }
                         
                         HStack (spacing: 15) {
                             Button(action: {
+                                user.savedGameBoardSetup = currentUser?.savedGame?.boardSetup ?? [[]]
+                                try? viewContext.save()
+                                print(user.settingDifficulty)
                                 gameView.toggle()
                             }) {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 16)
                                         .fill(Color.gray.opacity(0.7))
                                         .frame(width: proxy.size.width/2.5, height: proxy.size.height/3)
-
+                                    
                                     VStack {
                                         HStack {
                                             Image("chess")
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
-                                            .frame(width: proxy.size.width/3)
+                                                .frame(width: proxy.size.width/3)
                                             Spacer()
                                         }
                                         .frame(width: proxy.size.width/2)
-                                    
-    //                                    Spacer()
-                                    
+                                        
+                                        //                                    Spacer()
+                                        
                                         VStack (alignment: .leading, spacing: 5) {
                                             Text("Competitive")
                                                 .font(.custom("OpenSans", size: 25))
@@ -109,14 +125,14 @@ struct MenuView: View {
                                         }
                                         .padding(.horizontal)
                                         .padding(.bottom)
-
+                                        
                                         Spacer()
                                     }
                                     .frame(width: proxy.size.width/2.5, height: proxy.size.height/2.5)
                                 }
                             }
                             .fullScreenCover(isPresented: $gameView){
-                                GameView()
+                                GameView(user: currentUser ?? Users())
                             }
                             
                             VStack {
@@ -127,12 +143,12 @@ struct MenuView: View {
                                         RoundedRectangle(cornerRadius: 16)
                                             .fill(Color.gray.opacity(0.7))
                                             .frame(width: proxy.size.width/2.5, height: proxy.size.height/6.1)
-
+                                        
                                         VStack(alignment: .leading) {
                                             HStack {
                                                 Text("How to play?")
-                                                        .font(.custom("OpenSans_Italic", size: 18))
-                                                        .bold()
+                                                    .font(.custom("OpenSans_Italic", size: 18))
+                                                    .bold()
                                                     .multilineTextAlignment(.leading)
                                                 Image("how2play")
                                                     .resizable()
@@ -162,15 +178,15 @@ struct MenuView: View {
                                 .navigationDestination(isPresented: $how2playView) {
                                     How2playScreen()
                                         .navigationBarBackButtonHidden(false)
-                                   
+                                    
                                 }
                                 .frame(width: proxy.size.width/2.5, height: proxy.size.height/6)
                                 
                                 
                                 Button(action: {
                                     if let url = URL(string: "https://www.fide.com") {
-                                            UIApplication.shared.open(url)
-                                        }
+                                        UIApplication.shared.open(url)
+                                    }
                                 }) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 16)
@@ -179,16 +195,16 @@ struct MenuView: View {
                                         VStack(alignment: .leading) {
                                             HStack {
                                                 Text("Official Website")
-                                                        .font(.custom("OpenSans_Italic", size: 18))
-                                                        .bold()
+                                                    .font(.custom("OpenSans_Italic", size: 18))
+                                                    .bold()
                                                     .multilineTextAlignment(.leading)
                                                 Image("fide")
                                                     .resizable()
                                                     .frame(width: proxy.size.width/6)
                                             }
                                             .padding(.leading)
-
-    //                                                .padding(.leading)
+                                            
+                                            //                                                .padding(.leading)
                                             Spacer()
                                             Divider()
                                             HStack {
@@ -207,7 +223,7 @@ struct MenuView: View {
                                         }
                                         .padding(.top)
                                         .frame(width: proxy.size.width/2.5)
-
+                                        
                                     }
                                 }
                                 .frame(width: proxy.size.width/2.5, height: proxy.size.height/6.3)
@@ -229,13 +245,13 @@ struct MenuView: View {
                                     .bold()
                                 Text("|")
                                     .bold()
-
+                                
                                 Text(String(currentUser?.userStats?.unwrappedLosses ?? 0))
                                     .bold()
                                     .opacity(0.6)
                             }
                             .padding(.horizontal)
-                         
+                            
                             if currentUser?.unwrappedGameHistory.isEmpty ?? true {
                                 Spacer()
                                 Text("No available history")
@@ -245,28 +261,29 @@ struct MenuView: View {
                                         HStack {
                                             Text(formatDate(history.unwrappedDatePlayed))
                                                 .bold()
-
+                                            
                                             Spacer()
-
-                                            Image("autobot")
+                                            
+                                            Image(history.unwrappedOpponentUsername == "M.Carlsen" ? "magnus" : history.unwrappedOpponentUsername == "Nobita" ? "nobita" : "mitten")
                                                 .resizable()
                                                 .frame(width: proxy.size.width / 10, height: proxy.size.width / 12)
-                                                .background(
-                                                    Circle()
-                                                    .foregroundColor(.white)
-                                                )
-
-                                            Text("Autobot")
+                                            
+                                            
+                                            Text(history.unwrappedOpponentUsername)
                                                 .bold()
-
+                                            
                                             Spacer()
-
+                                            
                                             Text(history.unwrappedOutcome)
+                                                .font(.title2)
+                                                .foregroundColor(history.unwrappedOutcome == "Win" ? .green : history.unwrappedOutcome == "Draw" ? .yellow : .red)
+                                                .bold()
                                         }
+                                        .padding(.horizontal)
                                     }
                                 }
                             }
-
+                            
                             Spacer()
                         }
                         .frame(width: proxy.size.width)
@@ -276,19 +293,139 @@ struct MenuView: View {
                     .padding(.top)
                     
                     if showToast {
-                        AchievementView(isContentVisible: showToast)
+                        AchievementView(isContentVisible: showToast, imageName: achievementImage, des: achievementDes)
                     }
                 }
                 .frame(width: proxy.size.width)
                 .foregroundColor(.white)
                 .onAppear {
-                    withAnimation(.easeInOut) {
-                        showToast = true
+                    let currentUser = getUserWithUsername(username)
+                    for achievement in currentUser?.unwrappedAchievements ?? [] {
+                        if achievement.title == "First Step" && !achievement.unlocked {
+                            achievementImage = achievement.icon ?? ""
+                            achievementDes = achievement.des ?? ""
+                            showToast = true
+                            achievement.unlocked = true
+                        }
+                        
+                        if achievement.title == "Top 1" {
+                            if currentUser == users[0] && !achievement.unlocked {
+                                achievementImage = achievement.icon ?? ""
+                                achievementDes = achievement.des ?? ""
+                                showToast = true
+                                achievement.unlocked = true
+                            }
+                        }
+                        
+                        if users.count >= 3 {
+                            if achievement.title == "Top 2" {
+                                if currentUser == users[1] && !achievement.unlocked {
+                                    achievementImage = achievement.icon ?? ""
+                                    achievementDes = achievement.des ?? ""
+                                    showToast = true
+                                    achievement.unlocked = true
+                                }
+                            }
+                            
+                            if achievement.title == "Top 3" {
+                                if currentUser == users[2] && !achievement.unlocked {
+                                    achievementImage = achievement.icon ?? ""
+                                    achievementDes = achievement.des ?? ""
+                                    showToast = true
+                                    achievement.unlocked = true
+                                }
+                            }
+                        }
+                        
+                        
+                        if achievement.title == "Get's started" {
+                            if currentUser?.userStats?.totalGames == 1 && !achievement.unlocked {
+                                achievementImage = achievement.icon ?? ""
+                                achievementDes = achievement.des ?? ""
+                                showToast = true
+                                achievement.unlocked = true
+                            }
+                        }
+                        
+                        if achievement.title == "Game Lover" {
+                            if currentUser?.userStats?.totalGames == 5 && !achievement.unlocked {
+                                achievementImage = achievement.icon ?? ""
+                                achievementDes = achievement.des ?? ""
+                                showToast = true
+                                achievement.unlocked = true
+                            }
+                        }
+                        
+                        if achievement.title == "Friend with AI" {
+                            if currentUser?.userStats?.totalGames == 10 && !achievement.unlocked {
+                                achievementImage = achievement.icon ?? ""
+                                achievementDes = achievement.des ?? ""
+                                showToast = true
+                                achievement.unlocked = true
+                            }
+                        }
+                        
+                        if achievement.title == "The Challenger" {
+                            if currentUser?.userStats?.totalGames == 20 && !achievement.unlocked {
+                                achievementImage = achievement.icon ?? ""
+                                achievementDes = achievement.des ?? ""
+                                showToast = true
+                                achievement.unlocked = true
+                            }
+                        }
+                        
+                        if achievement.title == "AI Killer" {
+                            if currentUser?.userStats?.totalGames == 50 && !achievement.unlocked {
+                                achievementImage = achievement.icon ?? ""
+                                achievementDes = achievement.des ?? ""
+                                showToast = true
+                                achievement.unlocked = true
+                            }
+                        }
+                        
+                        if achievement.title == "Newbie" {
+                            if currentUser?.rating ?? 0 < 1000 && !achievement.unlocked {
+                                achievementImage = achievement.icon ?? ""
+                                achievementDes = achievement.des ?? ""
+                                showToast = true
+                                achievement.unlocked = true
+                            }
+                        }
+                        
+                        if achievement.title == "Pro Player" {
+                            if 1000 <= (currentUser?.rating ?? 0) && (currentUser?.rating ?? 0) < 1300 && !achievement.unlocked {
+                                achievementImage = achievement.icon ?? ""
+                                achievementDes = achievement.des ?? ""
+                                showToast = true
+                                achievement.unlocked = true
+                            }
+                        }
+                        
+                        if achievement.title == "Master" {
+                            if 1300 <= (currentUser?.rating ?? 0) && (currentUser?.rating ?? 0) < 1600 && !achievement.unlocked {
+                                achievementImage = achievement.icon ?? ""
+                                achievementDes = achievement.des ?? ""
+                                showToast = true
+                                achievement.unlocked = true
+                            }
+                        }
+                        
+                        if achievement.title == "Grand Master" {
+                            if currentUser?.rating ?? 0 >= 1600 && !achievement.unlocked {
+                                achievementImage = achievement.icon ?? ""
+                                achievementDes = achievement.des ?? ""
+                                showToast = true
+                                achievement.unlocked = true
+                            }
+                        }
+                        showToast = false
                     }
                 }
             }
+            .navigationViewStyle(.stack)
             
         }
+        
     }
     
     private func greeting(for date: Date) -> String {

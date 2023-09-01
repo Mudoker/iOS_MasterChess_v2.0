@@ -16,7 +16,7 @@ struct Master_ChessApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            CRUD()
+            SplashView()
                 .environment(\.managedObjectContext, dataManager.container.viewContext)
                 .environmentObject(currentUser) // Pass currentUser as an environment object
 

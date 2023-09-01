@@ -35,8 +35,9 @@ struct Test_ArrayAnimation: View {
                                     }
                                     .onChange(of: items2.count) { _ in
                                         withAnimation {
-                                                                        scrollViewProxy.scrollTo(items2.last, anchor: .trailing)
-                                                                    }                                    }
+                                            scrollViewProxy.scrollTo(items2.last, anchor: .trailing)
+                                        }
+                                    }
                                 }
                             }
                         }

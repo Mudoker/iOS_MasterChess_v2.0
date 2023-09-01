@@ -100,7 +100,7 @@ class AIEngine: NSObject, GKGameModel {
     func isWin(for player: GKGameModelPlayer) -> Bool {
         if let aiPlayer = player as? AIPlayer {
             // Check if the opponent is in a loss position (checkmate)
-            return isLoss(for: aiPlayer.opponent)
+            return chessBoard.isCheckMate(player: aiPlayer.player)
         }
         return false
     }
@@ -123,31 +123,14 @@ class AIEngine: NSObject, GKGameModel {
             score -= piece.pieceType.weight
         }
         
-        let checkOpponentBonus = 500
-        let checkPenalty = -500
-        let checkedMatePenalty = -9999
         let checkmateOpponentBonus = 9999
         
-        // Try to check the opponent
-        if chessBoard.isKingInCheck(board: chessBoard.piecePositions.value, player: aiPlayer.player == .white ? .black : .white) {
-            score += checkOpponentBonus
-        }
-        
-        // Try to avoid being checked
-        if chessBoard.isKingInCheck(board: chessBoard.piecePositions.value, player: aiPlayer.player) {
-            score += checkPenalty
-        }
-        
-        // Try to avoid moving into a checkmate position at all cost
-        if chessBoard.isCheckMate(player: aiPlayer.player) {
-            score += checkedMatePenalty
-        }
-        
+
         // Try to checkmate the opponent at all costs
         if chessBoard.isCheckMate(player: aiPlayer.player == .white ? .black : .white) {
             score += checkmateOpponentBonus
         }
-        
+
         return score
     }
 }

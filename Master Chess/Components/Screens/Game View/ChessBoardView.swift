@@ -3,6 +3,7 @@ import SwiftUI
 struct ChessBoardView: View {
     var currentUser = CurrentUser.shared
     let isAdmin = true // Set this to true or false based on admin status
+    @Environment(\.managedObjectContext) private var viewContext
     @StateObject var viewModel: GameViewModel
     var history: [Move] = [
         Move(from: Position(x: 0, y: 1), to: Position(x: 2, y: 3)),
@@ -16,8 +17,9 @@ struct ChessBoardView: View {
         Move(from: Position(x: 1, y: 5), to: Position(x: 3, y: 4)),
         Move(from: Position(x: 5, y: 2), to: Position(x: 4, y: 3))
     ]
+    @State var isMenu = false
     @State private var isExpanded = false
-    
+    var user: Users
     @State var isAnimation = false
     let columnLabels = "abcdefghijklmnopqrstuvwxyz"
     func coordinateString(for point: Position) -> String {
@@ -69,7 +71,7 @@ struct ChessBoardView: View {
                             Spacer()
 
                             VStack(alignment: .trailing) {
-                                Image(viewModel.blackPlayerName == "M.Carlsen" ? "magnus" : viewModel.blackPlayerName)
+                                Image(viewModel.blackPlayerName == "M.Carlsen" ? "magnus" : viewModel.blackPlayerName.lowercased())
                                     .resizable()
                                     .frame(width: proxy.size.width/5, height: proxy.size.width/5)
                                 VStack (alignment: .trailing) {
@@ -218,14 +220,13 @@ struct ChessBoardView: View {
                     .padding(.horizontal)
                     .padding(.vertical)
                     
-                    
                     if viewModel.chessGame.history.value.isEmpty {
                         Text("Start a move!")
                             .font(.title3.bold())
                             .opacity(0.7)
                             .frame(height: proxy.size.height / 20)
                         
-                    } else {
+                    } else {    
                         ScrollView(.horizontal, showsIndicators: false) {
                             ScrollViewReader { scrollProxy in
                                 HStack(spacing: proxy.size.width/30) {
@@ -264,11 +265,12 @@ struct ChessBoardView: View {
                     
                     HStack (spacing: 20) {
                         Button(action: {
-                            if viewModel.currentPlayer == .white {
-                                viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "wp"))
-                            } else {
-                                viewModel.didMove(move: Move(from: Position(x: 0, y: 0), to: Position(x: 1, y: 1)), piece: ChessPiece(stringLiteral: "bp"))
-                            }
+                            currentUser.hasActiveGame = false
+                            user.hasActiveGame = false
+                            user.savedGame?.history = []
+                            user.savedGame?.captures = []
+                            try?viewContext.save()
+                            viewModel.start()
                         }) {
                             VStack {
                                 Image(systemName: "plus.circle")
@@ -295,6 +297,9 @@ struct ChessBoardView: View {
                         Button(action: {
                             viewModel.chessGame.outcome = .checkmate
                             viewModel.chessGame.winner = .black
+                            
+                            currentUser.rating -= viewModel.chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: viewModel.chessGame.outcome, difficulty: currentUser.settingDifficulty)
+                            try?viewContext.save()
                         }) {
                             VStack {
                                 Image(systemName: "flag")
@@ -303,14 +308,31 @@ struct ChessBoardView: View {
                                 Text("Resign")
                             }
                         }
+                        
+                        Button(action: {
+                            isMenu.toggle()
+                        }) {
+                            VStack {
+                                Image(systemName: "line.3.horizontal.circle")
+                                    .resizable()
+                                    .frame(width: proxy.size.width/18, height: proxy.size.width/18)
+                                Text("Main Menu")
+                            }
+                        }
+                        .fullScreenCover(isPresented: $isMenu) {
+                            TabBar()
+                        }
+                        
                     }
                     Spacer()
                     
-                    if isAdmin {
+                    if currentUser.username == "admin" {
                         HStack (spacing: 20) {
                             Button(action: {
                                 viewModel.chessGame.outcome = .checkmate
                                 viewModel.chessGame.winner = .white
+                                user.hasActiveGame = false
+                                currentUser.rating += viewModel.chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: viewModel.chessGame.outcome, difficulty: currentUser.settingDifficulty)
                             }) {
                                 VStack {
                                     Text("Force Win")
@@ -323,6 +345,8 @@ struct ChessBoardView: View {
                             
                             Button(action: {
                                 viewModel.chessGame.outcome = .stalemate
+                                
+                                currentUser.rating += viewModel.chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: viewModel.chessGame.outcome, difficulty: currentUser.settingDifficulty)
                             }) {
                                 VStack {
                                     Text("Force Draw")
@@ -336,6 +360,13 @@ struct ChessBoardView: View {
                             Button(action: {
                                 viewModel.chessGame.outcome = .checkmate
                                 viewModel.chessGame.winner = .black
+                                
+                                currentUser.rating -= viewModel.chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: viewModel.chessGame.outcome, difficulty: currentUser.settingDifficulty)
+                                
+                                if currentUser.rating < 0 {
+                                    currentUser.rating = 0
+                                }
+                                
                             }) {
                                     VStack {
                                         Text("Force Lose")
@@ -358,6 +389,6 @@ struct ChessBoardView: View {
 
 struct ChessBoardView_Previews: PreviewProvider {
     static var previews: some View {
-        ChessBoardView(viewModel: GameViewModel())
+        ChessBoardView(viewModel: GameViewModel(), user: Users())
     }
 }

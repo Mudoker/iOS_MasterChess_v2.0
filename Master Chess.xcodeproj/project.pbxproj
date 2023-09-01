@@ -15,22 +15,22 @@
 		AB0A54522A9657970030539D /* game-end.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB0A544A2A9657970030539D /* game-end.mp3 */; };
 		AB0A54532A9657970030539D /* tenseconds.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB0A544B2A9657970030539D /* tenseconds.mp3 */; };
 		AB0A54542A9657970030539D /* illegal.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB0A544C2A9657970030539D /* illegal.mp3 */; };
-		AB1D81F92AA0A666000BDD05 /* SavedGame+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D81F72AA0A666000BDD05 /* SavedGame+CoreDataClass.swift */; };
-		AB1D81FA2AA0A666000BDD05 /* SavedGame+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D81F82AA0A666000BDD05 /* SavedGame+CoreDataProperties.swift */; };
-		AB1D82012AA0AB19000BDD05 /* Movement+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D81FF2AA0AB19000BDD05 /* Movement+CoreDataClass.swift */; };
-		AB1D82022AA0AB19000BDD05 /* Movement+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D82002AA0AB19000BDD05 /* Movement+CoreDataProperties.swift */; };
+		AB1D821D2AA0BF81000BDD05 /* Achievement+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D820B2AA0BF81000BDD05 /* Achievement+CoreDataClass.swift */; };
+		AB1D821E2AA0BF81000BDD05 /* Achievement+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D820C2AA0BF81000BDD05 /* Achievement+CoreDataProperties.swift */; };
+		AB1D82232AA0BF81000BDD05 /* Test+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D82112AA0BF81000BDD05 /* Test+CoreDataClass.swift */; };
+		AB1D82242AA0BF81000BDD05 /* Test+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D82122AA0BF81000BDD05 /* Test+CoreDataProperties.swift */; };
+		AB1D82252AA0BF81000BDD05 /* Users+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D82132AA0BF81000BDD05 /* Users+CoreDataClass.swift */; };
+		AB1D82262AA0BF81000BDD05 /* Users+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D82142AA0BF81000BDD05 /* Users+CoreDataProperties.swift */; };
+		AB1D82272AA0BF81000BDD05 /* Setting+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D82152AA0BF81000BDD05 /* Setting+CoreDataClass.swift */; };
+		AB1D82282AA0BF81000BDD05 /* Setting+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D82162AA0BF81000BDD05 /* Setting+CoreDataProperties.swift */; };
+		AB1D82292AA0BF81000BDD05 /* GameHistory+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D82172AA0BF81000BDD05 /* GameHistory+CoreDataClass.swift */; };
+		AB1D822A2AA0BF81000BDD05 /* GameHistory+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D82182AA0BF81000BDD05 /* GameHistory+CoreDataProperties.swift */; };
+		AB1D822D2AA0BF81000BDD05 /* GameStats+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D821B2AA0BF81000BDD05 /* GameStats+CoreDataClass.swift */; };
+		AB1D822E2AA0BF81000BDD05 /* GameStats+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D821C2AA0BF81000BDD05 /* GameStats+CoreDataProperties.swift */; };
 		AB1D8C0B2AA093A600826485 /* Test+History.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D8C0A2AA093A600826485 /* Test+History.swift */; };
 		AB3253B02A9C79AD0041BDF6 /* RatingCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3253AF2A9C79AD0041BDF6 /* RatingCalculator.swift */; };
 		AB5D2AEA2A9CE0C900ED4996 /* Test+ArrayAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5D2AE92A9CE0C900ED4996 /* Test+ArrayAnimation.swift */; };
 		AB5D2AEC2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5D2AEB2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift */; };
-		AB66490B2A9C44BD0098F2E2 /* Users+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6648FD2A9C44BD0098F2E2 /* Users+CoreDataClass.swift */; };
-		AB66490C2A9C44BD0098F2E2 /* Users+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6648FE2A9C44BD0098F2E2 /* Users+CoreDataProperties.swift */; };
-		AB66490F2A9C44BD0098F2E2 /* Achievement+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6649012A9C44BD0098F2E2 /* Achievement+CoreDataClass.swift */; };
-		AB6649102A9C44BD0098F2E2 /* Achievement+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6649022A9C44BD0098F2E2 /* Achievement+CoreDataProperties.swift */; };
-		AB6649112A9C44BD0098F2E2 /* GameHistory+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6649032A9C44BD0098F2E2 /* GameHistory+CoreDataClass.swift */; };
-		AB6649122A9C44BD0098F2E2 /* GameHistory+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6649042A9C44BD0098F2E2 /* GameHistory+CoreDataProperties.swift */; };
-		AB6649132A9C44BD0098F2E2 /* GameStats+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6649052A9C44BD0098F2E2 /* GameStats+CoreDataClass.swift */; };
-		AB6649142A9C44BD0098F2E2 /* GameStats+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6649062A9C44BD0098F2E2 /* GameStats+CoreDataProperties.swift */; };
 		AB66491E2A9C466E0098F2E2 /* move-opponent.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB66491B2A9C466E0098F2E2 /* move-opponent.mp3 */; };
 		AB6649202A9C46D20098F2E2 /* SoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB66491F2A9C46D20098F2E2 /* SoundPlayer.swift */; };
 		AB6649222A9C48480098F2E2 /* game-start.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB6649212A9C48480098F2E2 /* game-start.mp3 */; };
@@ -45,10 +45,12 @@
 		AB6A0B332A9F1DA8003400DB /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6A0B322A9F1DA8003400DB /* SettingView.swift */; };
 		AB6A0B362A9F4664003400DB /* LeaderBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6A0B352A9F4664003400DB /* LeaderBoard.swift */; };
 		AB6A0B3A2A9F90F6003400DB /* Modal+Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6A0B392A9F90F6003400DB /* Modal+Achievement.swift */; };
+		AB6AF97B2AA1A55700208B6E /* Movement+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6AF9792AA1A55700208B6E /* Movement+CoreDataClass.swift */; };
+		AB6AF97C2AA1A55700208B6E /* Movement+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6AF97A2AA1A55700208B6E /* Movement+CoreDataProperties.swift */; };
+		AB6AF97F2AA1BC0700208B6E /* SavedGame+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6AF97D2AA1BC0700208B6E /* SavedGame+CoreDataClass.swift */; };
+		AB6AF9802AA1BC0700208B6E /* SavedGame+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6AF97E2AA1BC0700208B6E /* SavedGame+CoreDataProperties.swift */; };
 		AB9011C12A9C6DA800C2D62D /* background.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB9011C02A9C6DA800C2D62D /* background.mp3 */; };
 		ABA5B1462A9C9CCE0043AB1C /* Test+Slide.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABA5B1452A9C9CCE0043AB1C /* Test+Slide.swift */; };
-		ABF184C02A9C80C300C991EB /* Setting+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF184BE2A9C80C300C991EB /* Setting+CoreDataClass.swift */; };
-		ABF184C12A9C80C300C991EB /* Setting+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF184BF2A9C80C300C991EB /* Setting+CoreDataProperties.swift */; };
 		ABF184C42A9C855C00C991EB /* Test+Pulsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF184C32A9C855C00C991EB /* Test+Pulsing.swift */; };
 		E12737E22A90BF890046AA4B /* Test+Pawn.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12737E12A90BF890046AA4B /* Test+Pawn.swift */; };
 		E12737E42A90C7DC0046AA4B /* Test+ChessBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12737E32A90C7DC0046AA4B /* Test+ChessBoard.swift */; };
@@ -72,7 +74,6 @@
 		E1D782562A8B95D7008B1081 /* ChessPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D782552A8B95D7008B1081 /* ChessPiece.swift */; };
 		E1D782582A8B9B54008B1081 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D782572A8B9B54008B1081 /* Position.swift */; };
 		E1D7825A2A8B9BE6008B1081 /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D782592A8B9BE6008B1081 /* Move.swift */; };
-		E1D7825C2A8B9C16008B1081 /* GameMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D7825B2A8B9C16008B1081 /* GameMode.swift */; };
 		E1D7825E2A8B9CFC008B1081 /* ChessBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D7825D2A8B9CFC008B1081 /* ChessBoard.swift */; };
 		E1F7FB162A838EE7005B08D8 /* Master_ChessApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F7FB152A838EE7005B08D8 /* Master_ChessApp.swift */; };
 		E1F7FB182A838EE7005B08D8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F7FB172A838EE7005B08D8 /* ContentView.swift */; };
@@ -100,22 +101,22 @@
 		AB0A544A2A9657970030539D /* game-end.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "game-end.mp3"; sourceTree = "<group>"; };
 		AB0A544B2A9657970030539D /* tenseconds.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tenseconds.mp3; sourceTree = "<group>"; };
 		AB0A544C2A9657970030539D /* illegal.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = illegal.mp3; sourceTree = "<group>"; };
-		AB1D81F72AA0A666000BDD05 /* SavedGame+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SavedGame+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		AB1D81F82AA0A666000BDD05 /* SavedGame+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SavedGame+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
-		AB1D81FF2AA0AB19000BDD05 /* Movement+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Movement+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		AB1D82002AA0AB19000BDD05 /* Movement+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Movement+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D820B2AA0BF81000BDD05 /* Achievement+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Achievement+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D820C2AA0BF81000BDD05 /* Achievement+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Achievement+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D82112AA0BF81000BDD05 /* Test+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D82122AA0BF81000BDD05 /* Test+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D82132AA0BF81000BDD05 /* Users+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Users+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D82142AA0BF81000BDD05 /* Users+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Users+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D82152AA0BF81000BDD05 /* Setting+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Setting+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D82162AA0BF81000BDD05 /* Setting+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Setting+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D82172AA0BF81000BDD05 /* GameHistory+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameHistory+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D82182AA0BF81000BDD05 /* GameHistory+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameHistory+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D821B2AA0BF81000BDD05 /* GameStats+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameStats+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		AB1D821C2AA0BF81000BDD05 /* GameStats+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameStats+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		AB1D8C0A2AA093A600826485 /* Test+History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+History.swift"; sourceTree = "<group>"; };
 		AB3253AF2A9C79AD0041BDF6 /* RatingCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingCalculator.swift; sourceTree = "<group>"; };
 		AB5D2AE92A9CE0C900ED4996 /* Test+ArrayAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+ArrayAnimation.swift"; sourceTree = "<group>"; };
 		AB5D2AEB2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+ChangingBorderColorView.swift"; sourceTree = "<group>"; };
-		AB6648FD2A9C44BD0098F2E2 /* Users+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Users+CoreDataClass.swift"; sourceTree = "<group>"; };
-		AB6648FE2A9C44BD0098F2E2 /* Users+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Users+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		AB6649012A9C44BD0098F2E2 /* Achievement+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Achievement+CoreDataClass.swift"; sourceTree = "<group>"; };
-		AB6649022A9C44BD0098F2E2 /* Achievement+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Achievement+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		AB6649032A9C44BD0098F2E2 /* GameHistory+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameHistory+CoreDataClass.swift"; sourceTree = "<group>"; };
-		AB6649042A9C44BD0098F2E2 /* GameHistory+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameHistory+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		AB6649052A9C44BD0098F2E2 /* GameStats+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameStats+CoreDataClass.swift"; sourceTree = "<group>"; };
-		AB6649062A9C44BD0098F2E2 /* GameStats+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameStats+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		AB66491B2A9C466E0098F2E2 /* move-opponent.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "move-opponent.mp3"; sourceTree = "<group>"; };
 		AB66491F2A9C46D20098F2E2 /* SoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPlayer.swift; sourceTree = "<group>"; };
 		AB6649212A9C48480098F2E2 /* game-start.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "game-start.mp3"; sourceTree = "<group>"; };
@@ -130,10 +131,12 @@
 		AB6A0B322A9F1DA8003400DB /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		AB6A0B352A9F4664003400DB /* LeaderBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderBoard.swift; sourceTree = "<group>"; };
 		AB6A0B392A9F90F6003400DB /* Modal+Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Modal+Achievement.swift"; sourceTree = "<group>"; };
+		AB6AF9792AA1A55700208B6E /* Movement+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Movement+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		AB6AF97A2AA1A55700208B6E /* Movement+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Movement+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		AB6AF97D2AA1BC0700208B6E /* SavedGame+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SavedGame+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		AB6AF97E2AA1BC0700208B6E /* SavedGame+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SavedGame+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		AB9011C02A9C6DA800C2D62D /* background.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = background.mp3; sourceTree = "<group>"; };
 		ABA5B1452A9C9CCE0043AB1C /* Test+Slide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+Slide.swift"; sourceTree = "<group>"; };
-		ABF184BE2A9C80C300C991EB /* Setting+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Setting+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		ABF184BF2A9C80C300C991EB /* Setting+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Setting+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		ABF184C32A9C855C00C991EB /* Test+Pulsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+Pulsing.swift"; sourceTree = "<group>"; };
 		E12737E12A90BF890046AA4B /* Test+Pawn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+Pawn.swift"; sourceTree = "<group>"; };
 		E12737E32A90C7DC0046AA4B /* Test+ChessBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+ChessBoard.swift"; sourceTree = "<group>"; };
@@ -157,7 +160,6 @@
 		E1D782552A8B95D7008B1081 /* ChessPiece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessPiece.swift; sourceTree = "<group>"; };
 		E1D782572A8B9B54008B1081 /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
 		E1D782592A8B9BE6008B1081 /* Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Move.swift; sourceTree = "<group>"; };
-		E1D7825B2A8B9C16008B1081 /* GameMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMode.swift; sourceTree = "<group>"; };
 		E1D7825D2A8B9CFC008B1081 /* ChessBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessBoard.swift; sourceTree = "<group>"; };
 		E1E3E52C2A92228E00EE365C /* Master-Chess-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Master-Chess-Info.plist"; sourceTree = "<group>"; };
 		E1F7FB122A838EE7005B08D8 /* Master Chess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Master Chess.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -494,20 +496,22 @@
 		E1F7FB4D2A83C380005B08D8 /* CRUD */ = {
 			isa = PBXGroup;
 			children = (
-				AB1D81FF2AA0AB19000BDD05 /* Movement+CoreDataClass.swift */,
-				AB1D82002AA0AB19000BDD05 /* Movement+CoreDataProperties.swift */,
-				AB1D81F72AA0A666000BDD05 /* SavedGame+CoreDataClass.swift */,
-				AB1D81F82AA0A666000BDD05 /* SavedGame+CoreDataProperties.swift */,
-				ABF184BE2A9C80C300C991EB /* Setting+CoreDataClass.swift */,
-				ABF184BF2A9C80C300C991EB /* Setting+CoreDataProperties.swift */,
-				AB6648FD2A9C44BD0098F2E2 /* Users+CoreDataClass.swift */,
-				AB6648FE2A9C44BD0098F2E2 /* Users+CoreDataProperties.swift */,
-				AB6649012A9C44BD0098F2E2 /* Achievement+CoreDataClass.swift */,
-				AB6649022A9C44BD0098F2E2 /* Achievement+CoreDataProperties.swift */,
-				AB6649032A9C44BD0098F2E2 /* GameHistory+CoreDataClass.swift */,
-				AB6649042A9C44BD0098F2E2 /* GameHistory+CoreDataProperties.swift */,
-				AB6649052A9C44BD0098F2E2 /* GameStats+CoreDataClass.swift */,
-				AB6649062A9C44BD0098F2E2 /* GameStats+CoreDataProperties.swift */,
+				AB6AF97D2AA1BC0700208B6E /* SavedGame+CoreDataClass.swift */,
+				AB6AF97E2AA1BC0700208B6E /* SavedGame+CoreDataProperties.swift */,
+				AB6AF9792AA1A55700208B6E /* Movement+CoreDataClass.swift */,
+				AB6AF97A2AA1A55700208B6E /* Movement+CoreDataProperties.swift */,
+				AB1D820B2AA0BF81000BDD05 /* Achievement+CoreDataClass.swift */,
+				AB1D820C2AA0BF81000BDD05 /* Achievement+CoreDataProperties.swift */,
+				AB1D82112AA0BF81000BDD05 /* Test+CoreDataClass.swift */,
+				AB1D82122AA0BF81000BDD05 /* Test+CoreDataProperties.swift */,
+				AB1D82132AA0BF81000BDD05 /* Users+CoreDataClass.swift */,
+				AB1D82142AA0BF81000BDD05 /* Users+CoreDataProperties.swift */,
+				AB1D82152AA0BF81000BDD05 /* Setting+CoreDataClass.swift */,
+				AB1D82162AA0BF81000BDD05 /* Setting+CoreDataProperties.swift */,
+				AB1D82172AA0BF81000BDD05 /* GameHistory+CoreDataClass.swift */,
+				AB1D82182AA0BF81000BDD05 /* GameHistory+CoreDataProperties.swift */,
+				AB1D821B2AA0BF81000BDD05 /* GameStats+CoreDataClass.swift */,
+				AB1D821C2AA0BF81000BDD05 /* GameStats+CoreDataProperties.swift */,
 				E1F7FB4E2A83C39E005B08D8 /* DataCRUD.swift */,
 			);
 			path = CRUD;
@@ -542,7 +546,6 @@
 		E1FB62852A8F33A100823651 /* Game */ = {
 			isa = PBXGroup;
 			children = (
-				E1D7825B2A8B9C16008B1081 /* GameMode.swift */,
 				E17068112A8E1F500015860F /* GameModel.swift */,
 				E1D7825D2A8B9CFC008B1081 /* ChessBoard.swift */,
 				E1FB627F2A8F2F5E00823651 /* CurrentUser.swift */,
@@ -643,44 +646,44 @@
 				AB6A0B2C2A9E6449003400DB /* ImageTilting.swift in Sources */,
 				E1F7FB1F2A838EE9005B08D8 /* Persistence.swift in Sources */,
 				E1FB62802A8F2F5E00823651 /* CurrentUser.swift in Sources */,
-				AB6649102A9C44BD0098F2E2 /* Achievement+CoreDataProperties.swift in Sources */,
-				AB1D81FA2AA0A666000BDD05 /* SavedGame+CoreDataProperties.swift in Sources */,
-				AB6649112A9C44BD0098F2E2 /* GameHistory+CoreDataClass.swift in Sources */,
 				E1FB62872A8F580800823651 /* GameView.swift in Sources */,
 				E1F7FB4F2A83C39E005B08D8 /* DataCRUD.swift in Sources */,
 				E1C15D472A8A5BFE00096FE2 /* Constants.swift in Sources */,
 				E14B23072A862C77003F79DC /* MenuView.swift in Sources */,
-				ABF184C12A9C80C300C991EB /* Setting+CoreDataProperties.swift in Sources */,
+				AB6AF97F2AA1BC0700208B6E /* SavedGame+CoreDataClass.swift in Sources */,
+				AB1D82242AA0BF81000BDD05 /* Test+CoreDataProperties.swift in Sources */,
+				AB1D821D2AA0BF81000BDD05 /* Achievement+CoreDataClass.swift in Sources */,
 				AB6A0B2E2A9EF679003400DB /* Modal+Promotion.swift in Sources */,
-				AB6649132A9C44BD0098F2E2 /* GameStats+CoreDataClass.swift in Sources */,
 				ABF184C42A9C855C00C991EB /* Test+Pulsing.swift in Sources */,
-				AB6649122A9C44BD0098F2E2 /* GameHistory+CoreDataProperties.swift in Sources */,
-				AB1D82022AA0AB19000BDD05 /* Movement+CoreDataProperties.swift in Sources */,
 				E1F7FB182A838EE7005B08D8 /* ContentView.swift in Sources */,
 				E1D7825A2A8B9BE6008B1081 /* Move.swift in Sources */,
-				AB1D81F92AA0A666000BDD05 /* SavedGame+CoreDataClass.swift in Sources */,
+				AB1D82232AA0BF81000BDD05 /* Test+CoreDataClass.swift in Sources */,
 				AB5D2AEA2A9CE0C900ED4996 /* Test+ArrayAnimation.swift in Sources */,
 				AB6A0B332A9F1DA8003400DB /* SettingView.swift in Sources */,
 				E17068122A8E1F500015860F /* GameModel.swift in Sources */,
-				AB66490C2A9C44BD0098F2E2 /* Users+CoreDataProperties.swift in Sources */,
 				E17068172A8E241E0015860F /* AIEngine.swift in Sources */,
 				E1F7FB332A839011005B08D8 /* SplashView.swift in Sources */,
 				E170680C2A8DF2270015860F /* ChessBoardView.swift in Sources */,
+				AB1D821E2AA0BF81000BDD05 /* Achievement+CoreDataProperties.swift in Sources */,
 				E1F7FB222A838EE9005B08D8 /* Master_Chess.xcdatamodeld in Sources */,
+				AB6AF97C2AA1A55700208B6E /* Movement+CoreDataProperties.swift in Sources */,
 				E1FB62832A8F300C00823651 /* Test+LoadEnvData.swift in Sources */,
 				E14B230A2A86324F003F79DC /* GlassMorphicCard.swift in Sources */,
-				AB1D82012AA0AB19000BDD05 /* Movement+CoreDataClass.swift in Sources */,
 				AB1D8C0B2AA093A600826485 /* Test+History.swift in Sources */,
 				E12737E22A90BF890046AA4B /* Test+Pawn.swift in Sources */,
+				AB1D822A2AA0BF81000BDD05 /* GameHistory+CoreDataProperties.swift in Sources */,
 				E192A2B12A878F87000139D1 /* ProfileView.swift in Sources */,
+				AB1D82292AA0BF81000BDD05 /* GameHistory+CoreDataClass.swift in Sources */,
 				AB6A0B1F2A9DF123003400DB /* ModalView.swift in Sources */,
 				E12737E42A90C7DC0046AA4B /* Test+ChessBoard.swift in Sources */,
 				E1D782582A8B9B54008B1081 /* Position.swift in Sources */,
 				E1F7FB3F2A83AA4E005B08D8 /* WelcomeScreen.swift in Sources */,
 				E15A2CEA2A84EC5600688B6E /* DataManager.swift in Sources */,
-				E1D7825C2A8B9C16008B1081 /* GameMode.swift in Sources */,
+				AB6AF9802AA1BC0700208B6E /* SavedGame+CoreDataProperties.swift in Sources */,
+				AB6AF97B2AA1A55700208B6E /* Movement+CoreDataClass.swift in Sources */,
 				E17068152A8E20580015860F /* AIBot.swift in Sources */,
 				E14B22FD2A85F3B2003F79DC /* SignUpScreen.swift in Sources */,
+				AB1D82272AA0BF81000BDD05 /* Setting+CoreDataClass.swift in Sources */,
 				E1D7825E2A8B9CFC008B1081 /* ChessBoard.swift in Sources */,
 				AB6A0B1D2A9DEF59003400DB /* Modal+BackGround.swift in Sources */,
 				E1D782562A8B95D7008B1081 /* ChessPiece.swift in Sources */,
@@ -688,19 +691,20 @@
 				ABA5B1462A9C9CCE0043AB1C /* Test+Slide.swift in Sources */,
 				E17068192A8E24610015860F /* AIPlayer.swift in Sources */,
 				AB6649202A9C46D20098F2E2 /* SoundPlayer.swift in Sources */,
-				AB66490B2A9C44BD0098F2E2 /* Users+CoreDataClass.swift in Sources */,
-				AB66490F2A9C44BD0098F2E2 /* Achievement+CoreDataClass.swift in Sources */,
 				AB3253B02A9C79AD0041BDF6 /* RatingCalculator.swift in Sources */,
-				ABF184C02A9C80C300C991EB /* Setting+CoreDataClass.swift in Sources */,
-				AB6649142A9C44BD0098F2E2 /* GameStats+CoreDataProperties.swift in Sources */,
 				E1FB62892A8FA19900823651 /* Test+GameModel.swift in Sources */,
 				AB5D2AEC2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift in Sources */,
 				E1F7FB3D2A83AA28005B08D8 /* LoginScreen.swift in Sources */,
+				AB1D82282AA0BF81000BDD05 /* Setting+CoreDataProperties.swift in Sources */,
+				AB1D82252AA0BF81000BDD05 /* Users+CoreDataClass.swift in Sources */,
+				AB1D822D2AA0BF81000BDD05 /* GameStats+CoreDataClass.swift in Sources */,
 				E1C15D3C2A8A207500096FE2 /* How2playScreen.swift in Sources */,
 				E1F7FB162A838EE7005B08D8 /* Master_ChessApp.swift in Sources */,
 				E192A2AE2A877759000139D1 /* TabBar.swift in Sources */,
+				AB1D82262AA0BF81000BDD05 /* Users+CoreDataProperties.swift in Sources */,
 				AB6A0B362A9F4664003400DB /* LeaderBoard.swift in Sources */,
 				E170681C2A8E24A80015860F /* AIMove.swift in Sources */,
+				AB1D822E2AA0BF81000BDD05 /* GameStats+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

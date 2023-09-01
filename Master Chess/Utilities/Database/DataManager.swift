@@ -1,20 +1,19 @@
-//
-//  DataManager.swift
-//  Master Chess
-//
-//  Created by Quoc Doan Huu on 10/08/2023.
-//
-
 import Foundation
 import CoreData
 
 class DataManager: ObservableObject {
-    let container = NSPersistentContainer(name: "Master_Chess")
+    let container: NSPersistentContainer
     
     init() {
+        container = NSPersistentContainer(name: "Master_Chess")
+        
+        let storeDescription = container.persistentStoreDescriptions.first
+        storeDescription?.setOption(true as NSNumber, forKey: NSMigratePersistentStoresAutomaticallyOption)
+        storeDescription?.setOption(true as NSNumber, forKey: NSInferMappingModelAutomaticallyOption)
+        
         container.loadPersistentStores { description, error in
             if let error = error {
-                print("Failt to load data: \(error.localizedDescription)")
+                fatalError("Failed to load data: \(error.localizedDescription)")
             }
             
             self.container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump

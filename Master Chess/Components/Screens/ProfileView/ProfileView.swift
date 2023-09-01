@@ -8,23 +8,17 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.username, ascending: true)], animation: .default) private var users: FetchedResults<Users>
-    @EnvironmentObject var currentUserr: CurrentUser
+    var currentUserr = CurrentUser.shared
     @AppStorage("userName") var username = "Mudoker"
     @State private var isUsernameTakenAlertPresented = false
     @State private var showAllItems = false
-    
+    @State private var isBack = false
     var columns: [GridItem] {
         [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     }
     
-    func isUsernameAvailable(_ newUsername: String) -> Bool {
-        let isTaken = users.contains { user in
-            user.unwrappedUsername == newUsername
-        }
-        return !isTaken
-    }
+    var currentUser: Users?
+    
     // Function to convert date to string
     func formatDate(_ date: Date) -> String {
         let dateFormatter = DateFormatter()
@@ -32,256 +26,268 @@ struct ProfileView: View {
         return dateFormatter.string(from: date)
     }
     
-    func getUserWithUsername(_ username: String) -> Users? {
-        return users.first { $0.username == username }
-    }
-    
     var body: some View {
-        GeometryReader { proxy in
-            VStack {
-                let currentUser = getUserWithUsername(username)
-                ScrollView (showsIndicators: false) {
-                    
-                    VStack {
-                        HStack {
-                            Spacer()
-                            Circle()
-                                .fill(.pink.opacity(0.4))
-                                .frame(width: proxy.size.width / 2.5)
-                                .overlay(
-                                    Image(currentUser?.profilePicture ?? "profile1")
-                                        .resizable()
-                                        .frame(width: proxy.size.width / 3, height: proxy.size.width / 3)
-                                        .overlay(
-                                            ZStack {
-                                                Circle()
-                                                    .fill( CurrentUser.shared.username == username ? Color.green : .gray)
-                                                    .frame(width: proxy.size.width / 18)
-                                                    .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
-                                                Circle()
-                                                    .stroke(Color.black, lineWidth: 3)
-                                                    .frame(width: proxy.size.width / 18)
-                                                    .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
-                                                
-                                            }
-                                        )
-                                )
-                            
-                            Spacer()
-                        }
-                        
-                        Text(currentUser?.username ?? "Mudoker")
-                            .font(.title)
-                            .bold()
+        NavigationView {
+            GeometryReader { proxy in
+                VStack {
+                    ScrollView (showsIndicators: false) {
                         VStack {
-                            if currentUser?.rating ?? 2000 < 800 {
-                                Text("Newbie")
-                                    .font(.title3)
-                                    .bold()
-                            } else if currentUser?.rating ?? 2000 < 1300 {
-                                Text("Pro")
-                                    .font(.title3)
-                                    .bold()
-                                
-                            } else if currentUser?.rating ?? 2000 < 1600 {
-                                Text("Master")
-                                    .font(.title3)
-                                    .bold()
-                                
-                            } else {
-                                Text("Grand Master")
-                                    .font(.title3)
-                                    .bold()
-                            }
-                            
-                            HStack {
-                                Text("Join date: ")
-                                Text(formatDate(currentUser?.joinDate ?? Date()))
-                            }
-                        }
-                        .padding(.bottom, 5)
-                        
-                        HStack (spacing: 20) {
-                            Spacer()
-                            VStack {
-                                if let totalGames = currentUser?.unwrappedUserStats.totalGames {
-                                    Text(String(totalGames))
-                                        .foregroundColor(.white)
-                                        .font(.largeTitle)
-                                        .bold()
-                                } else {
-                                    Text("0")
-                                        .foregroundColor(.white)
-                                        .font(.largeTitle)
-                                        .bold()
+                                HStack {
+                                    Spacer()
+                                    Circle()
+                                        .fill(.pink.opacity(0.4))
+                                        .frame(width: proxy.size.width / 2.5)
+                                        .overlay(
+                                            Image(currentUser?.profilePicture ?? "profile1")
+                                                .resizable()
+                                                .frame(width: proxy.size.width / 3, height: proxy.size.width / 3)
+                                                .overlay(
+                                                    ZStack {
+                                                        Circle()
+                                                            .fill( CurrentUser.shared.username == username ? Color.green : .gray)
+                                                            .frame(width: proxy.size.width / 18)
+                                                            .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
+                                                        Circle()
+                                                            .stroke(Color.black, lineWidth: 3)
+                                                            .frame(width: proxy.size.width / 18)
+                                                            .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
+                                                        
+                                                    }
+                                                )
+                                        )
+                                    
+                                    Spacer()
                                 }
-                                
-                                Text("Games")
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .font(.callout)
-                            }
                             
-                            Spacer()
                             
+                            Text(currentUser?.username ?? "Mudoker")
+                                .font(.title)
+                                .bold()
                             VStack {
-                                if let winrate = currentUser?.unwrappedUserStats.winRate {
-                                    Text("\(String(winrate))%")
-                                        .foregroundColor(.white)
-                                        .font(.largeTitle)
+                                if currentUser?.rating ?? 2000 < 800 {
+                                    Text("Newbie")
+                                        .font(.title3)
                                         .bold()
-                                } else {
-                                    Text("0%")
-                                        .foregroundColor(.white)
-                                        .font(.largeTitle)
-                                        .bold()
-                                }
-                                Text("Win rate")
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .font(.callout)
-                            }
-                            
-                            Spacer()
-                            
-                            VStack {
-                                if let rating = currentUser?.rating {
-                                    Text(String(rating))
-                                        .foregroundColor(.white)
-                                        .font(.largeTitle)
-                                        .bold()
-                                } else {
-                                    Text("0")
-                                        .foregroundColor(.white)
-                                        .font(.largeTitle)
-                                        .bold()
-                                }
-                                
-                                Text("Ratings")
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .font(.callout)
-                            }
-                            Spacer()
-                        }
-                        .padding(.horizontal)
-                        
-                    }
-                    
-                    HStack (alignment: .firstTextBaseline) {
-                        Text("Achievements")
-                            .font(.largeTitle)
-                            .bold()
-                        
-                        Spacer()
-                        Button(action: {
-                            withAnimation {
-                                showAllItems.toggle()
-                            }
-                        }) {
-                            Text(showAllItems ? "Show Less" : "Show All")
-                                .foregroundColor(.white)
-                                .font(.title3)
-                            
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.top)
-                    
-                    if let achievements = currentUser?.unwrappedAchievements {
-                        
-                        LazyVGrid(columns: columns, spacing: 16) {
-                            ForEach(achievements, id: \.self) { achivement in
-                                VStack {
-                                    Image(achivement.icon ?? "rank1")
-                                        .resizable()
-                                        .frame(width: proxy.size.width / 4, height: proxy.size.width / 4)
-                                    Text(achivement.title ?? "Top 1")
-                                        .font(.title)
+                                } else if currentUser?.rating ?? 2000 < 1300 {
+                                    Text("Pro")
+                                        .font(.title3)
                                         .bold()
                                     
-                                    Text(achivement.des ?? "Top 1 on the leaderboard!")
-                                        .font(.callout)
+                                } else if currentUser?.rating ?? 2000 < 1600 {
+                                    Text("Master")
+                                        .font(.title3)
                                         .bold()
-                                        .opacity(0.7)
+                                    
+                                } else {
+                                    Text("Grand Master")
+                                        .font(.title3)
+                                        .bold()
                                 }
+                                
+                                HStack {
+                                    Text("Join date: ")
+                                    Text(formatDate(currentUser?.joinDate ?? Date()))
+                                }
+                            }
+                            .padding(.bottom, 5)
+                            
+                            HStack (spacing: 20) {
+                                Spacer()
+                                VStack {
+                                    if let totalGames = currentUser?.unwrappedUserStats.totalGames {
+                                        Text(String(totalGames))
+                                            .foregroundColor(.white)
+                                            .font(.largeTitle)
+                                            .bold()
+                                    } else {
+                                        Text("0")
+                                            .foregroundColor(.white)
+                                            .font(.largeTitle)
+                                            .bold()
+                                    }
+                                    
+                                    Text("Games")
+                                        .foregroundColor(.white.opacity(0.7))
+                                        .font(.callout)
+                                }
+                                
+                                Spacer()
+                                
+                                VStack {
+                                    if let winrate = currentUser?.unwrappedUserStats.winRate {
+                                        Text("\(Int(winrate) == Int(winrate) ? "\(Int(winrate))%" : String(format: "%.2f%", winrate))")
+                                            .foregroundColor(.white)
+                                            .font(.largeTitle)
+                                            .bold()
+                                    } else {
+                                        Text("0%")
+                                            .foregroundColor(.white)
+                                            .font(.largeTitle)
+                                            .bold()
+                                    }
+                                    Text("Win rate")
+                                        .foregroundColor(.white.opacity(0.7))
+                                        .font(.callout)
+                                }
+                                
+                                Spacer()
+                                
+                                VStack {
+                                    if let rating = currentUser?.rating {
+                                        
+                                        Text(String(rating))
+                                            .foregroundColor(.white)
+                                            .font(.largeTitle)
+                                            .bold()
+                                    } else {
+                                        Text("0")
+                                            .foregroundColor(.white)
+                                            .font(.largeTitle)
+                                            .bold()
+                                    }
+                                    
+                                    Text("Ratings")
+                                        .foregroundColor(.white.opacity(0.7))
+                                        .font(.callout)
+                                }
+                                Spacer()
+                            }
+                                                        
+                        }
+                        
+                        HStack (alignment: .firstTextBaseline) {
+                            Text("Achievements")
+                                .font(.largeTitle)
+                                .bold()
+                            
+                            Spacer()
+                            Button(action: {
+                                withAnimation {
+                                    showAllItems.toggle()
+                                }
+                            }) {
+                                Text(showAllItems ? "Show Less" : "Show All")
+                                    .foregroundColor(.white)
+                                    .font(.title3)
+                                
                             }
                         }
                         .padding(.horizontal)
+                        .padding(.top)
                         
-                        
-                    } else {
-                        Text("No available achievement")
-                    }
-                    
-                    
-                    HStack {
-                        Text("History")
-                            .font(.largeTitle)
-                            .bold()
-                        Spacer()
-                    }
-                    .padding(.horizontal)
-                    
-                    if let histories = currentUser?.unwrappedGameHistory {
-                        ForEach(histories, id: \.self) { history in
-                            Capsule()
-                                .fill(.gray.opacity(0.3))
-                                .frame(width: proxy.size.width/1.2,height: proxy.size.width/5)
-                                .overlay(
-                                    HStack {
-                                        Text(formatDate(history.unwrappedDatePlayed))
-                                            .font(.callout)
-                                            .bold()
-                                        Spacer()
-                                        
-                                        Image(history.unwrappedOpponentUsername == "M.Carlsen" ? "magnus" : history.unwrappedOpponentUsername == "Nobita" ? "nobita" : "mitten")
+                        if let achievements = currentUser?.unwrappedAchievements {
+                            let unlockedAchievements = achievements.filter { $0.unlocked }
+
+                            let maxAchievementsToShow = showAllItems ? unlockedAchievements.count : 3
+
+                            LazyVGrid(columns: columns, alignment: .leading, spacing: 16) {
+                                ForEach(0..<min(unlockedAchievements.count, maxAchievementsToShow), id: \.self) { index in
+                                    let achievement = unlockedAchievements[index]
+
+                                    VStack(alignment: .leading) {
+                                        Image(achievement.icon ?? "rank1")
                                             .resizable()
-                                            .frame(width: proxy.size.width / 10, height: proxy.size.width / 12)
-                                            .background(
-                                                Circle()
-                                                    .foregroundColor(.white)
-                                            )
-                                        
-                                        
-                                        VStack(alignment: .leading) {
-                                            Text(history.unwrappedOpponentUsername)
-                                                .bold()
-                                            Text("Easy")
-                                        }
-                                        
-                                        Spacer()
-                                        VStack {
-                                            Text(history.unwrappedOutcome)
-                                                .font(.title2)
-                                                .foregroundColor(.green)
-                                                .bold()
-                                            
-                                            Text(String(history.unwrappedUserRatingChange))
-                                                .bold()
-                                                .opacity(0.7)
-                                                .foregroundColor(history.unwrappedOutcome == "Win" ? .green : history.unwrappedOutcome == "Draw" ? .yellow : .red)
-                                        }
-                                        
+                                            .frame(width: proxy.size.width / 4, height: proxy.size.width / 4)
+                                            .aspectRatio(contentMode: .fit)
+
+
+                                        Text(achievement.title ?? "Top 1")
+                                            .font(.title3)
+                                            .bold()
+
+                                        Text(achievement.des ?? "Top 1 on the leaderboard!")
+                                            .font(.caption)
+                                            .bold()
+                                            .opacity(0.7)
+                                        Spacer() // Push content to the top
+
                                     }
-                                        .padding(.horizontal)
-                                )
+                                }
+                            }
+                            .padding(.horizontal)
+                        } else {
+                            Text("No available achievement")
+                                .padding(.vertical)
                         }
-                    }else {
-                        Spacer()
-                        Text("No available history")
+
+                        
+                        
+                        HStack {
+                            Text("History")
+                                .font(.largeTitle)
+                                .bold()
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        
+                        if let histories = currentUser?.unwrappedGameHistory {
+                            ForEach(histories, id: \.self) { history in
+                                Capsule()
+                                    .fill(.gray.opacity(0.3))
+                                    .frame(width: proxy.size.width/1.2,height: proxy.size.width/5)
+                                    .overlay(
+                                        HStack {
+                                            Text(formatDate(history.unwrappedDatePlayed))
+                                                .font(.callout)
+                                                .bold()
+                                            Spacer()
+
+                                            Image(history.unwrappedOpponentUsername == "M.Carlsen" ? "magnus" : history.unwrappedOpponentUsername == "Nobita" ? "nobita" : "mitten")
+                                                .resizable()
+                                                .frame(width: proxy.size.width / 10, height: proxy.size.width / 12)
+                                                .background(
+                                                    Circle()
+                                                        .foregroundColor(.white)
+                                                )
+
+
+                                            VStack(alignment: .leading) {
+                                                Text(history.unwrappedOpponentUsername)
+                                                    .bold()
+                                                Text(history.unwrappedOpponentUsername == "M.Carlsen" ? "Hard" : history.unwrappedOpponentUsername == "Nobita" ? "Easy" : "Normal")
+                                            }
+
+                                            Spacer()
+                                            VStack {
+                                                Text(history.unwrappedOutcome)
+                                                    .font(.title2)
+                                                    .foregroundColor(history.unwrappedOutcome == "Win" ? .green : history.unwrappedOutcome == "Draw" ? .yellow : .red)
+                                                    .bold()
+
+                                                Text(String(history.unwrappedUserRatingChange))
+                                                    .bold()
+                                                    .opacity(0.7)
+                                                    .foregroundColor(history.unwrappedOutcome == "Win" ? .green : history.unwrappedOutcome == "Draw" ? .yellow : .red)
+                                            }
+
+                                        }
+                                            .padding(.horizontal)
+                                    )
+                            }
+                        }else {
+                            Text("No available history")
+                                .padding(.vertical)
+                        }
+                        
                     }
+
+                    VStack {
+                    }.frame(height: 30)
                     
                 }
-                VStack {
-                }.frame(height: 30)
-                
+                .edgesIgnoringSafeArea(.bottom)
+
             }
-        }
-        .foregroundColor(.white)
+            .foregroundColor(.white)
         .background(Color(red: 0.00, green: 0.09, blue: 0.18))
+        }
+        .navigationViewStyle(.stack)
+
     }
 }
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView()
+        ProfileView(currentUser: Users())
     }
 }

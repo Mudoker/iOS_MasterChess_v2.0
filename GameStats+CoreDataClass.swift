@@ -2,7 +2,7 @@
 //  GameStats+CoreDataClass.swift
 //  Master Chess
 //
-//  Created by quoc on 28/08/2023.
+//  Created by quoc on 31/08/2023.
 //
 //
 

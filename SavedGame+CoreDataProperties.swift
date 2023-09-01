@@ -2,7 +2,7 @@
 //  SavedGame+CoreDataProperties.swift
 //  Master Chess
 //
-//  Created by quoc on 31/08/2023.
+//  Created by quoc on 01/09/2023.
 //
 //
 
@@ -11,11 +11,11 @@ import CoreData
 
 
 extension SavedGame {
-    
+
     @nonobjc public class func fetchRequest() -> NSFetchRequest<SavedGame> {
         return NSFetchRequest<SavedGame>(entityName: "SavedGame")
     }
-    
+
     @NSManaged public var autoPromotionEnabled: Bool
     @NSManaged public var blackTimeLeft: Double
     @NSManaged public var boardSetup: [[String]]?
@@ -31,13 +31,14 @@ extension SavedGame {
     @NSManaged public var kingPosition: Int16
     @NSManaged public var moveAvailable: Int16
     @NSManaged public var whiteTimeLeft: Double
-    @NSManaged public var source: Users?
+    @NSManaged public var captures: [String]?
     @NSManaged public var history: NSSet?
-    
+    @NSManaged public var source: Users?
+
     public var unwrappedDifficulty: String {
-        difficulty ?? ""
-    }
-    
+            difficulty ?? ""
+        }
+        
     public var unwrappedIsEnpassant: Bool {
         isEnpassant
     }
@@ -72,25 +73,28 @@ extension SavedGame {
         
         return Array(set)
     }
+    public var unwrappedCaptures: [String] {
+        captures ?? []
+    }
 }
 
 // MARK: Generated accessors for history
 extension SavedGame {
-    
+
     @objc(addHistoryObject:)
     @NSManaged public func addToHistory(_ value: Movement)
-    
+
     @objc(removeHistoryObject:)
     @NSManaged public func removeFromHistory(_ value: Movement)
-    
+
     @objc(addHistory:)
     @NSManaged public func addToHistory(_ values: NSSet)
-    
+
     @objc(removeHistory:)
     @NSManaged public func removeFromHistory(_ values: NSSet)
-    
+
 }
 
 extension SavedGame : Identifiable {
-    
+
 }

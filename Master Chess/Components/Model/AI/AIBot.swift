@@ -38,10 +38,15 @@ class AIBot {
         switch userGameDifficulty {
         case "easy":
             maxDepth = userRating < 1000 ? 1 : 2
+            print("easy")
         case "normal":
             maxDepth = userRating < 1600 ? 2 : 3
+            print("nor")
+
         case "hard":
             maxDepth = 3
+            print("hard")
+
         default:
             break
         }

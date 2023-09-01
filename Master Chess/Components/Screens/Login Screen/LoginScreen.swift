@@ -175,6 +175,8 @@ struct LoginView: View {
                                     CurrentUser.shared.savedGameAutoPromotionEnabled = users[index].savedGame?.autoPromotionEnabled ?? false
                                     CurrentUser.shared.savedGameBlackTimeLeft = users[index].savedGame?.blackTimeLeft ?? 0
                                     CurrentUser.shared.savedGameBoardSetup = users[index].savedGame?.boardSetup ?? []
+                                    CurrentUser.shared.savedGameHistory = users[index].savedGame?.unwrappedHistory ?? []
+                                    CurrentUser.shared.savedGameCapture = users[index].savedGame?.unwrappedCaptures ?? []
                                     CurrentUser.shared.savedGameCurrentPlayer = users[index].savedGame?.currentPlayer ?? ""
                                     CurrentUser.shared.savedGameDifficulty = users[index].savedGame?.difficulty ?? ""
                                     CurrentUser.shared.savedGameMoveAvailable = users[index].savedGame?.moveAvailable ?? 0
@@ -216,8 +218,14 @@ struct LoginView: View {
                         }
                         .navigationDestination(
                             isPresented: $isMenuView) {
-                                TabBar()
-                                    .navigationBarBackButtonHidden(true)
+//                                if CurrentUser.shared.hasActiveGame {
+//                                    GameView()
+//                                        .navigationBarBackButtonHidden(true)
+//                                } else {
+                                    TabBar()
+                                        .navigationBarBackButtonHidden(true)
+//                                }
+                                
                         }
                             
                         HStack {

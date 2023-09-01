@@ -27,7 +27,7 @@ final class GameViewModel: ObservableObject {
     
     var gameSetting = Setting()
     private var cancellables = Set<AnyCancellable>()
-    
+
     init() {
         chessGame = ChessBoard()
         // create an AI (Will be updated)
@@ -53,7 +53,7 @@ final class GameViewModel: ObservableObject {
         chessGame.$whiteTimeLeft
             .sink { [weak self] whiteTime in
                 self?.whiteRemainigTime = "\(whiteTime)" // Use directly as Int
-                if whiteTime <= 10 {
+                if whiteTime <= 10 && whiteTime >= 5 {
                     self?.playSound(sound: "tenseconds", type: "mp3")
                     if whiteTime == 0 {
                         self?.chessGame.outcome = .outOfTime
@@ -117,49 +117,57 @@ final class GameViewModel: ObservableObject {
     
     func didMove(move: Move, piece: ChessPiece) {
         // trigger when player turn
-        guard ai1.isCalculatingMove == false else { return }
+//        guard ai1.isCalculatingMove == false else { return }
 
         guard ai2.isCalculatingMove == false else { return }
-////
-//                allMove(from: move.from, piece: piece)
-//                print("Human Move: from \(move.from.x), \(move.from.y) to \(move.to.x), \(move.to.y)")
-//                print(piece.pieceName)
-//                // move a piece
-//                chessGame.movePiece(from: move.from, to: move.to)
-//
-//                allValidMoves = []
 //        // will be updated later (right now AI is black by default)
         if currentPlayer == .white {
-            ai1.bestMove { move in
-                if let move = move {
-                    print("AI White Move: before \(move.from.x), \(move.from.y)")
+//            ai1.bestMove { move in
+//                if let move = move {
+//                    print("AI White Move: before \(move.from.x), \(move.from.y)")
+//
+//                    // When has value -> move the piece
+//                    self.chessGame.movePieceAI(from: move.from, to: move.to)
+//                    self.playSound(sound: "move-self", type: "mp3")
+//
+//                    print("AI White Move: after \(move.to.x), \(move.to.y)")
+//                    print("------")
+//                    self.allValidMoves = []
+//                }
+//            }
+            allMove(from: move.from, piece: piece)
+            // move a piece
+            chessGame.movePiece(from: move.from, to: move.to)
 
-                    // When has value -> move the piece
-                    self.chessGame.movePieceAI(from: move.from, to: move.to)
-                    self.playSound(sound: "move-self", type: "mp3")
-
-                    print("AI White Move: after \(move.to.x), \(move.to.y)")
-                    print("------")
-                    self.allValidMoves = []
-                }
-            }
+            allValidMoves = []
         }
-
 
         // will be updated later (right now AI is black by default)
         if currentPlayer == .black {
             ai2.bestMove { move in
                 if let move = move {
-                    print("AI Black Move: before \(move.from.x), \(move.from.y)")
                     // When has value -> move the piece
                     self.chessGame.movePieceAI(from: move.from, to: move.to)
                     self.playSound(sound: "move-opponent", type: "mp3")
-                    print("AI Black Move: after \(move.to.x), \(move.to.y)")
-                    print("------")
                     self.allValidMoves = []
                 }
             }
-        }
+            
+            // After move, check if white is loss
+            if chessGame.isCheckMate(player: currentPlayer) || chessGame.isStaleMate(player: currentPlayer) ||
+                chessGame.isOutOfMove(player: currentPlayer) || chessGame.isOutOfTime(player: currentPlayer) ||
+                chessGame.isInsufficientMaterial(player: currentPlayer) {
+                playSound(sound: "game-end", type: "mp3")
+                if chessGame.winner == .white {
+                    currentUser.rating += chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: chessGame.outcome, difficulty: currentUser.settingDifficulty)
+                } else {
+                    currentUser.rating -= chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: chessGame.outcome, difficulty: currentUser.settingDifficulty)
+                    if currentUser.rating < 0 {
+                        currentUser.rating = 0
+                    }
+                }
+            }
+        }        
     }
     
     // get current piece index
@@ -186,6 +194,58 @@ final class GameViewModel: ObservableObject {
                 audioPlayer.play()
             } catch {
                 print("Fail to play song")
+            }
+        }
+    }
+    
+
+    
+//    func convertMovementsToMoves(movements: [Movement]) -> [Move] {
+//        var moves: [Move] = []
+//
+//        for movement in movements {
+//            let startValue = Int(movement.start)
+//            let endValue = Int(movement.end)
+//
+//            let startX = (startValue - 1) / 10
+//            let startY = (startValue - 1) % 10
+//            let endX = (endValue - 1) / 10
+//            let endY = (endValue - 1) % 10
+//
+//            let from = Position(x: startX, y: startY)
+//            let to = Position(x: endX, y: endY)
+//
+//            let move = Move(from: from, to: to)
+//            moves.append(move)
+//        }
+//
+//        return moves
+//    }
+//
+//    func convertMovementToMoves(movement: Movement) -> Move {
+//
+//        let startValue = Int(movement.start)
+//        let endValue = Int(movement.end)
+//
+//        let startX = (startValue - 1) / 10
+//        let startY = (startValue - 1) % 10
+//        let endX = (endValue - 1) / 10
+//        let endY = (endValue - 1) % 10
+//
+//        let from = Position(x: startX, y: startY)
+//        let to = Position(x: endX, y: endY)
+//
+//        let move = Move(from: from, to: to)
+//
+//        return move
+//    }
+//
+
+
+    func convertChessPieceArrayToStringArray(_ chessPieceArray: [[ChessPiece?]]) -> [[String]] {
+        return chessPieceArray.map { row in
+            row.map { piece in
+                piece?.pieceName ?? ""
             }
         }
     }

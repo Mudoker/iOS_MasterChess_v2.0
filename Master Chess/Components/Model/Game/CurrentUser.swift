@@ -40,6 +40,7 @@ class CurrentUser: ObservableObject {
     @Published var savedGameIsBlackRightRookMoved: Bool = false
     @Published var savedGameKingPosition: Int16 = 0
     @Published var savedGameHistory: [Movement] = []
+    @Published var savedGameCapture: [String] = []
 
     static let shared = CurrentUser()
 }
