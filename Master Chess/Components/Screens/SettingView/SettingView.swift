@@ -62,50 +62,51 @@ struct SettingView: View {
                     }
                     ScrollView(showsIndicators: false) {
                         
-                        Button(action: {
-                            withAnimation {
-                                isShowProfile.toggle()
-                            }
-                        }) {
-                            HStack {
-                                Circle()
-                                    .fill(.white.opacity(0.4))
-                                    .frame(width: proxy.size.width/4)
-                                    .overlay(
-                                        Image(currentUser?.unwrappedProfilePicture ?? "profile1")
-                                            .resizable()
-                                            .frame(width: proxy.size.width/4.5, height: proxy.size.width/4.5)
-                                    )
-                                    .padding(.trailing)
-                                
-                                VStack (alignment: .leading) {
-                                    Text(currentUser?.unwrappedUsername ?? "Mudoker")
-                                        .font(.title)
-                                        .bold()
-                                    if currentUser?.rating ?? 2000 < 800 {
-                                        Text("Newbie")
-                                    } else if currentUser?.rating ?? 2000 < 1300 {
-                                        Text("Pro")
-                                    } else if currentUser?.rating ?? 2000 < 1600 {
-                                        Text("Master")
-                                    } else {
-                                        Text("Grand Master")
+                        NavigationLink(destination: ProfileView(currentUser: currentUser ?? Users())) {
+                            VStack {
+                                HStack {
+                                    Circle()
+                                        .fill(.white.opacity(0.4))
+                                        .frame(width: proxy.size.width/4)
+                                        .overlay(
+                                            Image(currentUser?.unwrappedProfilePicture ?? "profile1")
+                                                .resizable()
+                                                .frame(width: proxy.size.width/4.5, height: proxy.size.width/4.5)
+                                        )
+                                        .padding(.trailing)
+                                    
+                                    VStack (alignment: .leading) {
+                                        Text(currentUser?.unwrappedUsername ?? "Mudoker")
+                                            .font(.title)
+                                            .bold()
+                                        if currentUser?.rating ?? 2000 < 800 {
+                                            Text("Newbie")
+                                        } else if currentUser?.rating ?? 2000 < 1300 {
+                                            Text("Pro")
+                                        } else if currentUser?.rating ?? 2000 < 1600 {
+                                            Text("Master")
+                                        } else {
+                                            Text("Grand Master")
+                                        }
                                     }
+                                    Spacer()
+                                    Image(systemName: "arrow.forward.square")
+                                        .resizable()
+                                        .frame(width: proxy.size.width/10, height: proxy.size.width/10)
                                 }
-                                Spacer()
-                                Image(systemName: "arrow.forward.square")
-                                    .resizable()
-                                    .frame(width: proxy.size.width/10, height: proxy.size.width/10)
+                                .padding(.horizontal)
+                                .frame(height: proxy.size.width/3.5)
+                                .background(.gray.opacity(0.2))
+                                .padding(.bottom)
                             }
-                            .padding(.horizontal)
-                            .frame(height: proxy.size.width/3.5)
-                            .background(.gray.opacity(0.2))
                         }
-                        .navigationDestination(isPresented: $isShowProfile) {
-                            ProfileView(currentUser: currentUser ?? Users())
-                                .navigationBarBackButtonHidden(false)
-                        }
-                        .padding(.bottom)
+                        .simultaneousGesture(
+                            TapGesture()
+                                .onEnded {
+                                    isShowProfile = true
+                                }
+                        )
+                        
                         
                         VStack(spacing: 20) {
                             VStack {
@@ -198,7 +199,7 @@ struct SettingView: View {
                                     isChangesMade = true
                                     updateConfirmButtonState()
                                 }
-
+                                
                                 .padding([.bottom, .horizontal])
                                 Text("Language")
                                     .padding(.top)
@@ -290,7 +291,13 @@ struct SettingView: View {
                                     currentUserr.settingSoundEnabled = selectedSFX
                                     currentUserr.settingMusicEnabled = selectedSound
                                     currentUserr.settingDifficulty = selectedDifficulty
-
+                                    
+                                    if !selectedSound {
+                                        SoundPlayer.stopBackgroundMusic()
+                                        
+                                    } else {
+                                        SoundPlayer.startBackgroundMusic()
+                                    }
                                     try? viewContext.save()
                                     isConfirmButtonEnabled = false
                                 }

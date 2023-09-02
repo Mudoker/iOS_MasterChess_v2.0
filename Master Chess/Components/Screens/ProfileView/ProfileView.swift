@@ -27,37 +27,37 @@ struct ProfileView: View {
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             GeometryReader { proxy in
                 VStack {
                     ScrollView (showsIndicators: false) {
                         VStack {
-                                HStack {
-                                    Spacer()
-                                    Circle()
-                                        .fill(.pink.opacity(0.4))
-                                        .frame(width: proxy.size.width / 2.5)
-                                        .overlay(
-                                            Image(currentUser?.profilePicture ?? "profile1")
-                                                .resizable()
-                                                .frame(width: proxy.size.width / 3, height: proxy.size.width / 3)
-                                                .overlay(
-                                                    ZStack {
-                                                        Circle()
-                                                            .fill( CurrentUser.shared.username == username ? Color.green : .gray)
-                                                            .frame(width: proxy.size.width / 18)
-                                                            .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
-                                                        Circle()
-                                                            .stroke(Color.black, lineWidth: 3)
-                                                            .frame(width: proxy.size.width / 18)
-                                                            .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
-                                                        
-                                                    }
-                                                )
-                                        )
-                                    
-                                    Spacer()
-                                }
+                            HStack {
+                                Spacer()
+                                Circle()
+                                    .fill(.pink.opacity(0.4))
+                                    .frame(width: proxy.size.width / 2.5)
+                                    .overlay(
+                                        Image(currentUser?.profilePicture ?? "profile1")
+                                            .resizable()
+                                            .frame(width: proxy.size.width / 3, height: proxy.size.width / 3)
+                                            .overlay(
+                                                ZStack {
+                                                    Circle()
+                                                        .fill(CurrentUser.shared.username == currentUser?.unwrappedUsername ? Color.green : .gray)
+                                                        .frame(width: proxy.size.width / 18)
+                                                        .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
+                                                    Circle()
+                                                        .stroke(Color.black, lineWidth: 3)
+                                                        .frame(width: proxy.size.width / 18)
+                                                        .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
+                                                    
+                                                }
+                                            )
+                                    )
+                                
+                                Spacer()
+                            }
                             
                             
                             Text(currentUser?.username ?? "Mudoker")
@@ -152,7 +152,7 @@ struct ProfileView: View {
                                 }
                                 Spacer()
                             }
-                                                        
+                            
                         }
                         
                         HStack (alignment: .firstTextBaseline) {
@@ -177,30 +177,30 @@ struct ProfileView: View {
                         
                         if let achievements = currentUser?.unwrappedAchievements {
                             let unlockedAchievements = achievements.filter { $0.unlocked }
-
+                            
                             let maxAchievementsToShow = showAllItems ? unlockedAchievements.count : 3
-
+                            
                             LazyVGrid(columns: columns, alignment: .leading, spacing: 16) {
                                 ForEach(0..<min(unlockedAchievements.count, maxAchievementsToShow), id: \.self) { index in
                                     let achievement = unlockedAchievements[index]
-
+                                    
                                     VStack(alignment: .leading) {
                                         Image(achievement.icon ?? "rank1")
                                             .resizable()
                                             .frame(width: proxy.size.width / 4, height: proxy.size.width / 4)
                                             .aspectRatio(contentMode: .fit)
-
-
+                                        
+                                        
                                         Text(achievement.title ?? "Top 1")
                                             .font(.title3)
                                             .bold()
-
+                                        
                                         Text(achievement.des ?? "Top 1 on the leaderboard!")
                                             .font(.caption)
                                             .bold()
                                             .opacity(0.7)
                                         Spacer() // Push content to the top
-
+                                        
                                     }
                                 }
                             }
@@ -209,7 +209,7 @@ struct ProfileView: View {
                             Text("No available achievement")
                                 .padding(.vertical)
                         }
-
+                        
                         
                         
                         HStack {
@@ -231,7 +231,7 @@ struct ProfileView: View {
                                                 .font(.callout)
                                                 .bold()
                                             Spacer()
-
+                                            
                                             Image(history.unwrappedOpponentUsername == "M.Carlsen" ? "magnus" : history.unwrappedOpponentUsername == "Nobita" ? "nobita" : "mitten")
                                                 .resizable()
                                                 .frame(width: proxy.size.width / 10, height: proxy.size.width / 12)
@@ -239,27 +239,27 @@ struct ProfileView: View {
                                                     Circle()
                                                         .foregroundColor(.white)
                                                 )
-
-
+                                            
+                                            
                                             VStack(alignment: .leading) {
                                                 Text(history.unwrappedOpponentUsername)
                                                     .bold()
                                                 Text(history.unwrappedOpponentUsername == "M.Carlsen" ? "Hard" : history.unwrappedOpponentUsername == "Nobita" ? "Easy" : "Normal")
                                             }
-
+                                            
                                             Spacer()
                                             VStack {
                                                 Text(history.unwrappedOutcome)
                                                     .font(.title2)
                                                     .foregroundColor(history.unwrappedOutcome == "Win" ? .green : history.unwrappedOutcome == "Draw" ? .yellow : .red)
                                                     .bold()
-
+                                                
                                                 Text(String(history.unwrappedUserRatingChange))
                                                     .bold()
                                                     .opacity(0.7)
                                                     .foregroundColor(history.unwrappedOutcome == "Win" ? .green : history.unwrappedOutcome == "Draw" ? .yellow : .red)
                                             }
-
+                                            
                                         }
                                             .padding(.horizontal)
                                     )
@@ -270,19 +270,19 @@ struct ProfileView: View {
                         }
                         
                     }
-
+                    
                     VStack {
                     }.frame(height: 30)
                     
                 }
                 .edgesIgnoringSafeArea(.bottom)
-
+                
             }
             .foregroundColor(.white)
-        .background(Color(red: 0.00, green: 0.09, blue: 0.18))
+            .background(Color(red: 0.00, green: 0.09, blue: 0.18))
         }
         .navigationViewStyle(.stack)
-
+        
     }
 }
 

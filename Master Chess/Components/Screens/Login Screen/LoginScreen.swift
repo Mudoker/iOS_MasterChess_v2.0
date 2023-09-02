@@ -164,6 +164,7 @@ struct LoginView: View {
                                     
                                     // Properties from Setting
                                     CurrentUser.shared.settingAutoPromotionEnabled = users[index].userSettings?.autoPromotionEnabled ?? false
+
                                     CurrentUser.shared.settingIsSystemTheme = users[index].userSettings?.isSystemTheme ?? false
                                     CurrentUser.shared.settingIsDarkMode = users[index].userSettings?.isDarkMode ?? false
                                     CurrentUser.shared.settingLanguage = users[index].userSettings?.language ?? ""
@@ -189,6 +190,12 @@ struct LoginView: View {
                                     CurrentUser.shared.savedGameIsBlackRightRookMoved = users[index].savedGame?.isBlackRightRookMoved ?? false
                                     CurrentUser.shared.savedGameKingPosition = users[index].savedGame?.kingPosition ?? 0
                                     
+                                    if !CurrentUser.shared.settingMusicEnabled {
+                                        SoundPlayer.stopBackgroundMusic()
+                                    } else {
+                                        SoundPlayer.startBackgroundMusic()
+                                    }
+                                    
                                     loginStatus = "Login Successfully!"
                                     isMenuView = true
                                     userIndex = index
@@ -199,7 +206,6 @@ struct LoginView: View {
                                     loginStatus = "Wrong username or password"
                                 }
                             }
-                            print(isMenuView)
                             isAlert.toggle()
                         }
                         label: {

@@ -29,6 +29,7 @@
 		AB1D822E2AA0BF81000BDD05 /* GameStats+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D821C2AA0BF81000BDD05 /* GameStats+CoreDataProperties.swift */; };
 		AB1D8C0B2AA093A600826485 /* Test+History.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D8C0A2AA093A600826485 /* Test+History.swift */; };
 		AB3253B02A9C79AD0041BDF6 /* RatingCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3253AF2A9C79AD0041BDF6 /* RatingCalculator.swift */; };
+		AB5683122AA3A7E60094DB9C /* Test+Music.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5683112AA3A7E60094DB9C /* Test+Music.swift */; };
 		AB5D2AEA2A9CE0C900ED4996 /* Test+ArrayAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5D2AE92A9CE0C900ED4996 /* Test+ArrayAnimation.swift */; };
 		AB5D2AEC2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5D2AEB2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift */; };
 		AB66491E2A9C466E0098F2E2 /* move-opponent.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB66491B2A9C466E0098F2E2 /* move-opponent.mp3 */; };
@@ -115,6 +116,7 @@
 		AB1D821C2AA0BF81000BDD05 /* GameStats+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameStats+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		AB1D8C0A2AA093A600826485 /* Test+History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+History.swift"; sourceTree = "<group>"; };
 		AB3253AF2A9C79AD0041BDF6 /* RatingCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingCalculator.swift; sourceTree = "<group>"; };
+		AB5683112AA3A7E60094DB9C /* Test+Music.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+Music.swift"; sourceTree = "<group>"; };
 		AB5D2AE92A9CE0C900ED4996 /* Test+ArrayAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+ArrayAnimation.swift"; sourceTree = "<group>"; };
 		AB5D2AEB2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+ChangingBorderColorView.swift"; sourceTree = "<group>"; };
 		AB66491B2A9C466E0098F2E2 /* move-opponent.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "move-opponent.mp3"; sourceTree = "<group>"; };
@@ -217,6 +219,13 @@
 			children = (
 			);
 			path = ThemeSong;
+			sourceTree = "<group>";
+		};
+		AB5683132AA3AE4A0094DB9C /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Localization;
 			sourceTree = "<group>";
 		};
 		AB6A0B1B2A9DEF03003400DB /* Modal */ = {
@@ -409,6 +418,7 @@
 		E1F7FB292A838F00005B08D8 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				AB5683132AA3AE4A0094DB9C /* Localization */,
 				E1F7FB4D2A83C380005B08D8 /* CRUD */,
 				E1F7FB282A838EF1005B08D8 /* Database */,
 				AB66491F2A9C46D20098F2E2 /* SoundPlayer.swift */,
@@ -529,6 +539,7 @@
 				ABF184C32A9C855C00C991EB /* Test+Pulsing.swift */,
 				AB5D2AEB2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift */,
 				AB1D8C0A2AA093A600826485 /* Test+History.swift */,
+				AB5683112AA3A7E60094DB9C /* Test+Music.swift */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -657,6 +668,7 @@
 				ABF184C42A9C855C00C991EB /* Test+Pulsing.swift in Sources */,
 				E1F7FB182A838EE7005B08D8 /* ContentView.swift in Sources */,
 				E1D7825A2A8B9BE6008B1081 /* Move.swift in Sources */,
+				AB5683122AA3A7E60094DB9C /* Test+Music.swift in Sources */,
 				AB1D82232AA0BF81000BDD05 /* Test+CoreDataClass.swift in Sources */,
 				AB5D2AEA2A9CE0C900ED4996 /* Test+ArrayAnimation.swift in Sources */,
 				AB6A0B332A9F1DA8003400DB /* SettingView.swift in Sources */,

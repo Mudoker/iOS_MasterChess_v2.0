@@ -148,7 +148,9 @@ final class GameViewModel: ObservableObject {
                 if let move = move {
                     // When has value -> move the piece
                     self.chessGame.movePieceAI(from: move.from, to: move.to)
-                    self.playSound(sound: "move-opponent", type: "mp3")
+                    if self.currentUser.settingSoundEnabled {
+                        self.playSound(sound: "move-opponent", type: "mp3")
+                    }
                     self.allValidMoves = []
                 }
             }
@@ -157,7 +159,9 @@ final class GameViewModel: ObservableObject {
             if chessGame.isCheckMate(player: currentPlayer) || chessGame.isStaleMate(player: currentPlayer) ||
                 chessGame.isOutOfMove(player: currentPlayer) || chessGame.isOutOfTime(player: currentPlayer) ||
                 chessGame.isInsufficientMaterial(player: currentPlayer) {
-                playSound(sound: "game-end", type: "mp3")
+                if self.currentUser.settingSoundEnabled {
+                    self.playSound(sound: "game-end", type: "mp3")
+                }
                 if chessGame.winner == .white {
                     currentUser.rating += chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: chessGame.outcome, difficulty: currentUser.settingDifficulty)
                 } else {
@@ -197,50 +201,6 @@ final class GameViewModel: ObservableObject {
             }
         }
     }
-    
-
-    
-//    func convertMovementsToMoves(movements: [Movement]) -> [Move] {
-//        var moves: [Move] = []
-//
-//        for movement in movements {
-//            let startValue = Int(movement.start)
-//            let endValue = Int(movement.end)
-//
-//            let startX = (startValue - 1) / 10
-//            let startY = (startValue - 1) % 10
-//            let endX = (endValue - 1) / 10
-//            let endY = (endValue - 1) % 10
-//
-//            let from = Position(x: startX, y: startY)
-//            let to = Position(x: endX, y: endY)
-//
-//            let move = Move(from: from, to: to)
-//            moves.append(move)
-//        }
-//
-//        return moves
-//    }
-//
-//    func convertMovementToMoves(movement: Movement) -> Move {
-//
-//        let startValue = Int(movement.start)
-//        let endValue = Int(movement.end)
-//
-//        let startX = (startValue - 1) / 10
-//        let startY = (startValue - 1) % 10
-//        let endX = (endValue - 1) / 10
-//        let endY = (endValue - 1) % 10
-//
-//        let from = Position(x: startX, y: startY)
-//        let to = Position(x: endX, y: endY)
-//
-//        let move = Move(from: from, to: to)
-//
-//        return move
-//    }
-//
-
 
     func convertChessPieceArrayToStringArray(_ chessPieceArray: [[ChessPiece?]]) -> [[String]] {
         return chessPieceArray.map { row in

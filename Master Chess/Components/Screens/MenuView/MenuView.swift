@@ -28,8 +28,7 @@ struct MenuView: View {
     var body: some View {
         
         GeometryReader { proxy in
-            NavigationView {
-                
+            NavigationStack {
                 ZStack {
                     let currentUser = getUserWithUsername(username)
                     
@@ -56,9 +55,8 @@ struct MenuView: View {
                             HStack {
                                 Text("Rating: \(String(currentUser?.rating ?? 0))")
                                     .font(.caption)
-                                Button(action: {
-                                    leaderBoard.toggle()
-                                }) {
+                                
+                                NavigationLink(destination: LeaderBoard()) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 16)
                                             .fill(Color.gray.opacity(0.7))
@@ -68,10 +66,14 @@ struct MenuView: View {
                                             .frame(width: proxy.size.width/16, height: proxy.size.width/16)
                                     }
                                 }
-                                .navigationDestination(isPresented: $leaderBoard) {
-                                    LeaderBoard()
-                                        .navigationBarBackButtonHidden(false)
-                                }
+                                .simultaneousGesture(
+                                    TapGesture()
+                                        .onEnded {
+                                            leaderBoard = true
+                                        }
+                                )
+                                
+                                
                             }
                             .padding(.horizontal)
                             
@@ -81,7 +83,6 @@ struct MenuView: View {
                             Button(action: {
                                 user.savedGameBoardSetup = currentUser?.savedGame?.boardSetup ?? [[]]
                                 try? viewContext.save()
-                                print(user.settingDifficulty)
                                 gameView.toggle()
                             }) {
                                 ZStack {
@@ -134,11 +135,62 @@ struct MenuView: View {
                             .fullScreenCover(isPresented: $gameView){
                                 GameView(user: currentUser ?? Users())
                             }
+                            //                            NavigationLink(destination: GameView()) {
+                            //                                ZStack {
+                            //                                    RoundedRectangle(cornerRadius: 16)
+                            //                                        .fill(Color.gray.opacity(0.7))
+                            //                                        .frame(width: proxy.size.width/2.5, height: proxy.size.height/3)
+                            //
+                            //                                    VStack {
+                            //                                        HStack {
+                            //                                            Image("chess")
+                            //                                                .resizable()
+                            //                                                .aspectRatio(contentMode: .fit)
+                            //                                                .frame(width: proxy.size.width/3)
+                            //                                            Spacer()
+                            //                                        }
+                            //                                        .frame(width: proxy.size.width/2)
+                            //
+                            //                                        VStack (alignment: .leading, spacing: 5) {
+                            //                                            Text("Competitive")
+                            //                                                .font(.custom("OpenSans", size: 25))
+                            //                                                .bold()
+                            //                                                .multilineTextAlignment(.leading)
+                            //                                            Text("Player versus\nComputer")
+                            //                                                .font(.custom("OpenSans", size: 16))
+                            //                                                .multilineTextAlignment(.leading)
+                            //                                                .lineSpacing(2)
+                            //                                        }
+                            //                                        Spacer()
+                            //                                        Divider()
+                            //                                        HStack {
+                            //                                            Text("Play")
+                            //                                            Spacer()
+                            //                                            Image(systemName: "triangle.fill")
+                            //                                                .resizable()
+                            //                                                .aspectRatio(contentMode: .fit)
+                            //                                                .frame(width: proxy.size.width/35)
+                            //                                                .rotationEffect(Angle(degrees: 90))
+                            //
+                            //                                        }
+                            //                                        .padding(.horizontal)
+                            //                                        .padding(.bottom)
+                            //
+                            //                                        Spacer()
+                            //                                    }
+                            //                                    .frame(width: proxy.size.width/2.5, height: proxy.size.height/2.5)
+                            //                                }
+                            //                            }
+                            //                            .navigationBarBackButtonHidden(true)
+                            //                            .simultaneousGesture(
+                            //                                TapGesture()
+                            //                                    .onEnded {
+                            //                                        gameView = true
+                            //                                    }
+                            //                            )
                             
                             VStack {
-                                Button(action: {
-                                    how2playView = true
-                                }) {
+                                NavigationLink(destination: How2playScreen()) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 16)
                                             .fill(Color.gray.opacity(0.7))
@@ -174,13 +226,14 @@ struct MenuView: View {
                                         .padding(.top)
                                         .frame(width: proxy.size.width/2.5)
                                     }
-                                }
-                                .navigationDestination(isPresented: $how2playView) {
-                                    How2playScreen()
-                                        .navigationBarBackButtonHidden(false)
-                                    
-                                }
-                                .frame(width: proxy.size.width/2.5, height: proxy.size.height/6)
+                                    .frame(width: proxy.size.width/2.5, height: proxy.size.height/6)                                }
+                                .simultaneousGesture(
+                                    TapGesture()
+                                        .onEnded {
+                                            how2playView = true
+                                        }
+                                )
+                                
                                 
                                 
                                 Button(action: {
@@ -204,9 +257,10 @@ struct MenuView: View {
                                             }
                                             .padding(.leading)
                                             
-                                            //                                                .padding(.leading)
                                             Spacer()
+                                            
                                             Divider()
+                                            
                                             HStack {
                                                 Text("Explore")
                                                     .font(.caption)

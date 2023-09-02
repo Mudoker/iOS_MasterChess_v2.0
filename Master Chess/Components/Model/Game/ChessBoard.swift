@@ -130,7 +130,10 @@ class ChessBoard: ObservableObject, NSCopying {
         currentRating = currentUser.rating
         // Start the clocks to begin tracking time
         startClocks()
-        playSound(sound: "game-start", type: "mp3")
+        
+        if currentUser.settingSoundEnabled {
+            playSound(sound: "game-start", type: "mp3")
+        }
     }
     
     func getPiece(at position: Position) -> ChessPiece? {
@@ -163,7 +166,9 @@ class ChessBoard: ObservableObject, NSCopying {
                 // Check for capture
                 if let endPiece = piecePositions.value[end.y][end.x] {
                     captures.append(endPiece)
-                    playSound(sound: "capture", type: "mp3")
+                    if currentUser.settingSoundEnabled {
+                        playSound(sound: "capture", type: "mp3")
+                    }
                     isSoundPlayed = true
                 } else { // List of captured pieces and enpassant
                     let verticalDir = currentPlayer == .white ? 1 : -1
@@ -174,7 +179,9 @@ class ChessBoard: ObservableObject, NSCopying {
                         } else {
                             captures.append(ChessPiece(stringLiteral: "wp"))
                         }
-                        playSound(sound: "capture", type: "mp3")
+                        if currentUser.settingSoundEnabled {
+                            playSound(sound: "capture", type: "mp3")
+                        }
                         isSoundPlayed = true
                         updatedPiecePositions.value[end.y + verticalDir][end.x] = nil
                     }
@@ -211,7 +218,10 @@ class ChessBoard: ObservableObject, NSCopying {
                         blackKingPosition = Position(x: end.x, y: end.y)
                         kingPosition = blackKingPosition
                     }
-                    playSound(sound: "castle", type: "mp3")
+                    
+                    if currentUser.settingSoundEnabled {
+                        playSound(sound: "castle", type: "mp3")
+                    }
                     isSoundPlayed = true
                 } else if movingPiece.pieceType == .rook { // Turn on or off Castling
                     if movingPiece.side == .white {
@@ -232,7 +242,7 @@ class ChessBoard: ObservableObject, NSCopying {
                 // Must update to allow custom promotion
                 if movingPiece.pieceType == .pawn && (end.y == 7 || end.y == 0) {
                     if currentPlayer == .white {
-                        if currentUser.settingAutoPromotionEnabled {
+                        if !currentUser.settingAutoPromotionEnabled {
                             isPromotion = true
                         } else {
                             updatedPiecePositions.value[end.y][end.x] = ChessPiece(stringLiteral: "wq")
@@ -243,7 +253,9 @@ class ChessBoard: ObservableObject, NSCopying {
                 } else {
                     updatedPiecePositions.value[end.y][end.x] = movingPiece
                     if !isSoundPlayed {
-                        playSound(sound: "move-self", type: "mp3")
+                        if currentUser.settingSoundEnabled {
+                            playSound(sound: "move-self", type: "mp3")
+                        }
                         isSoundPlayed = true
                     }
                 }
@@ -263,7 +275,9 @@ class ChessBoard: ObservableObject, NSCopying {
                 if isCheckMate(player: currentPlayer) || isStaleMate(player: currentPlayer) ||
                    isOutOfMove(player: currentPlayer) || isOutOfTime(player: currentPlayer) ||
                    isInsufficientMaterial(player: currentPlayer) {
-                    playSound(sound: "game-end", type: "mp3")
+                    if currentUser.settingSoundEnabled {
+                        playSound(sound: "game-end", type: "mp3")
+                    }
                     if winner == .white {
                         print(outcome)
 
@@ -276,9 +290,8 @@ class ChessBoard: ObservableObject, NSCopying {
                             currentUser.rating = 0
                         }
                     }
-                } else {
-                    print(outcome)
                 }
+                
                 isSoundPlayed = false
             } else {
                 print("No piece found at the starting position.")

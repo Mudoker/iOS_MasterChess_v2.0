@@ -4,6 +4,8 @@ struct PromotionModal: View {
     @StateObject var viewModel: GameViewModel
     @State private var selectedPiece = ""
     @State private var isAnimating = false
+    var currentUser = CurrentUser.shared
+
     var isDark = false
     var body: some View {
         GeometryReader { proxy in
@@ -18,7 +20,9 @@ struct PromotionModal: View {
                                 withAnimation(.easeIn) {
                                     viewModel.chessGame.isPromotion = false
                                     viewModel.chessGame.piecePositions.value[viewModel.chessGame.history.value.last?.to.y ?? 0][viewModel.chessGame.history.value.last?.to.x ?? 0] = ChessPiece(stringLiteral: "wq")
-                                    viewModel.playSound(sound: "promote", type: "mp3")
+                                    if currentUser.settingSoundEnabled {
+                                        viewModel.playSound(sound: "promote", type: "mp3")
+                                    }
                                 }
                             }) {
                                 Image("wq")
@@ -41,7 +45,9 @@ struct PromotionModal: View {
                                 withAnimation(.easeIn) {
                                     viewModel.chessGame.isPromotion = false
                                     viewModel.chessGame.piecePositions.value[viewModel.chessGame.history.value.last?.to.y ?? 0][viewModel.chessGame.history.value.last?.to.x ?? 0] = ChessPiece(stringLiteral: "wn")
-                                    viewModel.playSound(sound: "promote", type: "mp3")
+                                    if currentUser.settingSoundEnabled {
+                                        viewModel.playSound(sound: "promote", type: "mp3")
+                                    }
                                 }
                             }) {
                                     Image("wn")
@@ -55,8 +61,9 @@ struct PromotionModal: View {
                                 withAnimation(.easeIn) {
                                     viewModel.chessGame.isPromotion = false
                                     viewModel.chessGame.piecePositions.value[viewModel.chessGame.history.value.last?.to.y ?? 0][viewModel.chessGame.history.value.last?.to.x ?? 0] = ChessPiece(stringLiteral: "wb")
-                                    viewModel.playSound(sound: "promote", type: "mp3")
-                                    
+                                    if currentUser.settingSoundEnabled {
+                                        viewModel.playSound(sound: "promote", type: "mp3")
+                                    }
                                 }
                             }) {
                                 Image("wb")
@@ -70,8 +77,9 @@ struct PromotionModal: View {
                                 withAnimation(.easeIn) {
                                     viewModel.chessGame.isPromotion = false
                                     viewModel.chessGame.piecePositions.value[viewModel.chessGame.history.value.last?.to.y ?? 0][viewModel.chessGame.history.value.last?.to.x ?? 0] = ChessPiece(stringLiteral: "wr")
-                                    viewModel.playSound(sound: "promote", type: "mp3")
-                                    
+                                    if currentUser.settingSoundEnabled {
+                                        viewModel.playSound(sound: "promote", type: "mp3")
+                                    }
                                 }
                             }) {
                                 Image("wr")

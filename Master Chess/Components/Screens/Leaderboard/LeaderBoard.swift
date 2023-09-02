@@ -1,30 +1,25 @@
-//
-//  LeaderBoard.swift
-//  Master Chess
-//
-//  Created by quoc on 30/08/2023.
-//
-
 import SwiftUI
 
 struct LeaderBoard: View {
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.rating, ascending: false)], animation: .default) private var users: FetchedResults<Users>
     var currentUserr = CurrentUser.shared
-    @State var isProfileView = false
+    @State private var isProfileViewActive = false
+    @State private var selectedUser: Users?
+    @State private var profileViewShown = false // This should be @State
     
     var body: some View {
         GeometryReader { proxy in
-            NavigationView {
+            NavigationStack {
                 VStack {
+                    Spacer()
+                        .frame(height: proxy.size.width/6)
                     ZStack {
                         HStack {
                             Spacer()
-                            NavigationLink(destination: ProfileView()) {
-                                Button(action: {
-                                    print(users[0].unwrappedUsername)
-                                    isProfileView.toggle()
-                                }) {
+                            NavigationLink(
+                                destination: ProfileView(currentUser: users[0])
+                            ) {
                                     VStack {
                                         Image("first")
                                             .resizable()
@@ -44,25 +39,19 @@ struct LeaderBoard: View {
                                             .font(.title)
                                             .bold()
                                             .foregroundColor(.yellow)
-                                        
-                                        
                                     }
                                     
-
                                 }
-                                
-                            }
-                            
-                            
-                            
+                                .simultaneousGesture(
+                                    TapGesture()
+                                        .onEnded {
+                                            isProfileViewActive = true
+                                        }
+                                )
                             Spacer()
                         }
-                        
-                        
                         HStack {
-                            Button(action: {
-                                isProfileView.toggle()
-                            }) {
+                            NavigationLink(destination: ProfileView(currentUser: users[1])) {
                                 VStack {
                                     Image("second")
                                         .resizable()
@@ -84,14 +73,15 @@ struct LeaderBoard: View {
                                         .foregroundColor(.gray)
                                 }
                             }
-                            .navigationDestination(isPresented: $isProfileView) {
-                                ProfileView()                            }
-                            
+                            .simultaneousGesture(
+                                TapGesture()
+                                    .onEnded {
+                                        isProfileViewActive = true
+                                    }
+                            )
+
                             Spacer()
-                            
-                            Button(action: {
-                                isProfileView.toggle()
-                            }) {
+                            NavigationLink(destination: ProfileView(currentUser: users[2])) {
                                 VStack {
                                     Image("third")
                                         .resizable()
@@ -112,21 +102,23 @@ struct LeaderBoard: View {
                                         .bold()
                                         .foregroundColor(.brown)
                                 }
+                                
                             }
-                            .navigationDestination(isPresented: $isProfileView) {
-                                ProfileView()                            }
-                            
+                            .simultaneousGesture(
+                                TapGesture()
+                                    .onEnded {
+                                        isProfileViewActive = true
+                                    }
+                            )
+                          
                         }
                         .padding(.top, proxy.size.width / 3)
-                        
                     }
                     .padding(.horizontal)
-        
+
                     ScrollView {
                         ForEach(3..<users.count, id: \.self) { index in
-                            Button(action: {
-                                isProfileView.toggle()
-                            }) {
+                            NavigationLink(destination: ProfileView(currentUser: users[index])) {
                                 HStack {
                                     Circle()
                                         .fill(Color.gray)
@@ -137,16 +129,12 @@ struct LeaderBoard: View {
                                                 .bold()
                                                 .foregroundColor(.black)
                                         )
-                                    
                                     Image(users[index].unwrappedProfilePicture)
                                         .resizable()
                                         .frame(width: proxy.size.width / 6, height: proxy.size.width / 6)
-                                    
                                     Text(users[index].unwrappedUsername)
                                         .font(.title2)
-                                    
                                     Spacer()
-                                    
                                     Text(String(users[index].rating))
                                         .font(.title3)
                                         .bold()
@@ -157,25 +145,21 @@ struct LeaderBoard: View {
                                 .cornerRadius(10)
                                 .shadow(radius: 3)
                                 .padding(.horizontal)
-                                
                             }
-                            .navigationDestination(isPresented: $isProfileView) {
-                                ProfileView()
-                            }
-                            
+                            .simultaneousGesture(
+                                TapGesture()
+                                    .onEnded {
+                                        isProfileViewActive = true
+                                    }
+                            )
+
                         }
                     }
                 }
+                .edgesIgnoringSafeArea(.all)
                 .foregroundColor(.white)
                 .background(Color(red: 0.00, green: 0.09, blue: 0.18))
             }
         }
-        
-    }
-}
-
-struct LeaderBoard_Previews: PreviewProvider {
-    static var previews: some View {
-        LeaderBoard()
     }
 }

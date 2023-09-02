@@ -33,7 +33,6 @@ struct GameView: View {
         pulsingScale = 1.0
     }
     
-    
     var body: some View {
         GeometryReader { proxy in
             ZStack {
@@ -50,8 +49,10 @@ struct GameView: View {
                                     let isCurrentPiece = currentPiece.0 == piece
                                     let pieceImage = Image(piece.imageView)
                                         .resizable()
+                                        .frame(width: proxy.size.width / 9, height: proxy.size.width / 9)
+                                        .padding(.bottom, proxy.size.width/40)
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: proxy.size.width / 9, height: proxy.size.width / 8)
+                                        .frame(width: proxy.size.width / 8, height: proxy.size.width / 8)
                                         .overlay(
                                             Circle()
                                                 .fill(isMoveValid ? Color.blue.opacity(0.8) : .clear)
@@ -113,7 +114,9 @@ struct GameView: View {
                                                     isVibrating = false
                                                 } else {
                                                     isVibrating = true
-                                                    viewModel.playSound(sound: "illegal", type: "mp3")
+                                                    if currentUser.settingSoundEnabled {
+                                                        viewModel.playSound(sound: "illegal", type: "mp3")
+                                                    }
                                                 }
                                             }
                                         }
@@ -140,9 +143,9 @@ struct GameView: View {
             let savedGame = SavedGame(context: viewContext)
             
             savedGame.boardSetup = viewModel.convertChessPieceArrayToStringArray(viewModel.chessGame.piecePositions.value)
-                      
+            
             var sequenceNumber: Int16 = 0 // Initialize a sequence number
-
+            
             for historyItem in viewModel.chessGame.history.value {
                 let integerOffsetsList = convertHistoryToIntegerOffsets(history: [historyItem])
                 let movements = convertIntegerOffsetsToMovements(integerOffsetsList: integerOffsetsList)
@@ -191,7 +194,7 @@ struct GameView: View {
                 viewModel.allMove(from: move.from, piece: piece)
                 self.viewModel.didMove(move: move, piece: currentPiece.0 ?? ChessPiece(stringLiteral: ""))
                 try? viewContext.save()
-
+                
                 self.currentPiece = (nil, .zero)
             }
     }
@@ -199,19 +202,19 @@ struct GameView: View {
     // Convert the move history to Integer to store in CoreData
     func convertHistoryToIntegerOffsets(history: [Move]) -> [[Int]] {
         var integerOffsets: [[Int]] = []
-
+        
         for move in history {
             let startX = move.from.x
             let startY = move.from.y
             let endX = move.to.x
             let endY = move.to.y
-
+            
             let startValue = startX * 10 + startY
             let endValue = endX * 10 + endY
-
+            
             integerOffsets.append([startValue, endValue])
         }
-
+        
         return integerOffsets
     }
     
@@ -222,15 +225,15 @@ struct GameView: View {
                 // Each integerOffsets array should have at least 2 values
                 continue
             }
-
+            
             let startValue = integerOffsets[0]
             let endValue = integerOffsets[1]
-
+            
             let startX = (startValue) / 10
             let startY = (startValue) % 10
             let endX = (endValue) / 10
             let endY = (endValue) % 10
-
+            
             let newMovement = Movement(context: viewContext)
             newMovement.start = Int16(startX * 10 + startY)
             newMovement.end = Int16(endX * 10 + endY)
@@ -248,12 +251,12 @@ struct GameView: View {
         
         let startValue = integerOffsets[0]
         let endValue = integerOffsets[1]
-
+        
         let startX = (startValue) / 10
         let startY = (startValue) % 10
         let endX = (endValue) / 10
         let endY = (endValue) % 10
-
+        
         let newMovement = Movement(context: viewContext)
         newMovement.start = Int16(startX * 10 + startY)
         newMovement.end = Int16(endX * 10 + endY)
@@ -284,7 +287,7 @@ struct GameView: View {
         let int16Value = Int16(position.x * 10 + position.y)
         return int16Value
     }
-
+    
 }
 
 // overide + for adding with cgsize
