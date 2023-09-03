@@ -23,7 +23,7 @@ struct LoginView: View {
     @State var isShowPassword: Bool = false
     @State private var isMenuView = false
     @State private var isRegister = false
-
+    @AppStorage("selectedLanguage") var selectedLanguage = "vi"
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Users.username, ascending: true)],
@@ -35,7 +35,9 @@ struct LoginView: View {
     @AppStorage("userIndex") var userIndex = 0
     @AppStorage("userName") var username = ""
     @EnvironmentObject var currentUser: CurrentUser
+    @AppStorage("theme") var theme = ""
 
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -143,6 +145,9 @@ struct LoginView: View {
                         Button {
                             for index in users.indices {
                                 if users[index].username == accountInput && users[index].password == passwordInput {
+                                    
+                                    CurrentUser.shared.settingLanguage = selectedLanguage
+                                    users[index].userSettings?.language = selectedLanguage
                                     CurrentUser.shared.username = users[index].username
                                     CurrentUser.shared.joinDate = users[index].joinDate
                                     CurrentUser.shared.password = users[index].password
@@ -166,7 +171,16 @@ struct LoginView: View {
                                     CurrentUser.shared.settingAutoPromotionEnabled = users[index].userSettings?.autoPromotionEnabled ?? false
 
                                     CurrentUser.shared.settingIsSystemTheme = users[index].userSettings?.isSystemTheme ?? false
+                                    if CurrentUser.shared.settingIsSystemTheme {
+                                        theme = "system"
+                                    }
                                     CurrentUser.shared.settingIsDarkMode = users[index].userSettings?.isDarkMode ?? false
+                                    
+                                    if CurrentUser.shared.settingIsDarkMode {
+                                        theme = "dark"
+                                    } else {
+                                        theme = "light"
+                                    }
                                     CurrentUser.shared.settingLanguage = users[index].userSettings?.language ?? ""
                                     CurrentUser.shared.settingMusicEnabled = users[index].userSettings?.musicEnabled ?? false
                                     CurrentUser.shared.settingSoundEnabled = users[index].userSettings?.soundEnabled ?? false
@@ -229,6 +243,8 @@ struct LoginView: View {
 //                                        .navigationBarBackButtonHidden(true)
 //                                } else {
                                     TabBar()
+                                    .environment(\.locale, Locale(identifier: CurrentUser.shared.settingLanguage)) // Apply the selected language
+
                                         .navigationBarBackButtonHidden(true)
 //                                }
                                 
@@ -288,15 +304,18 @@ struct LoginView: View {
                             .bold()
                             .padding(.top)
                             Spacer()
-                            Text(loginStatus)
-                            .font(.title3)
-                            .bold()
-                            .foregroundColor(.black)
                             if loginStatus != "Login Successfully!" {
                                 Text("Wrong Username or Password")
                                     .foregroundColor(.black)
+                                    .font(.title3)
+                                    .bold()
 
                                 Text("Please try again")
+                                .foregroundColor(.black)
+                            } else {
+                                Text(LocalizedStringKey(loginStatus))
+                                .font(.title3)
+                                .bold()
                                 .foregroundColor(.black)
                             }
                             Spacer()
@@ -339,7 +358,7 @@ struct LoginView: View {
                             Text("Contact technical support")
                             .foregroundColor(.black)
                             .padding(.vertical, 5)
-                            Text("masterChess@thebestgame.com")
+                            Text("s3927776@rmit.edu.vn")
                             .foregroundColor(.black)
                             Spacer()
                             Divider()
@@ -368,6 +387,7 @@ struct LoginView: View {
                 }
             }
         }
+        .environment(\.locale, Locale(identifier: selectedLanguage))
     }
 }
 struct Login_screen_Previews: PreviewProvider {

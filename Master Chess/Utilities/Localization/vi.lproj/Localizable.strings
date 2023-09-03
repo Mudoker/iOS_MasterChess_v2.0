@@ -1,0 +1,200 @@
+"greeting-string" = "Hello World";
+"Settings" = "Cài đặt";
+
+"Newbie" = "Nhập môn";
+"Pro" = "Cao Thủ";
+"Master" = "Kiện tướng";
+"Grand Master" = "Đại kiện tướng";
+"Rating: %@" = "Điểm: %@";
+"New Username" = "Tên đăng nhập mới";
+"New Password" = "Mật khẩu mới";
+"Auto Promotion Enabled" = "Tự động phong cấp";
+"Music Enabled" = "Bật nhạc";
+"Sound Enabled" = "Bật âm thanh";
+"Theme" = "Giao diện";
+"Light" = "Sáng";
+"Dark" = "Tối";
+"System" = "Hệ thống";
+"Language" = "Ngôn ngữ";
+"English" = "Tiếng Anh";
+"Vietnamese" = "Tiếng Việt";
+"Difficulty" = "Độ khó";
+"The AI will plan at most 2 moves ahead" = "AI sẽ tính trước tối đa 2 bước";
+"The AI will plan at most 3 moves ahead" = "AI sẽ tính trước tối đa 3 bước";
+"The AI will always plan 3 moves ahead" = "AI sẽ tính trước tối thiểu 3 bước";
+
+"%@ moves left" = "Còn %@ lượt";
+"%@'s Turn" = "Lượt: %@";
+"Start a move!" = "Bắt đầu chơi!";
+"New Game" = "Game mới";
+"Resign" = "Đầu hàng";
+"Main Menu" = "Trang chủ";
+"Force Win" = "Ép Thắng";
+"Force Draw" = "Ép Hoà";
+"Force Lose" = "Ép Thua";
+
+"Overview of Chess Game" = "Tổng quan về Cờ Vua";
+"Chess is a classic two-player strategy board game that has been enjoyed for centuries. It's played on an 8x8 board called a chessboard, with each player has control upon an army of 16 pieces. The objective is to checkmate the opponent's king while protecting your own." = "Cờ vua là một trò chơi chiến thuật hai người cổ điển đã được phổ biến suốt hàng thế kỷ. Cờ vua được chơi trên một bàn cờ 8x8 gọi là bàn cờ cờ vua, với mỗi người chơi sẽ kiểm soát một bộ gồm 16 quân cờ. Mục tiêu là chiếu hết (check mate) đối phương trong khi bảo vệ tướng của bạn.";
+
+"Board Setup" = "Thiết lập bàn cờ";
+"The chessboard consists of 64 squares arranged in an 8x8 grid. Players sit in front of each other, with the board oriented so that each player has a white square on their right.\nPlace the pieces on the board as follows:" = "Bàn cờ vua bao gồm 64 ô được sắp xếp trong một ma trận 8x8. Người chơi sẽ ngồi đối diện nhau, với bàn cờ được căn chỉnh sao cho mỗi người chơi sẽ có một ô màu trắng ở bên phải của họ. Đặt các quân cờ lên bàn cờ như sau:";
+"Each player has 16 pieces: 1 king, 1 queen, 2 rooks, 2 knights, 2 bishops, and 8 pawns." = "Mỗi người chơi có 16 quân cờ: 1 tượng, 1 hậu, 2 xe, 2 mã, 2 tượng, và 8 tốt.";
+"Pawns occupy the second row (rank) for white and the seventh row for black." = "Quân tốt chiếm dòng thứ hai cho bên trắng và dòng thứ bảy cho bên đen.";
+"Two rooks occupy the corners." = "Hai xe chiếm 2 góc trái phải của bàn cờ.";
+"The two knights are next to the rooks." = "Hai mã được đặt bên cạnh hai xe.";
+"The two bishops are placed next to the knights." = "Hai tượng được đặt bên cạnh hai mã.";
+"The queen takes her place on the remaining square of her color." = "Hậu được đặt vào ô còn lại cùng màu của mình.";
+"The king stands beside the queen." = "Vua đứng bên cạnh hậu.";
+
+"How to move" = "Cách di chuyển";
+"Pawns move forward one square and capture diagonally." = "Tốt di chuyển về phía trước một ô và ăn quân theo đường chéo.";
+"Rooks move horizontally or vertically across the board." = "Xe di chuyển ngang hoặc dọc trên bàn cờ.";
+"Knights move in an L-shape: two squares in one direction and then one square perpendicular." = "Ngựa di chuyển theo hình chữ 'L': hai ô theo một hướng, sau đó một ô vuông vuông góc.";
+"Bishops move diagonally." = "Tượng di chuyển theo đường chéo.";
+"Queens can move horizontally, vertically, or diagonally." = "Hậu có thể di chuyển ngang, dọc hoặc theo đường chéo.";
+"Kings move one square in any direction." = "Vua di chuyển một ô theo hướng bất kỳ.";
+
+"How to win" = "Cách chiến thắng";
+"The game is won by putting the opponent's king in checkmate, in other words, the king is under attack and cannot escape. You can also win if your opponent resigns, runs out of time or exceeds the number of moves." = "Trò chơi được thắng bằng cách đặt tướng đối phương vào tình trạng chiếu tướng, nghĩa là tướng đối phương đang bị tấn công và không thể thoát khỏi. Bạn cũng có thể thắng nếu đối thủ của bạn bỏ cuộc, hết thời gian, hoặc vượt quá số lượt đi.";
+
+"Master Rank Constraints" = "Độ khó cho bậc Kiện Tướng";
+"If players are in rank Master (rating > 1300), they will have a time limit of 10 minutes for the entire game. This adds urgency and encourages quick decision-making. They will also be limited to 40 moves in total. If they reach 0 moves, it will result in an immediate loss." = "Nếu người chơi ở bậc Kiện tướng (điểm > 1300), họ sẽ bị giới hạn thời gian giới hạn là 10 phút cho cả trận đấu. Điều này nhằm tăng độ khó và khuyến khích việc ra quyết định nhanh chóng. Họ cũng sẽ bị giới hạn 40 nước đi tổng cộng. Nếu vượt quá 40 bước sẽ bị xử thua ngay lập tức.";
+
+"Grand Master Rank Constraints" = "Độ khó cho bậc Đại Kiện Tướng";
+"For those Grandmasters (rating > 1600), there's a limit on the number of moves (30 moves in total). Players must carefully plan their strategies as they're restricted in their available moves." = "Đối với những Đại Kiện Tướng (điểm >= 1600), sẽ có giới hạn về số lượng nước đi (tổng cộng 30 nước). Người chơi phải lập kế hoạch chiến thuật cẩn thận vì họ sẽ bị hạn chế trong tổng số nước đi có sẵn.";
+
+"Score Calculation" = "Cách tính điểm";
+"In the game, points are awarded based on expected and final performance:" =
+"Trong Master Chess, điểm được đánh giá dựa trên kết quả dự kiến và kết quả cuối cùng:";
+"Where:" = "Trong đó:";
+"RatingChange = KFactor * DifficultyMultiplier * (ActualOutcome - ExpectedOutcome)" = "Điểm chênh lệch = Hệ số K * Độ khó * (Kết quả Thực tế - Kết quả Dự kiến)";
+"ExpectedOutcome = 1 / (1 + 10^((OpponentRating - PlayerRating) / 400))" = "Kết quả Dự kiến = 1 / (1 + 10^((Điểm Đối thủ - Điểm Người chơi) / 400))";
+
+"• RatingChange is the calculated change in the player's rating." = "• Điểm chênh lệch là sự thay đổi trong điểm đánh giá của người chơi.";
+"• KFactor represents a constant that governs the sensitivity of rating changes." = "• Hệ số K đại diện cho một hằng số quy định sự thay đổi điểm đánh giá.";
+"• DifficultyMultiplier adjusts the impact of difficulty levels on the rating change." = "• Sự thay đổi điểm sẽ dựa vào độ khó của game.";
+"• ActualOutcome signifies the actual game outcome's impact on the rating change." = "• Kết quả Thực tế biểu thị tác động thực sự của kết quả trò chơi lên sự thay đổi của điểm.";
+"• ExpectedOutcome predicts the likelihood of a player's victory based on Elo's probability estimation." = "• Kết quả Dự kiến dự đoán khả năng chiến thắng của người chơi dựa trên điểm Elo.";
+
+"Win rate" = "Tỉ lệ thắng";
+"Ratings" = "Điểm";
+"Join date: " = "Ngày tham gia: ";
+"Achievements" = "Thành tựu";
+"History" = "Lịch sử đấu";
+
+"Easy" = "Dễ";
+"Normal" = "Trung bình";
+"Hard" = "Khó";
+
+"Win" = "Thắng";
+"Draw" = "Hoà";
+"Loss" = "Thua";
+
+"Pro Player" = "Cao Thủ";
+"First time login!" = "Hành trình mới!";
+
+"Top 1" = "Top 1";
+"Top 2" = "Top 2";
+"Top 2" = "Top 2";
+
+"Get's started" = "Làm nóng người!";
+"Game Lover" = "Nghiện Game";
+"Friend with AI" = "Bạn Thân AI";
+"The Challenger" = "Kẻ Thách Đấu";
+"AI Killer" = "Sát Thủ AI";
+"Good morning!" = "Chào buổi sáng!";
+"Good evening!" = "Chào buổi tối!";
+"Good afternoon!" = "Chào buổi chiều!";
+
+"Competitive" = "Đối kháng";
+"Player versus\nComputer" = "Người đấu\nMáy";
+"Play" = "Chơi";
+"How to play?" = "Cách chơi";
+"Explore" = "Khám phá";
+"Official Website" = "Trang chủ";
+
+"Recent Matches" = "Lịch sử đấu";
+"No available history" = "Không có lịch sử";
+
+"Step" = "Bước";
+"Skip" = "Bỏ qua";
+
+"Continue" = "Tiếp tục";
+"Sign in" = "Đăng nhập";
+"Invalid username" = "Tên không hợp lệ";
+"Invalid username or it has been used" = "Tên không hợp lệ hoặc đã tồn tại";
+"Close" = "Đóng";
+"Create a profile" = "Tạo hồ sơ mới";
+"The username should be atleast 5 characters" = "Tên đăng nhập phải chứa ít nhất 5 kí tự";
+"Password" = "Mật khẩu";
+"Username" = "Tên đăng nhập";
+"Choose a theme preference" = "Chọn giao diện";
+"Music" = "Nhạc nền";
+"SFX" = "Hiệu ứng";
+"Auto Promotion" = "Tự phong cấp";
+"Disabled" = "Tắt";
+"Enabled" = "Mở";
+"𝗟𝗼𝗴𝗶𝗻" = "Đăng Nhập";
+"Please sign in to continue" = "Vui lòng đăng nhập để tiếp tục";
+"Account" = "Tài khoản";
+"Username or email" = "Tên đăng nhập hoặc email";
+"(Optional)" = "(Nếu có)";
+"Login Successfully!" = "Đăng nhập thành công!";
+"Wrong username or password" = "Sai tên đăng nhập/mật khẩu";
+"Wrong Username or Password" = "Sai tên đăng nhập/mật khẩu";
+
+"Login" = "Đăng nhập";
+"Login Successfully!" = "Đăng nhập thành công!";
+
+"Forgot password?" = "Quên mật khẩu?";
+"or" = "hoặc";
+"Create new account" = "Tạo tài khoản";
+"System alert" = "Thông báo";
+"Please try again" = "Hãy thử lại";
+"Password Recovery" = "Lấy lại mật khẩu";
+"Contact technical support" = "Hỗ trợ kĩ thuật";
+"Let's explore" = "Khám phá nào";
+"Need help?" = "Trợ giúp?";
+"Technical Support" = "Hỗ trợ kĩ thuật";
+"Please contact: s3927776@rmit.edu.vn" = "Liên lạc: s3927776@rmit.edu.vn";
+
+"Dashboard" = "Trang chủ";
+"Profile" = "Hồ sơ";
+
+"Confirm Change" = "Xác nhận";
+"Username Taken" = "Tên đăng nhập đã tồn tại";
+"The selected username is already taken. Please choose a different username." = "TTên đăng nhập đã tồn tại. Vui lòng chọn tên khác.";
+"Sign out" = "Đăng xuất";
+"Confirmation" = "Xác nhận";
+"Are you sure you want to sign out?" = "Bạn có chắc muốn đăng xuất?";
+"Cancel" = "Huỷ";
+
+"First time login!" = "Người chơi mới";
+"Top 1 on the leaderboard!" = "Top 1 bảng xếp hạng!";
+"Top 2 on the leaderboard!" = "Top 2 bảng xếp hạng!";
+"Top 3 on the leaderboard!" = "Top 3 bảng xếp hạng!";
+"Play 1 game!" = "Chơi 1 game!";
+"Play 5 game!" = "Chơi 5 game!";
+"Play 10 game!" = "Chơi 10 game!";
+"Play 20 game!" = "Chơi 20 game!";
+"Play 50 game!" = "Chơi 50 game!";
+"Reach Newbie ranking" = "Đạt Nhập Môn";
+"Reach Pro ranking" = "Đạt Cao Thủ";
+"Reach Master ranking" = "Đạt Kiện Tướng";
+"Reach Grand Master ranking" = "Đạt Đại Kiện Tướng";
+"No available achievement" = "Chưa có thành tựu";
+"First Step" = "Chập chững";
+"Show All" = "Tất cả";
+"Show Less" = "Thu gọn";
+"Achievement Unlocked" = "Mở khoá thành tựu";
+"DRAW" = "HOÀ";
+"YOU WON" = "THẮNG";
+"Checkmate" = "Chiếu bí";
+"YOU LOSS" = "Thua";
+"Insufficient Material" = "Thiếu quân";
+"Stale Mate" = "Thế bí";
+"Out of move" = "Hết lượt";
+"Out of time" = "Hết giờ";
+"Current Rating" = "Điểm hiện tại";
+"Go Back" = "Quay lại";
+

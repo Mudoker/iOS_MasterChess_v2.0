@@ -22,7 +22,7 @@ struct GameView: View {
     @State private var selectedPiece = ""
     @State private var isAnimating = false
     var isDark = false
-    
+    @State var isMenu = false
     private func startPulsingAnimation() {
         withAnimation(Animation.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
             pulsingScale = 1.1
@@ -36,7 +36,7 @@ struct GameView: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack {
-                ChessBoardView(viewModel: viewModel, user: user)
+                ChessBoardView(viewModel: viewModel, user: user)                
                 VStack {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 8), spacing: 0) {
                         ForEach(0..<8) { y in
@@ -50,7 +50,6 @@ struct GameView: View {
                                     let pieceImage = Image(piece.imageView)
                                         .resizable()
                                         .frame(width: proxy.size.width / 9, height: proxy.size.width / 9)
-                                        .padding(.bottom, proxy.size.width/40)
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: proxy.size.width / 8, height: proxy.size.width / 8)
                                         .overlay(
@@ -58,6 +57,7 @@ struct GameView: View {
                                                 .fill(isMoveValid ? Color.blue.opacity(0.8) : .clear)
                                                 .frame(width: isMoveValid ? 16 : 0, height: isMoveValid ? 16 : 0)
                                         )
+                                        
                                         .offset(isCurrentPiece ? self.currentPiece.1 : .zero)
                                         .onTapGesture {
                                             if piece.side == viewModel.currentPlayer {

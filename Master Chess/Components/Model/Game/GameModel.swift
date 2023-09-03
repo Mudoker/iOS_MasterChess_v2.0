@@ -86,7 +86,7 @@ final class GameViewModel: ObservableObject {
         case "easy":
             blackPlayerName = "Nobita"
             blackPlayerProfile = "nobita"
-            blackTitle = "Novice"
+            blackTitle = "Newbie"
         default:
             blackPlayerName = "Error" // Set a default value if none of the cases match
         }

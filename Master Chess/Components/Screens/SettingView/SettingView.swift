@@ -9,13 +9,16 @@ import SwiftUI
 
 struct SettingView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.colorScheme) var colorScheme
+
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.username, ascending: true)], animation: .default) private var users: FetchedResults<Users>
     var currentUserr = CurrentUser.shared
-    @State private var selectedLanguage = "English"
     @State private var selectedSound = false
     @State private var selectedSFX = false
     @State private var selectedAP = false
     @State private var selectedTheme = "Dark"
+    @State private var selectedLanguage = "en"
+
     @State var isConfirmLogOut: Bool = false
     @State var isLogOut: Bool = false
     @State private var newPassword = ""
@@ -26,6 +29,11 @@ struct SettingView: View {
     @AppStorage("userName") var username = "Mudoker"
     @State private var isUsernameTakenAlertPresented = false
     @State var isShowProfile = false
+    @AppStorage("selectedLanguage") var localization = "vi"
+    @AppStorage("theme") var theme = ""
+    @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
+    @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
+    
     func isUsernameAvailable(_ newUsername: String) -> Bool {
         let isTaken = users.contains { user in
             user.unwrappedUsername == newUsername
@@ -45,12 +53,9 @@ struct SettingView: View {
     func getUserWithUsername(_ username: String) -> Users? {
         return users.first { $0.username == username }
     }
-    
+   
     var body: some View {
         GeometryReader { proxy in
-            
-            NavigationView {
-                
                 let currentUser = getUserWithUsername(username)
                 VStack (alignment: .center) {
                     HStack {
@@ -62,11 +67,12 @@ struct SettingView: View {
                     }
                     ScrollView(showsIndicators: false) {
                         
-                        NavigationLink(destination: ProfileView(currentUser: currentUser ?? Users())) {
+                        NavigationLink(destination: ProfileView(currentUser: currentUser ?? Users())                        .navigationBarTitle(Text(""), displayMode: .inline)
+) {
                             VStack {
                                 HStack {
                                     Circle()
-                                        .fill(.white.opacity(0.4))
+                                        .fill(theme == "system" ? (colorScheme == .dark ? .gray.opacity(0.4) : .black.opacity(0.4)) : (theme == "light" ? .black.opacity(0.4) : .gray.opacity(0.4)))
                                         .frame(width: proxy.size.width/4)
                                         .overlay(
                                             Image(currentUser?.unwrappedProfilePicture ?? "profile1")
@@ -111,7 +117,6 @@ struct SettingView: View {
                         VStack(spacing: 20) {
                             VStack {
                                 TextField("New Username", text: $newUsername)
-                                    .foregroundColor(.white)
                                     .padding()
                                     .disableAutocorrection(true)
                                     .textInputAutocapitalization(.never)
@@ -121,7 +126,6 @@ struct SettingView: View {
                                     }
                                 
                                 TextField("New Password", text: $newPassword)
-                                    .foregroundColor(.white)
                                     .padding()
                                     .disableAutocorrection(true)
                                     .textInputAutocapitalization(.never)
@@ -137,7 +141,6 @@ struct SettingView: View {
                             VStack (spacing: 20) {
                                 Toggle("Auto Promotion Enabled", isOn: $selectedAP)
                                     .padding()
-                                    .foregroundColor(.white)
                                     .onChange(of: selectedAP) { _ in
                                         isChangesMade = true
                                         updateConfirmButtonState()
@@ -148,7 +151,6 @@ struct SettingView: View {
                                     }
                                 
                                 Toggle("Music Enabled", isOn: $selectedSound)
-                                    .foregroundColor(.white)
                                     .padding()
                                     .onChange(of: selectedSound) { _ in
                                         isChangesMade = true
@@ -161,7 +163,6 @@ struct SettingView: View {
                                     }
                                 
                                 Toggle("Sound Enabled", isOn: $selectedSFX)
-                                    .foregroundColor(.white)
                                     .padding()
                                     .onChange(of: selectedSFX) { _ in
                                         isChangesMade = true
@@ -205,13 +206,13 @@ struct SettingView: View {
                                     .padding(.top)
                                 
                                 Picker("Language", selection: $selectedLanguage) {
-                                    Text("English").tag("English")
-                                    Text("Vietnamese").tag("Vietnamese")
+                                    Text("English").tag("en")
+                                    Text("Vietnamese").tag("vi")
                                 }
                                 .pickerStyle(SegmentedPickerStyle())
                                 .preferredColorScheme(.dark)
                                 .onAppear {
-                                    let language = currentUser?.unwrappedUserSetting.unwrappedLanguage ?? "English"
+                                    let language = currentUser?.unwrappedUserSetting.unwrappedLanguage ?? "en"
                                     
                                     selectedLanguage = language
                                 }
@@ -226,15 +227,15 @@ struct SettingView: View {
                                         .padding(.top)
                                     
                                     if selectedDifficulty == "easy" {
-                                        Text("The AI will plan at most 2 moves a head")
+                                        Text("The AI will plan at most 2 moves ahead")
                                             .opacity(0.7)
                                             .italic()
                                     } else if selectedDifficulty == "normal" {
-                                        Text("The AI will plan at most 3 moves a head")
+                                        Text("The AI will plan at most 3 moves ahead")
                                             .opacity(0.7)
                                             .italic()
                                     } else {
-                                        Text("The AI will always plan 3 moves a head")
+                                        Text("The AI will always plan 3 moves ahead")
                                             .opacity(0.7)
                                             .italic()
                                     }
@@ -242,9 +243,9 @@ struct SettingView: View {
                                 
                                 
                                 Picker("Difficulty", selection: $selectedDifficulty) {
-                                    Text("Newbie").tag("easy")
-                                    Text("Intermediate").tag("normal")
-                                    Text("Advanced").tag("hard")
+                                    Text("Easy").tag("easy")
+                                    Text("Normal").tag("normal")
+                                    Text("Hard").tag("hard")
                                 }
                                 .pickerStyle(SegmentedPickerStyle())
                                 .preferredColorScheme(.dark)
@@ -278,19 +279,28 @@ struct SettingView: View {
                                         newPassword = ""
                                         
                                     }
+                                    localization = selectedLanguage
                                     currentUser?.userSettings?.autoPromotionEnabled = selectedAP
                                     currentUser?.userSettings?.isSystemTheme = selectedTheme == "system" ? true : false
                                     currentUser?.userSettings?.isDarkMode = selectedTheme == "light" ? false : true
+                                    
                                     currentUser?.userSettings?.soundEnabled = selectedSFX
                                     currentUser?.userSettings?.musicEnabled = selectedSound
                                     currentUser?.userSettings?.difficulty = selectedDifficulty
-                                    
+                                    currentUser?.userSettings?.language = selectedLanguage
+
+                                    theme = selectedTheme
                                     currentUserr.settingAutoPromotionEnabled = selectedAP
+                                    
                                     currentUserr.settingIsSystemTheme = selectedTheme == "system" ? true : false
+                                    
                                     currentUserr.settingIsDarkMode = selectedTheme == "light" ? false : true
+                                    
                                     currentUserr.settingSoundEnabled = selectedSFX
                                     currentUserr.settingMusicEnabled = selectedSound
                                     currentUserr.settingDifficulty = selectedDifficulty
+                                    
+                                    currentUserr.settingLanguage = selectedLanguage
                                     
                                     if !selectedSound {
                                         SoundPlayer.stopBackgroundMusic()
@@ -304,7 +314,6 @@ struct SettingView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(isConfirmButtonEnabled ? Color.blue : Color.gray)
-                                .foregroundColor(.white)
                                 .font(.headline)
                                 .cornerRadius(10)
                                 .disabled(!isConfirmButtonEnabled)
@@ -325,7 +334,6 @@ struct SettingView: View {
                                             .bold()
                                             .font(.title3)
                                     }
-                                    
                                 }
                                 .alert(isPresented: $isConfirmLogOut) {
                                     Alert(
@@ -342,17 +350,17 @@ struct SettingView: View {
                                     LoginView()
                                         .navigationBarBackButtonHidden(true)
                                 }
-                                .padding(.top, 6)
                             }
+                            .padding(.horizontal)
                             .padding(.top)
                         }
                     }
                 }
-                .foregroundColor(.white)
-                .background(Color(red: 0.00, green: 0.09, blue: 0.18))
-            }
-            
+                .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
+                .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
         }
+        .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
+        .environment(\.locale, Locale(identifier: localization))
     }
 }
 

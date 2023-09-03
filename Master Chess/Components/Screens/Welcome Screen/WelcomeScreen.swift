@@ -1,21 +1,12 @@
-//
-//  Onboarding Screen.swift
-//  Master Chess
-//
-//  Created by Quoc Doan Huu on 09/08/2023.
-//
-
 import SwiftUI
 
 struct Welcome_Screen: View {
-    // Show login screen
-    @State var isLogin = false
-    
-    // Show help panel
-    @State var showAlert = false
+    @AppStorage("selectedLanguage") var selectedLanguage = "en" // Default language is English
+    @State private var isLogin = false
+    @State private var showAlert = false
     @AppStorage("userName") var username = ""
     @EnvironmentObject var currentUser: CurrentUser
-
+    
     var body: some View {
         GeometryReader { proxy in
             ZStack {
@@ -28,7 +19,7 @@ struct Welcome_Screen: View {
                     Image("RmitLogo")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                    .frame(width:150, height: 150)
+                        .frame(width: proxy.size.width/2, height: proxy.size.width/2)
                     
                     Spacer()
                 }
@@ -36,12 +27,12 @@ struct Welcome_Screen: View {
                     Spacer()
                     HStack {
                         Text("𝐌𝐚𝐬𝐭𝐞𝐫 𝐂𝐡𝐞𝐬𝐬")
-                            .font(.system(size: 50))
+                            .font(.system(size: proxy.size.width/8))
                             .bold()
                         Spacer()
                     }
-                    .padding(.horizontal, 30)
-                    .padding(.bottom, 5)
+                    .padding(.horizontal)
+                    
                     HStack {
                         Text("Master Your Mind, Master Your Moves")
                             .font(.title3)
@@ -49,23 +40,20 @@ struct Welcome_Screen: View {
                             .opacity(0.7)
                         Spacer()
                     }
-                    .padding(.horizontal, 30)
-                    .padding(.bottom, 30)
+                    .padding(.horizontal)
+                    .padding(.bottom)
                     
                     Button {
                         isLogin = true
                     } label: {
                         HStack {
                             Text("Let's explore")
-                            
-                            // Spacer is used for positioning items
                             Spacer()
-                            
                             Image(systemName: "arrow.up.forward")
                         }
                         .foregroundColor(.black)
-                        .padding(.horizontal, 25)
-                        .frame(width: 340, height: 70)
+                        .padding(.horizontal)
+                        .frame(width: proxy.size.width/1.1, height: 70)
                         .background(.white)
                         .clipShape(Capsule())
                         .padding(.bottom)
@@ -73,30 +61,47 @@ struct Welcome_Screen: View {
                     .navigationDestination(
                         isPresented: $isLogin // trigger the navigation
                     ) {
-                        LoginView()
-                            .environmentObject(currentUser)
-                            .navigationBarBackButtonHidden(true)
+//                        LoginView()
+//                            .environmentObject(currentUser)
+//                            .navigationBarBackButtonHidden(true)
                     }
                     
-                    Button {
-                        showAlert.toggle()
-                    } label: {
-                        Text("Need help?")
+                    HStack (alignment: .firstTextBaseline) {
+                        Button {
+                            showAlert.toggle()
+                        } label: {
+                            Text("Need help?")
+                        }
+                        .alert(isPresented: $showAlert) {
+                            Alert(
+                                title: Text("Technical Support"),
+                                message: Text("Please contact: s3927776@rmit.edu.vn"),
+                                dismissButton: .default(Text("Close"))
+                            )
+                        }
+                        .padding(.horizontal, 30)
+                        
+                        Spacer()
+                        
+                        Picker(selection: $selectedLanguage, label: Text("Select Language")) {
+                            Text("English")
+                                .tag("en")
+                            
+                            Text("Vietnamese")
+                                .tag("vi")
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom)
                     }
-                    .alert(isPresented: $showAlert) {
-                        Alert(
-                            title: Text("Technical Support"),
-                            message: Text("Please contact: s3927776@rmit.edu.vn"),
-                            dismissButton: .default(Text("Close"))
-                        )
-                    }
-                    .padding(.horizontal, 30)
+                    
                 }
-                .padding(.bottom, 40)
+                .padding(.bottom)
+                .padding(.bottom)
                 .foregroundColor(.white)
             }
             .ignoresSafeArea()
         }
+        .environment(\.locale, Locale(identifier: selectedLanguage)) // Apply the selected language
     }
 }
 

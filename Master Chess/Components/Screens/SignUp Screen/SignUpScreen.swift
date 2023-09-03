@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SignUpScreen: View {
-
     @State var currentStep = 1
     @State var selectedProfile = 1
     @State var selectedTheme = 1
@@ -17,12 +16,14 @@ struct SignUpScreen: View {
     @State  var password: String = ""
     @State var isValidUsername: Bool = false
     @State var showAlertFalseUsername: Bool = false
-    @State  var selectedLanguage = "English"
+//    @State  var selectedLanguage = "English"
     @State  var selectedDifficulty = "easy"
     @State  var selectedSound = false
     @State  var selectedSFX = false
     @State  var selectedAP = false
     @State var isSkipRegister = false
+    @AppStorage("selectedLanguage") var selectedLanguage = "en" // Default language is English
+
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
@@ -335,7 +336,7 @@ struct SignUpScreen: View {
                 .alert(isPresented: $showAlertFalseUsername) {
                     Alert(
                         title: Text("Invalid username"),
-                        message: Text("Invalid password and it has been used"),
+                        message: Text("Invalid username or it has been used"),
                         dismissButton: .default(Text("Close"))
                     )
                 }
@@ -532,8 +533,8 @@ struct Register2: View {
                 Text ("Language")
                     .bold()
                 Picker("Language", selection: $selectedLanguage) {
-                                Text("Vietnamese").tag("Vietnamese")
-                                Text("English").tag("English")
+                                Text("Vietnamese").tag("vi")
+                                Text("English").tag("en")
                             }
                     .pickerStyle(SegmentedPickerStyle())
                     .preferredColorScheme(.dark)
@@ -541,9 +542,9 @@ struct Register2: View {
                 Text ("Difficulty")
                     .bold()
                 Picker("Difficulty", selection: $selectedDifficulty) {
-                                Text("Newbie").tag("easy")
-                                Text("Intermidiate").tag("normal")
-                                Text("Advanced").tag("hard")
+                                Text("Easy").tag("easy")
+                                Text("Normal").tag("normal")
+                                Text("Hard").tag("hard")
                             }
                     .pickerStyle(SegmentedPickerStyle())
                     .preferredColorScheme(.dark)

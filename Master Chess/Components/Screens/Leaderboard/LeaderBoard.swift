@@ -7,10 +7,27 @@ struct LeaderBoard: View {
     @State private var isProfileViewActive = false
     @State private var selectedUser: Users?
     @State private var profileViewShown = false // This should be @State
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @Environment(\.colorScheme) var colorScheme
     
+    @AppStorage("theme") var theme = ""
+    @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
+    @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
+    private var backButton: some View {
+        Button(action: {
+            presentationMode.wrappedValue.dismiss()
+        }) {
+            HStack {
+                Image(systemName: "arrow.left.circle.fill")
+                    .imageScale(.large)
+                Text("Go Back")
+            }
+            .padding()
+            .foregroundColor(.blue)
+        }
+    }
     var body: some View {
         GeometryReader { proxy in
-            NavigationStack {
                 VStack {
                     Spacer()
                         .frame(height: proxy.size.width/6)
@@ -157,9 +174,14 @@ struct LeaderBoard: View {
                     }
                 }
                 .edgesIgnoringSafeArea(.all)
-                .foregroundColor(.white)
-                .background(Color(red: 0.00, green: 0.09, blue: 0.18))
-            }
+                .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
+                .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
+                .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
+            
         }
+        .navigationBarBackButtonHidden(true) // Hide the default back button
+        .navigationBarItems(leading: backButton) // Place the custom back button in the top-left corner
+        .environment(\.locale, Locale(identifier: CurrentUser.shared.settingLanguage)) // Apply the selected language
+
     }
 }

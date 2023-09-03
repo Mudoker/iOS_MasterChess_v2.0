@@ -3,6 +3,8 @@ import SwiftUI
 struct MenuView: View {
     @State private var currentTime = Date()
     @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.colorScheme) var colorScheme
+
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.rating, ascending: true)], animation: .default) private var users: FetchedResults<Users>
     @AppStorage("userName") var username = "Mudoker"
     @State private var isSheetPresented = true
@@ -10,6 +12,9 @@ struct MenuView: View {
     func getUserWithUsername(_ username: String) -> Users? {
         return users.first { $0.username == username }
     }
+    @State private var languageChanged = false // Add this state
+    @AppStorage("selectedLanguage") var selectedLanguage = "vi"
+
     // Function to convert date to string
     func formatDate(_ date: Date) -> String {
         let dateFormatter = DateFormatter()
@@ -24,26 +29,26 @@ struct MenuView: View {
     @State var leaderBoard = false
     @State var how2playView = false
     @State var gameView = false
+    @AppStorage("theme") var theme = ""
+    @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
+    @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
     
     var body: some View {
         
         GeometryReader { proxy in
-            NavigationStack {
                 ZStack {
                     let currentUser = getUserWithUsername(username)
                     
-                    Color(red: 0.00, green: 0.09, blue: 0.18)
-                        .ignoresSafeArea()
+                   
                     
                     VStack(alignment: .leading) {
                         HStack {
                             VStack(alignment: .leading) {
                                 Text(getFormattedDate())
-                                
                                     .frame(height: proxy.size.width/100)
                                     .padding(.leading)
                                 
-                                Text(greeting(for: currentTime))
+                                Text(LocalizedStringKey(greeting(for: currentTime)))
                                     .font(.title2)
                                     .frame(height: proxy.size.width/10)
                                     .bold()
@@ -55,11 +60,11 @@ struct MenuView: View {
                             HStack {
                                 Text("Rating: \(String(currentUser?.rating ?? 0))")
                                     .font(.caption)
-                                
+
                                 NavigationLink(destination: LeaderBoard()) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 16)
-                                            .fill(Color.gray.opacity(0.7))
+                                            .fill(theme == "system" ? (colorScheme == .dark ? .gray.opacity(0.7) : .black.opacity(0.2)) : (theme == "light" ? .black.opacity(0.2) : .gray.opacity(0.7)))
                                             .frame(width: proxy.size.width/8, height: proxy.size.height/16)
                                         Image(systemName: "medal.fill")
                                             .resizable()
@@ -87,7 +92,7 @@ struct MenuView: View {
                             }) {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 16)
-                                        .fill(Color.gray.opacity(0.7))
+                                        .fill(theme == "system" ? (colorScheme == .dark ? .gray.opacity(0.7) : .black.opacity(0.2)) : (theme == "light" ? .black.opacity(0.2) : .gray.opacity(0.7)))
                                         .frame(width: proxy.size.width/2.5, height: proxy.size.height/3)
                                     
                                     VStack {
@@ -135,65 +140,14 @@ struct MenuView: View {
                             .fullScreenCover(isPresented: $gameView){
                                 GameView(user: currentUser ?? Users())
                             }
-                            //                            NavigationLink(destination: GameView()) {
-                            //                                ZStack {
-                            //                                    RoundedRectangle(cornerRadius: 16)
-                            //                                        .fill(Color.gray.opacity(0.7))
-                            //                                        .frame(width: proxy.size.width/2.5, height: proxy.size.height/3)
-                            //
-                            //                                    VStack {
-                            //                                        HStack {
-                            //                                            Image("chess")
-                            //                                                .resizable()
-                            //                                                .aspectRatio(contentMode: .fit)
-                            //                                                .frame(width: proxy.size.width/3)
-                            //                                            Spacer()
-                            //                                        }
-                            //                                        .frame(width: proxy.size.width/2)
-                            //
-                            //                                        VStack (alignment: .leading, spacing: 5) {
-                            //                                            Text("Competitive")
-                            //                                                .font(.custom("OpenSans", size: 25))
-                            //                                                .bold()
-                            //                                                .multilineTextAlignment(.leading)
-                            //                                            Text("Player versus\nComputer")
-                            //                                                .font(.custom("OpenSans", size: 16))
-                            //                                                .multilineTextAlignment(.leading)
-                            //                                                .lineSpacing(2)
-                            //                                        }
-                            //                                        Spacer()
-                            //                                        Divider()
-                            //                                        HStack {
-                            //                                            Text("Play")
-                            //                                            Spacer()
-                            //                                            Image(systemName: "triangle.fill")
-                            //                                                .resizable()
-                            //                                                .aspectRatio(contentMode: .fit)
-                            //                                                .frame(width: proxy.size.width/35)
-                            //                                                .rotationEffect(Angle(degrees: 90))
-                            //
-                            //                                        }
-                            //                                        .padding(.horizontal)
-                            //                                        .padding(.bottom)
-                            //
-                            //                                        Spacer()
-                            //                                    }
-                            //                                    .frame(width: proxy.size.width/2.5, height: proxy.size.height/2.5)
-                            //                                }
-                            //                            }
-                            //                            .navigationBarBackButtonHidden(true)
-                            //                            .simultaneousGesture(
-                            //                                TapGesture()
-                            //                                    .onEnded {
-                            //                                        gameView = true
-                            //                                    }
-                            //                            )
                             
                             VStack {
-                                NavigationLink(destination: How2playScreen()) {
+                                NavigationLink(destination: How2playScreen()
+                                    .navigationBarTitle("")
+                                    .navigationBarHidden(false)) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 16)
-                                            .fill(Color.gray.opacity(0.7))
+                                            .fill(theme == "system" ? (colorScheme == .dark ? .gray.opacity(0.7) : .black.opacity(0.2)) : (theme == "light" ? .black.opacity(0.2) : .gray.opacity(0.7)))
                                             .frame(width: proxy.size.width/2.5, height: proxy.size.height/6.1)
                                         
                                         VStack(alignment: .leading) {
@@ -243,7 +197,7 @@ struct MenuView: View {
                                 }) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 16)
-                                            .fill(Color.gray.opacity(0.7))
+                                            .fill(theme == "system" ? (colorScheme == .dark ? .gray.opacity(0.7) : .black.opacity(0.2)) : (theme == "light" ? .black.opacity(0.2) : .gray.opacity(0.7)))
                                             .frame(width: proxy.size.width/2.5, height: proxy.size.height/6.3)
                                         VStack(alignment: .leading) {
                                             HStack {
@@ -311,7 +265,7 @@ struct MenuView: View {
                                 Text("No available history")
                             } else {
                                 ScrollView {
-                                    ForEach(currentUser?.unwrappedGameHistory ?? [GameHistory(context: viewContext)], id: \.self) { history in
+                                    ForEach(currentUser?.unwrappedGameHistory.sorted(by: { $0.unwrappedDatePlayed > $1.unwrappedDatePlayed }) ?? [GameHistory(context: viewContext)], id: \.self) { history in
                                         HStack {
                                             Text(formatDate(history.unwrappedDatePlayed))
                                                 .bold()
@@ -328,7 +282,7 @@ struct MenuView: View {
                                             
                                             Spacer()
                                             
-                                            Text(history.unwrappedOutcome)
+                                            Text(LocalizedStringKey(history.unwrappedOutcome))
                                                 .font(.title2)
                                                 .foregroundColor(history.unwrappedOutcome == "Win" ? .green : history.unwrappedOutcome == "Draw" ? .yellow : .red)
                                                 .bold()
@@ -351,7 +305,6 @@ struct MenuView: View {
                     }
                 }
                 .frame(width: proxy.size.width)
-                .foregroundColor(.white)
                 .onAppear {
                     let currentUser = getUserWithUsername(username)
                     for achievement in currentUser?.unwrappedAchievements ?? [] {
@@ -475,11 +428,11 @@ struct MenuView: View {
                         showToast = false
                     }
                 }
-            }
-            .navigationViewStyle(.stack)
-            
         }
-        
+        .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
+        .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
+        .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
+        .environment(\.locale, Locale(identifier: selectedLanguage))
     }
     
     private func greeting(for date: Date) -> String {
@@ -496,6 +449,14 @@ struct MenuView: View {
     
     func getFormattedDate() -> String {
         let dateFormatter = DateFormatter()
+        
+        // Check the selected language and set the locale accordingly
+        if selectedLanguage == "en" {
+            dateFormatter.locale = Locale(identifier: "en_US")
+        } else if selectedLanguage == "vi" {
+            dateFormatter.locale = Locale(identifier: "vi_VN")
+        }
+        
         dateFormatter.dateFormat = "E, MMM d yyyy"
         return dateFormatter.string(from: Date())
     }

@@ -46,7 +46,7 @@ class AIBot {
             break
         }
         strategist.maxLookAheadDepth = maxDepth
-
+        
         // The AI will not make any random move -> always choose the best move
         // Optional in this case (consider to ignore this)
         strategist.randomSource = nil

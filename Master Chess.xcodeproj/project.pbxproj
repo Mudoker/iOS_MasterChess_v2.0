@@ -30,6 +30,9 @@
 		AB1D8C0B2AA093A600826485 /* Test+History.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1D8C0A2AA093A600826485 /* Test+History.swift */; };
 		AB3253B02A9C79AD0041BDF6 /* RatingCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3253AF2A9C79AD0041BDF6 /* RatingCalculator.swift */; };
 		AB5683122AA3A7E60094DB9C /* Test+Music.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5683112AA3A7E60094DB9C /* Test+Music.swift */; };
+		AB5683162AA3AEA30094DB9C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AB5683182AA3AEA30094DB9C /* Localizable.strings */; };
+		AB56831A2AA3AF110094DB9C /* Test+Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5683192AA3AF110094DB9C /* Test+Localization.swift */; };
+		AB56831D2AA4B9360094DB9C /* Test+CustomBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB56831C2AA4B9360094DB9C /* Test+CustomBackButton.swift */; };
 		AB5D2AEA2A9CE0C900ED4996 /* Test+ArrayAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5D2AE92A9CE0C900ED4996 /* Test+ArrayAnimation.swift */; };
 		AB5D2AEC2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5D2AEB2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift */; };
 		AB66491E2A9C466E0098F2E2 /* move-opponent.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AB66491B2A9C466E0098F2E2 /* move-opponent.mp3 */; };
@@ -117,6 +120,10 @@
 		AB1D8C0A2AA093A600826485 /* Test+History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+History.swift"; sourceTree = "<group>"; };
 		AB3253AF2A9C79AD0041BDF6 /* RatingCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingCalculator.swift; sourceTree = "<group>"; };
 		AB5683112AA3A7E60094DB9C /* Test+Music.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+Music.swift"; sourceTree = "<group>"; };
+		AB5683172AA3AEA30094DB9C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AB5683192AA3AF110094DB9C /* Test+Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+Localization.swift"; sourceTree = "<group>"; };
+		AB56831B2AA3B0AE0094DB9C /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AB56831C2AA4B9360094DB9C /* Test+CustomBackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+CustomBackButton.swift"; sourceTree = "<group>"; };
 		AB5D2AE92A9CE0C900ED4996 /* Test+ArrayAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+ArrayAnimation.swift"; sourceTree = "<group>"; };
 		AB5D2AEB2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+ChangingBorderColorView.swift"; sourceTree = "<group>"; };
 		AB66491B2A9C466E0098F2E2 /* move-opponent.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "move-opponent.mp3"; sourceTree = "<group>"; };
@@ -224,6 +231,7 @@
 		AB5683132AA3AE4A0094DB9C /* Localization */ = {
 			isa = PBXGroup;
 			children = (
+				AB5683182AA3AEA30094DB9C /* Localizable.strings */,
 			);
 			path = Localization;
 			sourceTree = "<group>";
@@ -540,6 +548,8 @@
 				AB5D2AEB2A9CE98500ED4996 /* Test+ChangingBorderColorView.swift */,
 				AB1D8C0A2AA093A600826485 /* Test+History.swift */,
 				AB5683112AA3A7E60094DB9C /* Test+Music.swift */,
+				AB5683192AA3AF110094DB9C /* Test+Localization.swift */,
+				AB56831C2AA4B9360094DB9C /* Test+CustomBackButton.swift */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -607,6 +617,7 @@
 			knownRegions = (
 				en,
 				Base,
+				vi,
 			);
 			mainGroup = E1F7FB092A838EE7005B08D8;
 			productRefGroup = E1F7FB132A838EE7005B08D8 /* Products */;
@@ -631,6 +642,7 @@
 				AB0A54502A9657970030539D /* capture.mp3 in Resources */,
 				AB0A544D2A9657970030539D /* castle.mp3 in Resources */,
 				AB9011C12A9C6DA800C2D62D /* background.mp3 in Resources */,
+				AB5683162AA3AEA30094DB9C /* Localizable.strings in Resources */,
 				AB0A54522A9657970030539D /* game-end.mp3 in Resources */,
 				AB66491E2A9C466E0098F2E2 /* move-opponent.mp3 in Resources */,
 				AB6A0B272A9E2C83003400DB /* gameDraw.mp3 in Resources */,
@@ -666,6 +678,7 @@
 				AB1D821D2AA0BF81000BDD05 /* Achievement+CoreDataClass.swift in Sources */,
 				AB6A0B2E2A9EF679003400DB /* Modal+Promotion.swift in Sources */,
 				ABF184C42A9C855C00C991EB /* Test+Pulsing.swift in Sources */,
+				AB56831D2AA4B9360094DB9C /* Test+CustomBackButton.swift in Sources */,
 				E1F7FB182A838EE7005B08D8 /* ContentView.swift in Sources */,
 				E1D7825A2A8B9BE6008B1081 /* Move.swift in Sources */,
 				AB5683122AA3A7E60094DB9C /* Test+Music.swift in Sources */,
@@ -674,6 +687,7 @@
 				AB6A0B332A9F1DA8003400DB /* SettingView.swift in Sources */,
 				E17068122A8E1F500015860F /* GameModel.swift in Sources */,
 				E17068172A8E241E0015860F /* AIEngine.swift in Sources */,
+				AB56831A2AA3AF110094DB9C /* Test+Localization.swift in Sources */,
 				E1F7FB332A839011005B08D8 /* SplashView.swift in Sources */,
 				E170680C2A8DF2270015860F /* ChessBoardView.swift in Sources */,
 				AB1D821E2AA0BF81000BDD05 /* Achievement+CoreDataProperties.swift in Sources */,
@@ -722,11 +736,24 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		AB5683182AA3AEA30094DB9C /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AB5683172AA3AEA30094DB9C /* en */,
+				AB56831B2AA3B0AE0094DB9C /* vi */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		E1F7FB232A838EE9005B08D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -787,6 +814,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

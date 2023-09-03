@@ -2,7 +2,8 @@ import SwiftUI
 
 struct TabBar: View {
     @State private var tabSelection = 0
-    
+    @AppStorage("selectedLanguage") var selectedLanguage = "en" // Default language is English
+
     var body: some View {
         TabView(selection: $tabSelection) {
             NavigationView {
@@ -19,6 +20,7 @@ struct TabBar: View {
             .toolbarBackground(.hidden, for: .tabBar)
 
         }
+        .environment(\.locale, Locale(identifier: selectedLanguage)) // Apply the selected language
         .overlay(alignment: .bottom) {
             CustomTabbar(tabSelection: $tabSelection)
         }
@@ -29,7 +31,8 @@ struct TabBar: View {
 struct CustomTabbar: View {
     @Binding var tabSelection: Int
     @Namespace var namespace
-    
+    @AppStorage("selectedLanguage") var selectedLanguage = "en" // Default language is English
+
     let tabItems: [(image: String, page: String)] = [
         ("house", "Dashboard"),
         ("gear", "Profile")
@@ -53,7 +56,7 @@ struct CustomTabbar: View {
                                         .frame(width: 24, height: 24)
                                         .cornerRadius(10)
                                         .matchedGeometryEffect(id: tabItems[index].page, in: namespace)
-                                    Text(tabItems[index].page)
+                                    Text(LocalizedStringKey(tabItems[index].page))
                                         .font(.caption)
                                         .foregroundColor(tabSelection == index ? .blue : .gray)
                                 }
@@ -67,10 +70,9 @@ struct CustomTabbar: View {
             }
             .edgesIgnoringSafeArea(.all)
         }
+        .environment(\.locale, Locale(identifier: selectedLanguage)) // Apply the selected language
     }
 }
-
-
 
 struct TabBar_Previews: PreviewProvider {
     static var previews: some View {

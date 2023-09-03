@@ -1162,6 +1162,10 @@ class ChessBoard: ObservableObject, NSCopying {
         .store(in: &cancellables)
     }
     
+    func stopClocks() {
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+    }
     // Copy the current Settings (For the AI evaluation, any changes will not affect the actual board)
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = ChessBoard()
