@@ -1,27 +1,46 @@
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 25/08/2023
+ Last modified: 30/08/2023
+ Acknowledgement:
+ ivangodfather. “Chess” Github.com. https://dribbble.com/shots/17726071/attachments/12888457?mode=media (accessed Aug 25, 2023).
+ */
+
 import Foundation
 import GameplayKit
 
+// Custom game engine conforming to GKGameModel
 class AIEngine: NSObject, GKGameModel {
-
     let chessBoard: ChessBoard
+    
+    // Return the list of players (white and black)
     var players: [GKGameModelPlayer]? {
         return AIPlayer.allPlayers
     }
     
+    // currently active player
     var activePlayer: GKGameModelPlayer? {
         return chessBoard.currentPlayer == .white ? AIPlayer.allPlayers[0] : AIPlayer.allPlayers[1]
     }
     
+    // Create a copy of the game state
     func copy(with zone: NSZone? = nil) -> Any {
         let copy = AIEngine(chessBoard: chessBoard.copy() as! ChessBoard)
         copy.setGameModel(self)
         return copy
     }
     
+    // Initialize the game engine with a chessboard
     init(chessBoard: ChessBoard) {
         self.chessBoard = chessBoard
     }
     
+    // Set the game state from another game model
     func setGameModel(_ gameModel: GKGameModel) {
         if let board = gameModel as? AIEngine {
             chessBoard.piecePositions.value = board.chessBoard.piecePositions.value
@@ -30,6 +49,7 @@ class AIEngine: NSObject, GKGameModel {
         }
     }
 
+    // Generate possible game model updates for the current player
     func gameModelUpdates(for player: GKGameModelPlayer) -> [GKGameModelUpdate]? {
         guard let aiPlayer = player as? AIPlayer else {
             return nil
@@ -40,6 +60,7 @@ class AIEngine: NSObject, GKGameModel {
         return nil
     }
     
+    // Apply a game model update (a move) to the game state
     func apply(_ gameModelUpdate: GKGameModelUpdate) {
         if let aiMove = gameModelUpdate as? AIMove {
             chessBoard.movePieceAI(from: aiMove.move.from, to: aiMove.move.to)
@@ -87,7 +108,7 @@ class AIEngine: NSObject, GKGameModel {
         return moves.shuffled()
     }
     
-    // Implement the isLoss function
+    // Check if the current player (AI) has lost
     func isLoss(for player: GKGameModelPlayer) -> Bool {
         if let aiPlayer = player as? AIPlayer {
             // Check if the AI's king is in a loss position (checkmate)
@@ -96,7 +117,7 @@ class AIEngine: NSObject, GKGameModel {
         return false
     }
 
-    // check is black is loss -> check mate
+    // Check if the current player (AI) has won
     func isWin(for player: GKGameModelPlayer) -> Bool {
         if let aiPlayer = player as? AIPlayer {
             // Check if the opponent is in a loss position (checkmate)
@@ -105,6 +126,7 @@ class AIEngine: NSObject, GKGameModel {
         return false
     }
     
+    // Assign a score to the current game state for the AI player
     func score(for player: GKGameModelPlayer) -> Int {
         guard let aiPlayer = player as? AIPlayer else {
             return 0

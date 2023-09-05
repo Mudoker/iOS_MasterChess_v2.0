@@ -1,15 +1,13 @@
 /*
  RMIT University Vietnam
  Course: COSC2659 iOS Development
- Semester: 2023B
- Assessment: Assignment 1
+ Semester: 2022B
+ Assessment: Assignment 2
  Author: Doan Huu Quoc
  ID: 3927776
- Created  date: 18/07/2023
- Last modified: 26/07/2023
+ Created  date: 09/08/2023
+ Last modified: 09/08/2023
  Acknowledgement:
- Q.Doan, "Author Signature" unpublished, Jul. 2023.
- Q.Doan, "appIcon" unpublished, Jul. 2023.
  */
 
 import SwiftUI

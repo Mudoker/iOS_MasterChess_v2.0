@@ -1,3 +1,16 @@
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 25/08/2023
+ Last modified: 30/08/2023
+ Acknowledgement:
+ ivangodfather. “Chess” Github.com. https://dribbble.com/shots/17726071/attachments/12888457?mode=media (accessed Aug 25, 2023).
+ */
+
 import Foundation
 import GameplayKit // built-in AI
 
@@ -45,23 +58,28 @@ class AIBot {
         default:
             break
         }
+        
         strategist.maxLookAheadDepth = maxDepth
         
         // The AI will not make any random move -> always choose the best move
-        // Optional in this case (consider to ignore this)
         strategist.randomSource = nil
         
         self.player = player
     }
     
+    // Calculate and return the best move
     func bestMove(completion: @escaping (Move?) -> ()) {
+        // is thinking
         isCalculatingMove = true
 
+        // Run asynchronously
         DispatchQueue.global(qos: .background).async {
+            // Copy the board
             let boardCopy = self.chessBoard.copy() as! ChessBoard
 
             self.strategist.gameModel = AIEngine(chessBoard: boardCopy)
-
+            
+            // Caluclate best move
             if let aiMove = self.strategist.bestMove(for: self.player == .black ? AIPlayer.allPlayers[1] : AIPlayer.allPlayers[0]) as? AIMove {
                 DispatchQueue.main.async {
                     self.isCalculatingMove = false

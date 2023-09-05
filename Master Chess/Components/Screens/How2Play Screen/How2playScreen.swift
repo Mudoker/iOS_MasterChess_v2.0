@@ -1,19 +1,28 @@
-//
-//  How2playScreen.swift
-//  Master Chess
-//
-//  Created by Quoc Doan Huu on 14/08/2023.
-//
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 14/08/2023
+ Last modified: 31/08/2023
+ Acknowledgement:
+ */
 
 import SwiftUI
 
 struct How2playScreen: View {
+    // Theme
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("theme") var theme = ""
     @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
     @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
+    
+    // Localization
     @AppStorage("selectedLanguage") var selectedLanguage = "vi"
 
+    // Content
     let overview = "Chess is a classic two-player strategy board game that has been enjoyed for centuries. It's played on an 8x8 board called a chessboard, with each player has control upon an army of 16 pieces. The objective is to checkmate the opponent's king while protecting your own."
     
     let boardSetup = "The chessboard consists of 64 squares arranged in an 8x8 grid. Players sit in front of each other, with the board oriented so that each player has a white square on their right.\nPlace the pieces on the board as follows:"
@@ -52,6 +61,9 @@ struct How2playScreen: View {
     @State var imageSizeWidth: CGFloat = 0
     @State var imageSizeHeight: CGFloat = 0
     @State var padding: CGFloat = 16
+    
+    // Go back button
+    @State var isBack = false
     private var backButton: some View {
         Button(action: {
             presentationMode.wrappedValue.dismiss()
@@ -66,14 +78,15 @@ struct How2playScreen: View {
         }
     }
     
-    @State var isBack = false
     var body: some View {
         GeometryReader { proxy in
             ZStack {
+                // Content
                 ScrollView(showsIndicators: false) {
                     VStack (alignment: .leading, spacing: 10) {
                         Section(header:
-                            Text("Overview of Chess Game")                        .font(titleFont)
+                            Text("Overview of Chess Game")
+                                .font(titleFont)
                                 .bold()
                         ) {
                             Text (LocalizedStringKey(overview))
@@ -107,6 +120,7 @@ struct How2playScreen: View {
                                     .resizable()
                                     .frame(width: imageSizeWidth, height: imageSizeHeight)
                                 
+                                // Push view
                                 Spacer()
                                 
                                 Image("chessboard2")
@@ -137,17 +151,20 @@ struct How2playScreen: View {
                                         .resizable()
                                         .frame(width: imageSizeWidth, height: imageSizeHeight)
                                     
+                                    // Push view
                                     Spacer()
                                     
                                     Image("knightmove")
                                         .resizable()
                                         .frame(width: imageSizeWidth, height: imageSizeHeight)
                                 }
+                                
                                 HStack {
                                     Image("rookmove")
                                         .resizable()
                                         .frame(width: imageSizeWidth, height: imageSizeHeight)
                                     
+                                    // Push view
                                     Spacer()
                                     
                                     Image("bishopmove")
@@ -160,6 +177,7 @@ struct How2playScreen: View {
                                         .resizable()
                                         .frame(width: imageSizeWidth, height: imageSizeHeight)
                                     
+                                    // Push view
                                     Spacer()
                                     
                                     Image("kingmove")
@@ -179,6 +197,7 @@ struct How2playScreen: View {
                                     .resizable()
                                     .frame(width: imageSizeWidth, height: imageSizeHeight)
 
+                                // Push view
                                 Spacer()
                                 
                                 Image("gameloss")
@@ -262,9 +281,9 @@ struct How2playScreen: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden(true)
+        .navigationBarBackButtonHidden(true) // hide default back button
         .navigationBarItems(leading: backButton)
-        .environment(\.locale, Locale(identifier: selectedLanguage))
+        .environment(\.locale, Locale(identifier: selectedLanguage)) // localization
     }
 }
 

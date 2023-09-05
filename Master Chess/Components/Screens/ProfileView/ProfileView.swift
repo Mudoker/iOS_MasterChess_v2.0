@@ -1,28 +1,45 @@
-//
-//  ProfileView.swift
-//  Master Chess
-//
-//  Created by Quoc Doan Huu on 12/08/2023.
-//
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 12/08/2023
+ Last modified: 31/08/2023
+ Acknowledgement:
+ */
+
 
 import SwiftUI
 
 struct ProfileView: View {
+    // Current user data
     var currentUserr = CurrentUser.shared
     @AppStorage("userName") var username = "Mudoker"
-    @State private var isUsernameTakenAlertPresented = false
+    
+    // Control state
     @State private var showAllItems = false
     @State private var isBack = false
+    
+    // Localization
     @AppStorage("selectedLanguage") var selectedLanguage = "vi"
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    // theme
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("theme") var theme = ""
     @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
     @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
+    
+    // cutom back button
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    // Columns of achievements
     var columns: [GridItem] {
         [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     }
     
+    // current user from core data
     var currentUser: Users?
     
     // Responsive
@@ -49,6 +66,7 @@ struct ProfileView: View {
     @State var historyCapsuleSizeWidth: CGFloat = 0
     @State var historyCapsuleSizeHeight: CGFloat = 0
     
+    // custom back button
     private var backButton: some View {
         Button(action: {
             presentationMode.wrappedValue.dismiss()
@@ -62,6 +80,7 @@ struct ProfileView: View {
             .foregroundColor(.blue)
         }
     }
+    
     // Function to convert date to string
     func formatDate(_ date: Date) -> String {
         let dateFormatter = DateFormatter()
@@ -75,7 +94,9 @@ struct ProfileView: View {
                 ScrollView (showsIndicators: false) {
                     VStack {
                         HStack {
+                            // Push view
                             Spacer()
+                            
                             Circle()
                                 .fill(.pink.opacity(0.4))
                                 .frame(width: imageBackgroundSize)
@@ -84,6 +105,7 @@ struct ProfileView: View {
                                         .resizable()
                                         .frame(width: profileImageSize, height: profileImageSize)
                                         .overlay(
+                                            // Activity sign
                                             ZStack {
                                                 Circle()
                                                     .fill(CurrentUser.shared.username == currentUser?.unwrappedUsername ? Color.green : .gray)
@@ -94,17 +116,20 @@ struct ProfileView: View {
                                                     .stroke(Color.black, lineWidth: 3)
                                                     .frame(width: activeStatusSize)
                                                     .position(x: activeStatusPositionX, y: activeStatusPositionY)
-                                                
                                             }
                                         )
                                 )
                             
+                            // push view
                             Spacer()
                         }
                         
+                        // Name
                         Text(currentUser?.username ?? "Mudoker")
                             .font(userNameFont)
                             .bold()
+                        
+                        // Title
                         VStack {
                             if currentUser?.rating ?? 2000 < 800 {
                                 Text("Newbie")
@@ -126,6 +151,7 @@ struct ProfileView: View {
                                     .bold()
                             }
                             
+                            // Date joined
                             HStack {
                                 Text("Join date: ")
                                     .font(userJoinDateFont)
@@ -136,8 +162,11 @@ struct ProfileView: View {
                         }
                         .padding(.bottom, 5)
                         
+                        // User stats
                         HStack (spacing: 20) {
+                            // Push view
                             Spacer()
+                            
                             VStack {
                                 if let totalGames = currentUser?.unwrappedUserStats.totalGames {
                                     Text(String(totalGames))
@@ -154,6 +183,7 @@ struct ProfileView: View {
                                     .font(gameStatsDesFont)
                             }
                             
+                            // push view
                             Spacer()
                             
                             VStack {
@@ -171,6 +201,7 @@ struct ProfileView: View {
                                     .font(gameStatsDesFont)
                             }
                             
+                            // push view
                             Spacer()
                             
                             VStack {
@@ -189,17 +220,23 @@ struct ProfileView: View {
                                     .opacity(0.7)
                                     .font(gameStatsDesFont)
                             }
+                            
+                            // push view
                             Spacer()
                         }
                         
                     }
                     
+                    // User achievements
                     HStack (alignment: .firstTextBaseline) {
                         Text("Achievements")
                             .font(.largeTitle)
                             .bold()
                         
+                        // push view
                         Spacer()
+                        
+                        // Show full or at most 3 achievements
                         Button(action: {
                             withAnimation {
                                 showAllItems.toggle()
@@ -207,14 +244,17 @@ struct ProfileView: View {
                         }) {
                             Text(showAllItems ? "Show Less" : "Show All")
                                 .font(.title3)
-                            
                         }
                     }
                     .padding(.horizontal)
                     .padding(.top)
                     
+                    // List of achievements
                     if let achievements = currentUser?.unwrappedAchievements {
+                        // filter unlocked ones
                         let unlockedAchievements = achievements.filter { $0.unlocked }
+                        
+                        // number of achievements shown
                         let maxAchievementsToShow = showAllItems ? unlockedAchievements.count : 3
                         
                         let filteredAchievements = Array(unlockedAchievements.prefix(maxAchievementsToShow))
@@ -251,14 +291,18 @@ struct ProfileView: View {
                             .padding(.vertical)
                     }
                     
+                    // Gaming history
                     HStack {
                         Text("History")
                             .font(.largeTitle)
                             .bold()
+                        
+                        // push view
                         Spacer()
                     }
                     .padding(.horizontal)
                     
+                    // Show list of histories
                     if let histories = currentUser?.unwrappedGameHistory.sorted(by: { $0.unwrappedDatePlayed > $1.unwrappedDatePlayed }) {
                         ForEach(histories, id: \.self) { history in
                             Capsule()
@@ -266,18 +310,21 @@ struct ProfileView: View {
                                 .frame(width: historyCapsuleSizeWidth,height: historyCapsuleSizeHeight)
                                 .overlay(
                                     HStack {
+                                        // Date
                                         Text(formatDate(history.unwrappedDatePlayed))
                                             .font(historyDateFont)
                                             .bold()
+                                        
+                                        // push view
                                         Spacer()
                                         
+                                        // Opponent infor
                                         Image(history.unwrappedOpponentUsername == "M.Carlsen" ? "magnus" : history.unwrappedOpponentUsername == "Nobita" ? "nobita" : "mitten")
                                             .resizable()
                                             .frame(width: historyImageSizeWidth, height: historyImageSizeHeight)
                                             .background(
                                                 Circle()
                                             )
-                                        
                                         
                                         VStack(alignment: .leading) {
                                             Text(history.unwrappedOpponentUsername)
@@ -288,8 +335,10 @@ struct ProfileView: View {
                                                 .font(historyDifficulty)
                                         }
                                         
+                                        // push view
                                         Spacer()
                                         
+                                        // Outcome
                                         VStack {
                                             Text(LocalizedStringKey(history.unwrappedOutcome))
                                                 .font(historyOutcome)
@@ -302,24 +351,23 @@ struct ProfileView: View {
                                                 .foregroundColor(history.unwrappedOutcome == "Win" ? .green : history.unwrappedOutcome == "Draw" ? .yellow : .red)
                                                 .font(historyRatingChange)
                                         }
-                                        
                                     }
-                                        .padding(.horizontal)
+                                    .padding(.horizontal)
                                 )
                         }
-                    }else {
+                    } else {
                         Text("No available history")
                             .padding(.vertical)
-                        
                     }
-                    
                 }
                 
+                // push view
                 VStack {
                 }.frame(height: 30)
                 
             }
             .onAppear {
+                // Responsive
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     imageBackgroundSize = proxy.size.width / 2.5
                     profileImageSize = proxy.size.width / 3
@@ -361,13 +409,12 @@ struct ProfileView: View {
         }
         .navigationBarBackButtonHidden(true) // Hide the default back button
         .navigationBarItems(leading: backButton) // Place the custom back button in the top-left corner
+        // theme
         .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
         .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
         
         .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
-        .environment(\.locale, Locale(identifier: selectedLanguage))
-
-        
+        .environment(\.locale, Locale(identifier: selectedLanguage)) // localization
     }
 }
 

@@ -1,10 +1,21 @@
-//
-//  SignUpScreen.swift
-//  Master Chess
-//
-//  Created by Quoc Doan Huu on 11/08/2023.
-//
-
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 11/08/2023
+ Last modified: 21/08/2023
+ Acknowledgement:
+ Pinterest. "" pinterest.com https://www.pinterest.com/pin/225672631319564242/ (accessed 11/08/2023)
+ Pinterest. "" pinterest.com https://www.pinterest.com/pin/164170348907500351/ (accessed 11/08/2023)
+ TeePublic. "Panda by Khatii" pinterest.com https://www.pinterest.com/pin/439663982384708870/ (accessed 11/08/2023)
+ Freepik. "Cute cat eat ramen noodle carton" pinterest.com https://www.pinterest.com/pin/622411611024331684/ (accessed 11/08/2023)
+ Freepik. "Sol en estilo pixel art" pinterest.com https://www.pinterest.com/pin/662732901469338929/ (accessed 11/08/2023)
+ Freepik. "" pinterest.com https://www.pinterest.com/pin/232498399506736782/ (accessed 11/08/2023)
+ Shutterstock. "" shutterstock.com https://www.shutterstock.com/image-vector/pixel-art-illustration-gear-icon-pixelated-2286959667 (accessed 11/08/2023)
+ */
 import SwiftUI
 
 struct SignUpScreen: View {
@@ -69,17 +80,17 @@ struct SignUpScreen: View {
                         
                         NavigationLink(destination: LoginView()
                             .navigationBarBackButtonHidden(true)) {
-                            // Push to 2 sides
-                            // Center
+                                // Push to 2 sides
+                                // Center
                                 Text("Skip")
                                     .font(textFont)
-                        }
-                        .simultaneousGesture(
-                            TapGesture()
-                                .onEnded {
-                                    isSkipRegister.toggle()
-                                }
-                        )
+                            }
+                            .simultaneousGesture(
+                                TapGesture()
+                                    .onEnded {
+                                        isSkipRegister.toggle()
+                                    }
+                            )
                         
                     }
                     .padding(.horizontal)
@@ -394,11 +405,13 @@ struct SignUpScreen: View {
                                     .bold()
                                     .padding(.top)
                                 
+                                // Push view
                                 Spacer()
                                 
                                 Text("Invalid username")
                                     .font(alertContentFont)
                                 
+                                // Push view
                                 Spacer()
                                 
                                 // Line separating sections
@@ -418,12 +431,13 @@ struct SignUpScreen: View {
                                             .font(alertCloseFont)
                                             .foregroundColor(.red)
                                         
+                                        // Push view
                                         Spacer()
                                     }
                                 }
                                 .padding(.bottom)
                             }
-                            .foregroundColor(Color.black)
+                                .foregroundColor(Color.black)
                         )
                         .cornerRadius(proxy.size.width/30)
                         .padding()
@@ -433,6 +447,7 @@ struct SignUpScreen: View {
                 }
             }
             .onAppear {
+                // Responsive
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     buttonSizeWidth = proxy.size.width/1.1
                     buttonSizeHeight = proxy.size.width/6
@@ -487,6 +502,7 @@ struct Register1: View {
                         .font(.system(size: headerFontSize))
                         .bold()
                     
+                    // Push view
                     Spacer()
                 }
                 
@@ -546,8 +562,7 @@ struct Register1: View {
                                     .foregroundColor(.gray)
                                     .frame(width: proxy.size.width/15, height: proxy.size.width/15)
                                 
-                                TextField("", text: $username, prompt:  Text("Username or email")
-                                    .foregroundColor(.black.opacity(0.5))
+                                TextField("", text: $username, prompt:  Text("Username or email").foregroundColor(.black.opacity(0.5))
                                 )
                                 .padding(.leading, textFieldPaddingLeading)
                                 .font(.body)
@@ -570,8 +585,7 @@ struct Register1: View {
                                 
                                 // Show or hide password
                                 if isShowPassword {
-                                    TextField("", text: $password, prompt:  Text("Password")
-                                        .foregroundColor(.black.opacity(0.5))
+                                    TextField("", text: $password, prompt:  Text("Password").foregroundColor(.black.opacity(0.5))
                                     )
                                     .padding(.leading, textFieldPaddingLeading)
                                     .foregroundColor(.black)
@@ -579,8 +593,7 @@ struct Register1: View {
                                     .textInputAutocapitalization(.never)
                                     .scaleEffect(scaleInputField)
                                 } else {
-                                    SecureField("", text: $password, prompt:  Text("Password")
-                                        .foregroundColor(.black.opacity(0.5))
+                                    SecureField("", text: $password, prompt:  Text("Password").foregroundColor(.black.opacity(0.5))
                                     )
                                     .padding(.leading, textFieldPaddingLeading)
                                     .foregroundColor(.black)
@@ -646,11 +659,11 @@ struct Register1: View {
 struct Register2: View {
     // Manage user selection
     @Binding var selectedTheme: Int
-    @Binding  var selectedLanguage: String
-    @Binding  var selectedDifficulty: String
-    @Binding  var selectedSound:Bool
-    @Binding  var selectedSFX:Bool
-    @Binding  var selectedAP:Bool
+    @Binding var selectedLanguage: String
+    @Binding var selectedDifficulty: String
+    @Binding var selectedSound:Bool
+    @Binding var selectedSFX:Bool
+    @Binding var selectedAP:Bool
     
     // Responsive
     @State var headerFontSize: CGFloat = 0
@@ -674,6 +687,7 @@ struct Register2: View {
                     
                     // Push to middle
                     HStack {
+                        // Push view
                         Spacer()
                         
                         ForEach(1...3, id: \.self) { i in
@@ -693,6 +707,7 @@ struct Register2: View {
                             }
                         }
                         
+                        // Push view
                         Spacer()
                     }
                     

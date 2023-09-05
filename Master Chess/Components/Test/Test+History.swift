@@ -1,12 +1,18 @@
-//
-//  Test+History.swift
-//  Master Chess
-//
-//  Created by quoc on 31/08/2023.
-//
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 31/08/2023
+ Last modified: 31/08/2023
+ Acknowledgement:
+ */
 
 import SwiftUI
 
+// Test UI history
 struct Test_History: View {
     var body: some View {
         GeometryReader { proxy in
@@ -18,6 +24,8 @@ struct Test_History: View {
                         Text("31/08/2023")
                             .font(.callout)
                             .bold()
+                        
+                        // Push view
                         Spacer()
                         
                         Image("mitten")
@@ -28,14 +36,15 @@ struct Test_History: View {
                                     .foregroundColor(.white)
                             )
                         
-                        
                         VStack(alignment: .leading) {
                             Text("Mitten")
                                 .bold()
                             Text("Easy")
                         }
                         
+                        // Push view
                         Spacer()
+                        
                         VStack {
                             Text("Win")
                                 .font(.title2)
@@ -47,9 +56,8 @@ struct Test_History: View {
                                 .opacity(0.7)
                                 .foregroundColor(.green)
                         }
-                        
                     }
-                        .padding(.horizontal)
+                    .padding(.horizontal)
                 )
         }
     }

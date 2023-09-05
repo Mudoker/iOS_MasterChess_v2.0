@@ -1,47 +1,65 @@
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 19/08/2023
+ Last modified: 19/08/2023
+ Acknowledgement:
+ */
+
 import SwiftUI
 
+// Test animation when add new item in array
 struct Test_ArrayAnimation: View {
+    // Control State
     @State private var items1: [String] = []
     @State private var items2: [String] = []
     @State private var showScrollToEndButton: Bool = false
     @State private var scrollToBottom: Bool = false
-
+    
     var body: some View {
         VStack {
             // Horizontal array with easeIn animation
             HStack(spacing: 10) {
-                            ForEach(items1, id: \.self) { item in
-                                Text(item)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
-                                    .id(item)
-                                    .transition(AnyTransition.opacity.animation(.easeIn))
-                            }
-                            
-                            Spacer()
-                        }
-            ScrollView(.horizontal) {
-                            ScrollViewReader { scrollViewProxy in
-                                HStack {
-                                    ForEach(items2, id: \.self) { item in
-                                        Text(item)
-                                            .padding()
-                                            .background(Color.green)
-                                            .foregroundColor(.white)
-                                            .cornerRadius(10)
-                                            .id(item) // Use item as the id
-                                    }
-                                    .onChange(of: items2.count) { _ in
-                                        withAnimation {
-                                            scrollViewProxy.scrollTo(items2.last, anchor: .trailing)
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                ForEach(items1, id: \.self) { item in
+                    Text(item)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .id(item)
+                        .transition(AnyTransition.opacity.animation(.easeIn))
+                }
+                
+                // Push View
+                Spacer()
+            }
             
+            // Second array for scrolling animation
+            ScrollView(.horizontal) {
+                ScrollViewReader { scrollViewProxy in
+                    HStack {
+                        ForEach(items2, id: \.self) { item in
+                            Text(item)
+                                .padding()
+                                .background(Color.green)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                                .id(item) // Use item as the id
+                        }
+                        .onChange(of: items2.count) { _ in
+                            withAnimation {
+                                scrollViewProxy.scrollTo(items2.last, anchor: .trailing)
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Scrolling
             if showScrollToEndButton {
                 Button("Scroll to End") {
                     withAnimation {
@@ -51,6 +69,7 @@ struct Test_ArrayAnimation: View {
                 .padding(.bottom, 20)
             }
             
+            // Add item
             Button("Add Item") {
                 let newItem = "Item \(items1.count + 1)"
                 withAnimation {

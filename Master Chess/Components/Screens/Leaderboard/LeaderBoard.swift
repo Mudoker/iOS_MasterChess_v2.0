@@ -1,15 +1,38 @@
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 25/08/2023
+ Last modified: 03/09/2023
+ Acknowledgement:
+ Pikbest. "Ranking Numbers Design Vector" pikbest.com https://pikbest.com/png-images/qiantu-ranking-numbers-design-vector_2666278.html (accessed 25/08/2023)
+
+ */
+
+
 import SwiftUI
 
 struct LeaderBoard: View {
+    // Get list of users and sort by their ratings decendingly
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.rating, ascending: false)], animation: .default) private var users: FetchedResults<Users>
+    
+    // current user instance
     var currentUserr = CurrentUser.shared
+    
+    // Navigate to profile view
     @State private var isProfileViewActive = false
     @State private var selectedUser: Users?
-    @State private var profileViewShown = false // This should be @State
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @Environment(\.colorScheme) var colorScheme
+    @State private var profileViewShown = false
     
+    // For custom back button
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    // Theme
+    @Environment(\.colorScheme) var colorScheme
     @AppStorage("theme") var theme = ""
     @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
     @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
@@ -22,6 +45,8 @@ struct LeaderBoard: View {
     @State var scaleDownSize:CGFloat = 0.9
     @State var rank1UsernameFont: Font = .title2
     @State var otherUsernameFont: Font = .title3
+    
+    // custom back button
     private var backButton: some View {
         Button(action: {
             presentationMode.wrappedValue.dismiss()
@@ -35,15 +60,22 @@ struct LeaderBoard: View {
             .foregroundColor(.blue)
         }
     }
+    
     var body: some View {
         GeometryReader { proxy in
             VStack {
+                // Push view
                 Spacer()
                     .frame(height: proxy.size.width/6)
+                
                 ZStack {
                     HStack {
+                        // Push view
                         Spacer()
+                        
+                        // Show if at least 1 player
                         if users.count >= 1 {
+                            // Press will navigate to profile view
                             NavigationLink(
                                 destination: ProfileView(currentUser: users[0])
                             ) {
@@ -72,7 +104,6 @@ struct LeaderBoard: View {
                                         .bold()
                                         .foregroundColor(.yellow)
                                 }
-                                
                             }
                             .simultaneousGesture(
                                 TapGesture()
@@ -81,14 +112,18 @@ struct LeaderBoard: View {
                                     }
                             )
                         } else {
+                            // No user
                             Text("Not enough data!")
                         }
                         
+                        // Push view
                         Spacer()
                     }
                     
+                    // More than 1 players
                     HStack {
                         if users.count >= 2 {
+                            // Navigate profile view
                             NavigationLink(destination: ProfileView(currentUser: users[1])) {
                                 VStack {
                                     Image("second")
@@ -124,11 +159,11 @@ struct LeaderBoard: View {
                             )
                         }
                         
-                        
-                        
+                        // Push view
                         Spacer()
                         
                         if users.count >= 3 {
+                            // Navigate profile view
                             NavigationLink(destination: ProfileView(currentUser: users[2])) {
                                 VStack {
                                     Image("third")
@@ -154,7 +189,6 @@ struct LeaderBoard: View {
                                         .bold()
                                         .foregroundColor(.brown)
                                 }
-                                
                             }
                             .simultaneousGesture(
                                 TapGesture()
@@ -168,6 +202,7 @@ struct LeaderBoard: View {
                 }
                 .padding(.horizontal)
                 
+                // More than 3 players
                 if users.count >= 4 {
                     ScrollView {
                         ForEach(3..<users.count, id: \.self) { index in
@@ -190,6 +225,7 @@ struct LeaderBoard: View {
                                     Text(users[index].unwrappedUsername)
                                         .font(otherUsernameFont)
                                     
+                                    // Push view
                                     Spacer()
                                     
                                     Text(String(users[index].rating))
@@ -212,10 +248,10 @@ struct LeaderBoard: View {
                         }
                     }
                 }
-                
             }
             .frame(maxHeight: .infinity)
             .onAppear {
+                // Responsive
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     imageSizeWidth = proxy.size.width/5
                     imageSizeHeight = proxy.size.width/5
@@ -231,6 +267,7 @@ struct LeaderBoard: View {
                 }
             }
             .edgesIgnoringSafeArea(.all)
+            // Theme
             .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
             .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
             .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
@@ -238,7 +275,7 @@ struct LeaderBoard: View {
         }
         .navigationBarBackButtonHidden(true) // Hide the default back button
         .navigationBarItems(leading: backButton) // Place the custom back button in the top-left corner
-        .environment(\.locale, Locale(identifier: CurrentUser.shared.settingLanguage)) // Apply the selected language
+        .environment(\.locale, Locale(identifier: CurrentUser.shared.settingLanguage)) // Localization
     }
 }
 

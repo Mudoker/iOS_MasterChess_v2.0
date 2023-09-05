@@ -1,5 +1,18 @@
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 03/09/2023
+ Last modified: 03/09/2023
+ Acknowledgement:
+ */
+
 import SwiftUI
 
+// Custom back button
 struct TestCustomBackButton: View {
     var body: some View {
         NavigationView {
@@ -16,6 +29,7 @@ struct TestCustomBackButton: View {
 }
 
 struct SecondView: View {
+    // Control the presentation of views
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     var body: some View {
@@ -24,10 +38,11 @@ struct SecondView: View {
                 .font(.largeTitle)
                 .padding()
         }
-        .navigationBarBackButtonHidden(true) // Hide the default back button
+        .navigationBarBackButtonHidden(true) // Hide the back button
         .navigationBarItems(leading: backButton) // Place the custom back button in the top-left corner
     }
 
+    // Button
     private var backButton: some View {
         Button(action: {
             presentationMode.wrappedValue.dismiss()
@@ -35,6 +50,7 @@ struct SecondView: View {
             HStack {
                 Image(systemName: "arrow.left.circle.fill")
                     .imageScale(.large)
+                
                 Text("Go Back")
             }
             .padding()

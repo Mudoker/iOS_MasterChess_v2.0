@@ -1,13 +1,19 @@
-//
-//  RatingCalculator.swift
-//  Master Chess
-//
-//  Created by quoc on 28/08/2023.
-// https://en.wikipedia.org/wiki/Elo_rating_system
-//
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 28/08/2023
+ Last modified: 28/08/2023
+ Acknowledgement:
+    Wikipedia. "Elo rating system". wikipedia.org https://en.wikipedia.org/wiki/Elo_rating_system (accsesed Aug. 28, 2023)
+ */
 
 import Foundation
 
+// Calculating user rating chagne
 class RatingCalculator {
     static let shared = RatingCalculator()
     
@@ -39,7 +45,7 @@ class RatingCalculator {
         switch result {
             case .checkmate, .outOfTime:
                 return 1.0
-            case .stalemate, .insufficientMaterial, .fiftyMoveRule, .outOfMove, .ongoing:
+            case .stalemate, .insufficientMaterial, .outOfMove, .ongoing:
                 return 0.5
         }
     }

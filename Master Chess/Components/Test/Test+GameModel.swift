@@ -1,12 +1,18 @@
-//
-//  Test+GameModel.swift
-//  Master Chess
-//
-//  Created by Quoc Doan Huu on 18/08/2023.
-//
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 18/08/2023
+ Last modified: 18/08/2023
+ Acknowledgement:
+ */
 
 import SwiftUI
 
+// Testing
 struct Test_GameModel: View {
     @StateObject private var chessGame = ChessBoard()
     var body: some View {

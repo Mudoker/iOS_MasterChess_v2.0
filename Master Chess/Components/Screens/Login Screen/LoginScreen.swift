@@ -1,19 +1,13 @@
 /*
  RMIT University Vietnam
  Course: COSC2659 iOS Development
- Semester: 2023B
- Assessment: Assignment 1
+ Semester: 2022B
+ Assessment: Assignment 2
  Author: Doan Huu Quoc
  ID: 3927776
- Created  date: 18/07/2023
- Last modified: 26/07/2023
+ Created  date: 11/08/2023
+ Last modified: 21/08/2023
  Acknowledgement:
- Q.Doan, "app logo light" unpublished, Jul. 2023.
- T.Huynh. "Week 3 - Intro to SwiftUI, Xcode & Layouts (I'm Rich App)" rmit.instructure.com.https://rmit.instructure.com/courses/121597/pages/w3-whats-happening-this-week?module_item_id=5219563
- (accessed Jul. 20, 2023).
- Account (both should all be in lowercased):
- username: admin
- password: admin
  */
 
 import SwiftUI
@@ -96,8 +90,8 @@ struct LoginView: View {
                 // Content
                 VStack (alignment: .center) {
                     VStack {
+                        // push view
                         VStack{
-                            
                         }
                         .frame(height: proxy.size.width/10)
                         
@@ -139,15 +133,14 @@ struct LoginView: View {
                                         .padding(.leading, proxy.size.width/30)
                                         .foregroundColor(.gray)
                                     
-                                    TextField("", text: $accountInput, prompt:  Text("Username or email")
-                                        .foregroundColor(.black.opacity(0.5))
+                                    TextField("", text: $accountInput, prompt:  Text("Username or email").foregroundColor(.black.opacity(0.5))
                                     )
                                     .padding(.leading, textFieldPaddingLeading)
                                     .textInputAutocapitalization(.never)
                                     .disableAutocorrection(true)
                                     .scaleEffect(scaleInputField)
                                     .foregroundColor(.black)
-                                       
+                                    
                                 }
                             )
                             .padding(.bottom)
@@ -186,8 +179,7 @@ struct LoginView: View {
                                             .scaleEffect(scaleInputField)
                                             .foregroundColor(.black)
                                     } else {
-                                        SecureField("", text: $passwordInput, prompt:  Text("Password")
-                                            .foregroundColor(.black.opacity(0.5))
+                                        SecureField("", text: $passwordInput, prompt:  Text("Password").foregroundColor(.black.opacity(0.5))
                                         )
                                         .padding(.leading, textFieldPaddingLeading)
                                         .disableAutocorrection(true)
@@ -216,14 +208,15 @@ struct LoginView: View {
                         
                         // Push the button down
                         VStack{
-                            
                         }
                         .frame(height: buttonPaddingTop)
                         
                         // Center button
                         HStack {
+                            // push view
                             Spacer()
                             
+                            // Login button
                             Button {
                                 for index in users.indices {
                                     // If login successfully
@@ -329,9 +322,9 @@ struct LoginView: View {
                                         .navigationBarBackButtonHidden(true)
                                 }
                             
+                            // push view
                             Spacer()
                         }
-                        
                         
                         // 2 buttons
                         HStack {
@@ -386,6 +379,7 @@ struct LoginView: View {
                     .frame(maxWidth: proxy.size.width)
                     .edgesIgnoringSafeArea(.all)
                     
+                    // push view
                     Spacer()
                     
                 }
@@ -403,6 +397,7 @@ struct LoginView: View {
                                     .bold()
                                     .padding(.top)
                                 
+                                // push view
                                 Spacer()
                                 
                                 if loginStatus != "Login Successfully!" {
@@ -415,6 +410,7 @@ struct LoginView: View {
                                         .bold()
                                 }
                                 
+                                // push view
                                 Spacer()
                                 
                                 // Line separating sections
@@ -461,6 +457,7 @@ struct LoginView: View {
                                     .bold()
                                     .padding(.top)
                                 
+                                // push view
                                 Spacer()
                                 
                                 Text("Contact technical support")
@@ -472,6 +469,7 @@ struct LoginView: View {
                                     .font(alertContentFont)
                                     .accentColor(.black)
                                 
+                                // push view
                                 Spacer()
                                 
                                 // Line separing sections
@@ -506,6 +504,7 @@ struct LoginView: View {
             }
             
             .onAppear {
+                // Responsive
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     logoWidth = proxy.size.width/1.1
                     logoHeight = proxy.size.width/5

@@ -1,39 +1,55 @@
-//
-//  SettingView.swift
-//  Master Chess
-//
-//  Created by quoc on 30/08/2023.
-//
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 30/08/2023
+ Last modified: 03/09/2023
+ Acknowledgement:
+ */
 
 import SwiftUI
 
 struct SettingView: View {
+    // Get list of users
     @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.colorScheme) var colorScheme
-    
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Users.username, ascending: true)], animation: .default) private var users: FetchedResults<Users>
     var currentUserr = CurrentUser.shared
+    
+    // Log out
+    @State var isConfirmLogOut: Bool = false
+    @State var isLogOut: Bool = false
+    
+    // Setting change
+    @State private var newPassword = ""
+    @State private var newUsername = ""
     @State private var selectedSound = false
     @State private var selectedSFX = false
     @State private var selectedAP = false
     @State private var selectedTheme = "Dark"
     @State private var selectedLanguage = "en"
-    
-    @State var isConfirmLogOut: Bool = false
-    @State var isLogOut: Bool = false
-    @State private var newPassword = ""
-    @State private var newUsername = ""
     @State private var isConfirmButtonEnabled = false
     @State private var isChangesMade = false
     @State var selectedDifficulty = "easy"
-    @AppStorage("userName") var username = "Mudoker"
     @State private var isUsernameTakenAlertPresented = false
     @State var isShowProfile = false
-    @AppStorage("selectedLanguage") var localization = "vi"
+    
+    // Theme
+    @Environment(\.colorScheme) var colorScheme
     @AppStorage("theme") var theme = ""
     @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
     @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
     @State var buttonSizeHeight: CGFloat = 0
+    
+    // Localization
+    @AppStorage("selectedLanguage") var localization = "vi"
+
+    // Find user
+    @AppStorage("userName") var username = "Mudoker"
+
+    // Validate username
     func isUsernameAvailable(_ newUsername: String) -> Bool {
         let isTaken = users.contains { user in
             user.unwrappedUsername == newUsername
@@ -47,9 +63,12 @@ struct SettingView: View {
         return dateFormatter.string(from: date)
     }
     
+    // control sate
     private func updateConfirmButtonState() {
         isConfirmButtonEnabled = isChangesMade
     }
+    
+    // get user
     func getUserWithUsername(_ username: String) -> Users? {
         return users.first { $0.username == username }
     }
@@ -72,8 +91,11 @@ struct SettingView: View {
     
     var body: some View {
         GeometryReader { proxy in
+            // get user
             let currentUser = getUserWithUsername(username)
+            
             VStack (alignment: .center) {
+                // Push view
                 if UIDevice.current.userInterfaceIdiom == .pad {
                     VStack{
                     }
@@ -85,11 +107,16 @@ struct SettingView: View {
                         .font(.system(size: viewTitleFontSize))
                         .bold()
                         .padding(.horizontal)
+                    
+                    // push view
                     Spacer()
                 }
+                
                 ScrollView(showsIndicators: false) {
+                    // press will navigate to profile view
                     NavigationLink(destination: ProfileView(currentUser: currentUser ?? Users())
                     ) {
+                        // Content
                         HStack {
                             Circle()
                                 .fill(theme == "system" ? (colorScheme == .dark ? .gray.opacity(0.4) : .black.opacity(0.4)) : (theme == "light" ? .black.opacity(0.4) : .gray.opacity(0.4)))
@@ -121,6 +148,7 @@ struct SettingView: View {
                                 }
                             }
                             
+                            // Push view
                             Spacer()
                             
                             Image(systemName: "arrow.forward.square")
@@ -139,6 +167,7 @@ struct SettingView: View {
                             }
                     )
                     
+                    // Update infor
                     VStack(spacing: 20) {
                         VStack {
                             TextField("", text: $newUsername, prompt:  Text("New Username")
@@ -153,6 +182,7 @@ struct SettingView: View {
                             .scaleEffect(scaleSettingField)
                             .padding(.leading, textFieldPadding)
                             
+                            // Line separator
                             Divider()
                             
                             TextField("", text: $newPassword, prompt:  Text("New Password")
@@ -171,6 +201,7 @@ struct SettingView: View {
                         .frame(width: proxy.size.width)
                         .background(.gray.opacity(0.2))
                         
+                        // Setting
                         VStack (spacing: 20) {
                             Toggle("Auto Promotion Enabled", isOn: $selectedAP)
                                 .padding()
@@ -184,7 +215,8 @@ struct SettingView: View {
                                 }
                                 .padding(.horizontal, textFieldPadding/1.35)
                                 .scaleEffect(scaleSettingField)
-                            
+
+                            // Line separator
                             Divider()
                             
                             Toggle("Music Enabled", isOn: $selectedSound)
@@ -201,6 +233,7 @@ struct SettingView: View {
                                 .padding(.horizontal, textFieldPadding/1.35)
                                 .scaleEffect(scaleSettingField)
                             
+                            // Line separator
                             Divider()
                             
                             Toggle("Sound Enabled", isOn: $selectedSFX)
@@ -223,6 +256,7 @@ struct SettingView: View {
                             Text("Theme")
                                 .font(settingTitleFont)
                                 .padding(.top)
+                            
                             Picker("Language", selection: $selectedTheme) {
                                 Text("Light").tag("light")
                                 Text("Dark").tag("dark")
@@ -294,7 +328,6 @@ struct SettingView: View {
                                 }
                             }
                             
-                            
                             Picker("Difficulty", selection: $selectedDifficulty) {
                                 Text("Easy").tag("easy")
                                 Text("Normal").tag("normal")
@@ -314,12 +347,13 @@ struct SettingView: View {
                                 updateConfirmButtonState()
                             }
                             .padding([.bottom, .horizontal])
-                            
                         }
                         .background(.gray.opacity(0.2))
                         
+                        // Confirm button
                         VStack {
                             Button {
+                                // On press will update the current user setting both in core date and CurrentUser struct
                                 if newUsername != "" {
                                     if isUsernameAvailable(newUsername) {
                                         isUsernameTakenAlertPresented = false
@@ -335,6 +369,8 @@ struct SettingView: View {
                                     
                                 }
                                 localization = selectedLanguage
+                                
+                                // Core Date
                                 currentUser?.userSettings?.autoPromotionEnabled = selectedAP
                                 currentUser?.userSettings?.isSystemTheme = selectedTheme == "system" ? true : false
                                 currentUser?.userSettings?.isDarkMode = selectedTheme == "light" ? false : true
@@ -345,6 +381,8 @@ struct SettingView: View {
                                 currentUser?.userSettings?.language = selectedLanguage
                                 
                                 theme = selectedTheme
+                                
+                                // CurrentUser
                                 currentUserr.settingAutoPromotionEnabled = selectedAP
                                 
                                 currentUserr.settingIsSystemTheme = selectedTheme == "system" ? true : false
@@ -357,13 +395,18 @@ struct SettingView: View {
                                 
                                 currentUserr.settingLanguage = selectedLanguage
                                 
+                                // Background music
                                 if !selectedSound {
                                     SoundPlayer.stopBackgroundMusic()
                                     
                                 } else {
                                     SoundPlayer.startBackgroundMusic()
                                 }
+                                
+                                // Save
                                 try? viewContext.save()
+                                
+                                // Update state
                                 isConfirmButtonEnabled = false
                                 
                             } label: {
@@ -385,6 +428,7 @@ struct SettingView: View {
                                 )
                             }
                             
+                            // Log out
                             Button {
                                 isConfirmLogOut.toggle()
                             } label: {
@@ -414,13 +458,17 @@ struct SettingView: View {
                         .padding(.horizontal)
                         .padding(.top)
                     }
+                    
+                    // push view
                     VStack{}
                         .frame(height: 50)
                 }
             }
+            //Theme
             .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
             .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
             .onAppear {
+                // Responsive
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     viewTitleFontSize = 35
                     profileBackgroundSize = proxy.size.width/4

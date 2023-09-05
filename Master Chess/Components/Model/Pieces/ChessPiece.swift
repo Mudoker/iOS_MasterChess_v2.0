@@ -1,3 +1,16 @@
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 12/08/2023
+ Last modified: 12/08/2023
+ Acknowledgement:
+ ivangodfather. “Chess” Github.com. https://dribbble.com/shots/17726071/attachments/12888457?mode=media (accessed Aug 25, 2023).
+ */
+
 import Foundation
 import SwiftUI
 
@@ -31,10 +44,12 @@ struct ChessPiece: ExpressibleByStringLiteral, Identifiable, Hashable {
     let pieceName: StringLiteralType
     var isInvalidMove = false
     init(stringLiteral value: String) {
+        // the name should be bq, bk, wp, wk, ...
         guard value.count == 2 else {
             preconditionFailure("Invalid string literal length")
         }
         
+        // Name format: bq = black queen
         let color = value[value.startIndex].lowercased()
         let type = value[value.index(after: value.startIndex)].lowercased()
         

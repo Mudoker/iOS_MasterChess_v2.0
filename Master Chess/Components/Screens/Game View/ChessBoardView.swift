@@ -1,10 +1,28 @@
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 14/08/2023
+ Last modified: 03/09/2023
+ Acknowledgement:
+ */
+
 import SwiftUI
 
 struct ChessBoardView: View {
+    // Current User
     var currentUser = CurrentUser.shared
-    let isAdmin = true // Set this to true or false based on admin status
+    
+    // Core Date
     @Environment(\.managedObjectContext) private var viewContext
+    
+    // Watch game state
     @StateObject var viewModel: GameViewModel
+    
+    // Decoy data
     var history: [Move] = [
         Move(from: Position(x: 0, y: 1), to: Position(x: 2, y: 3)),
         Move(from: Position(x: 1, y: 2), to: Position(x: 2, y: 3)),
@@ -17,29 +35,43 @@ struct ChessBoardView: View {
         Move(from: Position(x: 1, y: 5), to: Position(x: 3, y: 4)),
         Move(from: Position(x: 5, y: 2), to: Position(x: 4, y: 3))
     ]
+    
+    // Localization
     @AppStorage("selectedLanguage") var selectedLanguage = "vi"
     
+    // menu view navigation
     @State var isMenu = false
-    @State private var isExpanded = false
-    var user: Users
-    @State var isAnimation = false
-    let columnLabels = "abcdefghijklmnopqrstuvwxyz"
     
+    // Animatoin
+    @State private var isExpanded = false
+    @State var isAnimation = false
+
+    // Current user
+    var user: Users
+    
+    // Convert history to chess note
+    let columnLabels = "abcdefghijklmnopqrstuvwxyz"
+
+    // Theme
     @Environment(\.colorScheme) var colorScheme
-    @State var boardBackground = UIBlurEffect.Style.light
     @AppStorage("theme") var theme = ""
     @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
     @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
+    
+    // Control state
+    @State var boardBackground = UIBlurEffect.Style.light
     @State var selectedOpacity: Double = 0.0
     @State var nonSelectedOpacity: Double = 0.0
     @State var backgroundColor = Color.white
     
+    // Convert histories of move to string
     func coordinateString(for point: Position) -> String {
         let xCoordinate = String(columnLabels[columnLabels.index(columnLabels.startIndex, offsetBy: point.x)])
         let yCoordinate = "\(point.y + 1)"
         return "\(xCoordinate)\(yCoordinate)"
     }
     
+    // For seconds to time
     func formatTime(_ timeString: String) -> String {
         guard let totalSeconds = Int(timeString) else {
             return ""
@@ -75,12 +107,15 @@ struct ChessBoardView: View {
     @State var adminButtonSizeWidth: CGFloat = 0
     @State var adminButtonSizeHeight: CGFloat = 0
     @State var playerTurnRoundedCorner: CGFloat = 0
+    
     var body: some View {
         GeometryReader { proxy in
             ZStack {
                 VStack(spacing: 0) {
                     ZStack {
+                        // Infor hub
                         HStack {
+                            // Player
                             VStack(alignment: .leading) {
                                 Image(currentUser.profilePicture ?? "profile1")
                                     .resizable()
@@ -94,28 +129,26 @@ struct ChessBoardView: View {
                                         Text("Newbie")
                                             .opacity(0.7)
                                             .font(userTitleFont)
-                                        
                                     } else if CurrentUser.shared.rating < 1300 {
                                         Text("Pro")
                                             .opacity(0.7)
                                             .font(userTitleFont)
-                                        
                                     } else if CurrentUser.shared.rating < 1600 {
                                         Text("Master")
                                             .opacity(0.7)
                                             .font(userTitleFont)
-                                        
                                     } else {
                                         Text("Grand Master")
                                             .opacity(0.7)
                                             .font(userTitleFont)
-                                        
                                     }
                                 }
-                                
                             }
+                            
+                            // Push view
                             Spacer()
                             
+                            // Opponent
                             VStack(alignment: .trailing) {
                                 Image(viewModel.blackPlayerName == "M.Carlsen" ? "magnus" : viewModel.blackPlayerName.lowercased())
                                     .resizable()
@@ -134,6 +167,7 @@ struct ChessBoardView: View {
                         .padding(.horizontal, inforHubPaddingHorizontal)
                         .padding(.bottom, inforHubPaddingBottom)
                         
+                        // Timer
                         VStack (spacing: timerSpacing) {
                             HStack {
                                 if UIDevice.current.userInterfaceIdiom == .pad {
@@ -143,25 +177,24 @@ struct ChessBoardView: View {
                                 Text(formatTime(viewModel.whiteRemainigTime))
                                     .font(timerFont)
                                     .padding(10)
-                                    .background(viewModel.currentPlayer == .white ?  Color.gray.opacity(0.7) : Color.gray.opacity(0.2)
-                                    )
+                                    .background(viewModel.currentPlayer == .white ?  Color.gray.opacity(0.7) : Color.gray.opacity(0.2))
                                     .clipShape(RoundedRectangle(cornerRadius: timerRoundedCorner))
                                     .frame(width: timerBackground)
 
                                 Text(formatTime(viewModel.blackRemainigTime))
                                     .font(timerFont)
                                     .padding(10)
-                                    .background(viewModel.currentPlayer == .white ?
-                                        Color.gray.opacity(0.2) : Color.gray.opacity(0.7)
-                                    )
+                                    .background(viewModel.currentPlayer == .white ? Color.gray.opacity(0.2) : Color.gray.opacity(0.7))
                                     .clipShape(RoundedRectangle(cornerRadius: timerRoundedCorner))
                                     .frame(width: timerBackground)
                                 
+                                // spacing
                                 if UIDevice.current.userInterfaceIdiom == .pad {
                                     Spacer()
                                 }
                             }
                             
+                            // Player turn
                             ZStack {
                                 RoundedRectangle(cornerRadius: proxy.size.width/40)
                                     .stroke(Color.blue, lineWidth: proxy.size.width/100)
@@ -185,6 +218,7 @@ struct ChessBoardView: View {
                                     }
                             }
                             
+                            // Available moves
                             if viewModel.currentPlayer == .white {
                                 if UIDevice.current.userInterfaceIdiom == .phone {
                                     Text("\(String(viewModel.chessGame.availableMoves)) moves left")
@@ -209,9 +243,11 @@ struct ChessBoardView: View {
                         }
                     }
                     
+                    // Chess board
                     ForEach((0...7).reversed(), id: \.self) { y in
                         HStack(spacing: 0) {
                             ForEach(0...7, id: \.self) { x in
+                                // REsponsive
                                 if UIDevice.current.userInterfaceIdiom == .phone {
                                     GlassMorphicCard(
                                         isDarkMode: .constant(!(x + y).isMultiple(of: 2)),
@@ -235,9 +271,13 @@ struct ChessBoardView: View {
                         }
                     }
                     
+                    // Captured list
                     HStack {
+                        // get list of captures
                         let whiteCaptures = viewModel.chessGame.captures.filter { $0.pieceName.starts(with: "b") }
                         let blackCaptures = viewModel.chessGame.captures.filter { $0.pieceName.starts(with: "w") }
+                        
+                        // show at most 3 pieces
                         if whiteCaptures.count > 4 {
                             ForEach(0..<3, id: \.self) { index in
                                 if index < whiteCaptures.count {
@@ -246,8 +286,7 @@ struct ChessBoardView: View {
                                         Image(pieceName)
                                             .resizable()
                                             .frame(width: capturedPieceImageSize, height: capturedPieceImageSize)
-                                            .transition(AnyTransition.opacity.animation(.easeIn))
-                                        
+                                            .transition(AnyTransition.opacity.animation(.easeIn)) // animation
                                     }
                                 }
                             }
@@ -260,13 +299,15 @@ struct ChessBoardView: View {
                                         .resizable()
                                         .frame(width: capturedPieceImageSize, height: capturedPieceImageSize)
                                         .id(index)
-                                        .transition(AnyTransition.opacity.animation(.easeIn))
+                                        .transition(AnyTransition.opacity.animation(.easeIn)) // animation
                                 }
                             }
                         }
                         
+                        // Push view
                         Spacer()
                         
+                        // Show at most 3 pieces
                         if blackCaptures.count > 4 {
                             ForEach(0..<3, id: \.self) { index in
                                 if index < blackCaptures.count {
@@ -275,7 +316,7 @@ struct ChessBoardView: View {
                                         Image(pieceName)
                                             .resizable()
                                             .frame(width: capturedPieceImageSize, height: capturedPieceImageSize)
-                                            .transition(AnyTransition.opacity.animation(.easeIn))
+                                            .transition(AnyTransition.opacity.animation(.easeIn)) // animation
                                     }
                                 }
                             }
@@ -288,7 +329,7 @@ struct ChessBoardView: View {
                                     Image(pieceName)
                                         .resizable()
                                         .frame(width: capturedPieceImageSize, height: capturedPieceImageSize)
-                                        .transition(AnyTransition.opacity.animation(.easeIn))
+                                        .transition(AnyTransition.opacity.animation(.easeIn)) // animation
                                 }
                             }
                         }
@@ -297,14 +338,14 @@ struct ChessBoardView: View {
                     .padding(.horizontal)
                     .padding(.vertical)
                     
+                    // Move histories
                     if !viewModel.chessGame.history.value.isEmpty {
                         Text("Start a move!")
                             .font(.title3.bold())
                             .opacity(0.7)
                             .frame(height: proxy.size.height / 20)
-                        
-                        
                     } else {
+                        // Horizontal scroll view
                         ScrollView(.horizontal, showsIndicators: false) {
                             ScrollViewReader { scrollProxy in
                                 HStack(spacing: proxy.size.width/30) {
@@ -327,6 +368,7 @@ struct ChessBoardView: View {
                                     }
                                     .onChange(of: viewModel.chessGame.history.value.count) { _ in
                                         withAnimation {
+                                            // automatically scroll to end
                                             scrollProxy.scrollTo(viewModel.chessGame.history.value.last, anchor: .trailing)
                                         }
                                     }
@@ -338,15 +380,21 @@ struct ChessBoardView: View {
                         .frame(height: proxy.size.height / 20)
                     }
                     
+                    // Push view
                     Spacer()
                     
+                    // REsponsive
                     if UIDevice.current.userInterfaceIdiom == .phone {
+                        // Buttons
                         HStack (spacing: 20) {
+                            // New game
                             Button(action: {
+                                // reset all
                                 currentUser.hasActiveGame = false
                                 user.hasActiveGame = false
                                 user.savedGame?.history = []
                                 user.savedGame?.captures = []
+                                
                                 try?viewContext.save()
                                 viewModel.start()
                             }) {
@@ -354,25 +402,30 @@ struct ChessBoardView: View {
                                     Image(systemName: "plus.circle")
                                         .resizable()
                                         .frame(width: proxy.size.width/18, height: proxy.size.width/18)
+                                    
                                     Text("New Game")
                                 }
                             }
                             
+                            // Resign
                             Button(action: {
                                 viewModel.chessGame.outcome = .checkmate
                                 viewModel.chessGame.winner = .black
                                 
                                 currentUser.rating -= viewModel.chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: viewModel.chessGame.outcome, difficulty: currentUser.settingDifficulty)
+                                
                                 try?viewContext.save()
                             }) {
                                 VStack {
                                     Image(systemName: "flag")
                                         .resizable()
                                         .frame(width: proxy.size.width/18, height: proxy.size.width/18)
+                                    
                                     Text("Resign")
                                 }
                             }
                             
+                            // Menu view
                             Button(action: {
                                 viewModel.chessGame.stopClocks()
                                 isMenu.toggle()
@@ -381,6 +434,7 @@ struct ChessBoardView: View {
                                     Image(systemName: "line.3.horizontal.circle")
                                         .resizable()
                                         .frame(width: proxy.size.width/18, height: proxy.size.width/18)
+                                    
                                     Text("Main Menu")
                                 }
                             }
@@ -389,10 +443,14 @@ struct ChessBoardView: View {
                                     .navigationBarBackButtonHidden(true)
                             }
                         }
+                        
+                        // Push view
                         Spacer()
                         
-                        if currentUser.username != "" {
+                        // admin buttons
+                        if currentUser.username == "admin" {
                             HStack (spacing: 20) {
+                                // Force win
                                 Button(action: {
                                     viewModel.chessGame.outcome = .checkmate
                                     viewModel.chessGame.winner = .white
@@ -409,6 +467,7 @@ struct ChessBoardView: View {
                                     }
                                 }
                                 
+                                // Force draw
                                 Button(action: {
                                     viewModel.chessGame.outcome = .stalemate
                                     
@@ -424,16 +483,17 @@ struct ChessBoardView: View {
                                     }
                                 }
                                 
+                                // Forece draw
                                 Button(action: {
                                     viewModel.chessGame.outcome = .checkmate
                                     viewModel.chessGame.winner = .black
                                     
                                     currentUser.rating -= viewModel.chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: viewModel.chessGame.outcome, difficulty: currentUser.settingDifficulty)
                                     
+                                    // Avoid negative rating
                                     if currentUser.rating < 0 {
                                         currentUser.rating = 0
                                     }
-                                    
                                 }) {
                                     VStack {
                                         Text("Force Lose")
@@ -448,6 +508,7 @@ struct ChessBoardView: View {
                             .padding(.vertical)
                         }
                     } else {
+                        // The same for iphone
                         HStack (spacing: 20) {
                             Button(action: {
                                 currentUser.hasActiveGame = false
@@ -496,7 +557,7 @@ struct ChessBoardView: View {
                                     .navigationBarBackButtonHidden(true)
                             }
                             
-                            if currentUser.username != "" {
+                            if currentUser.username == "admin" {
                                 HStack (spacing: 20) {
                                     Button(action: {
                                         viewModel.chessGame.outcome = .checkmate
@@ -557,6 +618,7 @@ struct ChessBoardView: View {
                 }
             }
             .onAppear {
+                // Responsive
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     profileImageSize = proxy.size.width/5
                     timerSpacing = proxy.size.width/30
@@ -595,10 +657,11 @@ struct ChessBoardView: View {
                 }
             }
         }
+        // theme
         .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
         .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
         .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
-        .environment(\.locale, Locale(identifier: selectedLanguage))
+        .environment(\.locale, Locale(identifier: selectedLanguage)) // localization
     }
 }
 

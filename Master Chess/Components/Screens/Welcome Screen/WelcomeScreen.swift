@@ -1,3 +1,16 @@
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 09/08/2023
+ Last modified: 09/08/2023
+ Acknowledgement:
+ wallspic. "750x1334 Huawei, Huawei Mate, Huawei Mate 10, Chess, Chessboard Wallpaper for IPhone 6, 6S, 7, 8." wallspic.com https://wallspic.com/image/159249-huawei-huawei_mate-huawei_mate_10-chess-chessboard/750x1334 (accsesed Aug. 09, 2023)
+ */
+
 import SwiftUI
 
 struct Welcome_Screen: View {
@@ -75,6 +88,7 @@ struct Welcome_Screen: View {
                                 .bold()
                                 .opacity(0.7)
                             
+                            // Push view
                             Spacer()
                         }
                         .padding(.horizontal)
@@ -86,6 +100,7 @@ struct Welcome_Screen: View {
                                 Text("Let's explore")
                                     .font(needHelpFont)
                                 
+                                // Push view
                                 Spacer()
                                 
                                 Image(systemName: "arrow.up.forward")
@@ -119,20 +134,18 @@ struct Welcome_Screen: View {
                                     .font(needHelpFont)
                             }
                             
-                            
+                            // Push view
                             Spacer()
                             
                             // Picker for localization
                             Picker(selection: $language, label: Text("Select Language")) {
-                                
                                 // 2 options for languages
                                 Text("English")
                                     .tag("en")
-
+                                
                                 
                                 Text("Vietnamese")
                                     .tag("vi")
-
                             }
                             .scaleEffect(languageSelectionScale) // Scaling for Ipad view
                             .padding(.bottom)
@@ -156,13 +169,16 @@ struct Welcome_Screen: View {
                                         .bold()
                                         .padding(.top)
                                     
+                                    // Push view
                                     Spacer()
                                     
                                     Text("Please contact: s3927776@rmit.edu.vn")
                                         .font(needHelpFont)
                                     
+                                    // Push view
                                     Spacer()
                                     
+                                    // Line separator
                                     Divider()
                                     
                                     Button {
@@ -170,18 +186,20 @@ struct Welcome_Screen: View {
                                             showAlert.toggle()
                                         }
                                     }
-                                    label: {
-                                        HStack {
-                                            Spacer()
-                                            
-                                            Text("Close")
-                                                .font(alertCloseFont)
-                                                .foregroundColor(.red)
-                                            
-                                            Spacer()
-                                        }
+                                label: {
+                                    HStack {
+                                        // Push view
+                                        Spacer()
+                                        
+                                        Text("Close")
+                                            .font(alertCloseFont)
+                                            .foregroundColor(.red)
+                                        
+                                        // Push view
+                                        Spacer()
                                     }
-                                    .padding(.bottom)
+                                }
+                                .padding(.bottom)
                                 }
                             )
                             .cornerRadius(proxy.size.width/30)
@@ -193,7 +211,9 @@ struct Welcome_Screen: View {
                     selectedLanguage = newValue
                 }
                 .onAppear {
+                    // Localization
                     language = selectedLanguage
+                    
                     // Asign value according to device type
                     if UIDevice.current.userInterfaceIdiom == .phone {
                         logoSize = proxy.size.width/2
@@ -222,7 +242,7 @@ struct Welcome_Screen: View {
                         alertSizeWidth = proxy.size.width/2
                         alertSizeHeight = proxy.size.width/3
                     }
-            }
+                }
             }
         }
         .preferredColorScheme(.dark)

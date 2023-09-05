@@ -1,6 +1,17 @@
+/*
+ RMIT University Vietnam
+ Course: COSC2659 iOS Development
+ Semester: 2022B
+ Assessment: Assignment 2
+ Author: Doan Huu Quoc
+ ID: 3927776
+ Created  date: 12/08/2023
+ Last modified: 01/09/2023
+ Acknowledgement:
+ */
+
 import Combine
 import Foundation
-
 
 class CurrentUser: ObservableObject {
     @Published var username: String? = "test"
@@ -11,9 +22,11 @@ class CurrentUser: ObservableObject {
     @Published var rating: Int = 0
     @Published var userID: UUID? = UUID()
     @Published var hasActiveGame: Bool = false
+    
     // Add the new properties
     @Published var userAchievement: NSSet? = []
     @Published var userHistory: NSSet? = []
+    
     // Properties from Setting
     @Published var settingAutoPromotionEnabled: Bool = false
     @Published var settingIsDarkMode: Bool = false
@@ -22,6 +35,7 @@ class CurrentUser: ObservableObject {
     @Published var settingSoundEnabled: Bool = false
     @Published var settingDifficulty: String = "hard"
     @Published var settingIsSystemTheme: Bool = false
+    
     // Properties from SavedGame
     @Published var savedGameAutoPromotionEnabled: Bool = false
     @Published var savedGameBlackTimeLeft: Double = 0
@@ -42,5 +56,6 @@ class CurrentUser: ObservableObject {
     @Published var savedGameHistory: [Movement] = []
     @Published var savedGameCapture: [String] = []
 
+    // only 1 instance is created
     static let shared = CurrentUser()
 }
