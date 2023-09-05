@@ -13,7 +13,7 @@ struct Master_ChessApp: App {
     @StateObject private var currentUser = CurrentUser() // Initialize the CurrentUser instance
     var body: some Scene {
         WindowGroup {
-            ProfileView()
+            GameView()
                 .environment(\.managedObjectContext, dataManager.container.viewContext)
                 .environmentObject(currentUser) // Pass currentUser as an environment object
         }

@@ -33,6 +33,14 @@ struct GameView: View {
         pulsingScale = 1.0
     }
     
+    //Responsive
+    @State var pieceImageSizeWidth1: CGFloat = 0
+    @State var pieceImageSizeWidth2: CGFloat = 0
+    @State var pieceImageSizeHeight1: CGFloat = 0
+    @State var pieceImageSizeHeight2: CGFloat = 0
+    @State var tileSizeWidth: CGFloat = 0
+    @State var tileSizeHeight: CGFloat = 0
+    @State var viewPush: CGFloat = 0
     var body: some View {
         GeometryReader { proxy in
             ZStack {
@@ -49,9 +57,9 @@ struct GameView: View {
                                     let isCurrentPiece = currentPiece.0 == piece
                                     let pieceImage = Image(piece.imageView)
                                         .resizable()
-                                        .frame(width: proxy.size.width / 9, height: proxy.size.width / 9)
+                                        .frame(width: pieceImageSizeWidth1, height: pieceImageSizeHeight1)
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: proxy.size.width / 8, height: proxy.size.width / 8)
+                                        .frame(width: pieceImageSizeWidth2, height: pieceImageSizeHeight2)
                                         .overlay(
                                             Circle()
                                                 .fill(isMoveValid ? Color.blue.opacity(0.8) : .clear)
@@ -120,13 +128,36 @@ struct GameView: View {
                                                 }
                                             }
                                         }
-                                        .frame(width: proxy.size.width / 8, height: proxy.size.width / 8)
+                                        .frame(width: tileSizeWidth, height: tileSizeHeight)
                                 }
                             }
                         }
                     }
-                    Spacer().frame(height: proxy.size.width / 6)
                     
+                    Spacer().frame(height: viewPush)
+                }
+            }
+            .onAppear {
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                    pieceImageSizeWidth1 = proxy.size.width / 9
+                    pieceImageSizeHeight1 = proxy.size.width / 9
+                    pieceImageSizeWidth2 = proxy.size.width / 8
+                    pieceImageSizeHeight2 = proxy.size.width / 8
+                    tileSizeWidth = proxy.size.width / 8
+                    tileSizeHeight = proxy.size.width / 8
+                    viewPush = proxy.size.width / 4.5
+                } else {
+                    pieceImageSizeWidth1 = proxy.size.width / 10
+                    pieceImageSizeHeight1 = proxy.size.width / 11
+                    pieceImageSizeWidth2 = proxy.size.width / 9
+                    pieceImageSizeHeight2 = proxy.size.width / 10
+                    tileSizeWidth = proxy.size.width / 8
+                    tileSizeHeight = proxy.size.width / 10
+                    if proxy.size.width >= 1024 {
+                        viewPush = proxy.size.width / 19
+                    } else {
+                        viewPush = proxy.size.width / 9
+                    }
                 }
             }
             if viewModel.chessGame.isPromotion {
