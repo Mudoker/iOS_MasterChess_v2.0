@@ -1,107 +1,234 @@
 import SwiftUI
 
 struct Welcome_Screen: View {
-    @AppStorage("selectedLanguage") var selectedLanguage = "en" // Default language is English
+    // Global variable for localization
+    @AppStorage("selectedLanguage") var selectedLanguage = "en"
+    
+    // Navigate to login view
     @State private var isLogin = false
+    
+    // Show alert for need help
     @State private var showAlert = false
+    
+    // username of current user
     @AppStorage("userName") var username = ""
+    
+    // instance of currentUser
     @EnvironmentObject var currentUser: CurrentUser
     
+    // Update and UI and store to selectedLanguage
+    @State var language = ""
+    
+    // Responsive for Iphone and Ipad
+    @State var logoSize: CGFloat = 0.0
+    @State var titleFontSize: CGFloat =  0.0
+    @State var buttonWidth: CGFloat = 0
+    @State var buttonHeight: CGFloat = 0
+    @State var fontSubtitle: Font = .title
+    @State var needHelpFont: Font = .body
+    @State var arrowSize: CGFloat = 0
+    @State var languageSelectionScale: CGFloat = 1
+    @State var alertTitleFont: Font = .title
+    @State var alertCloseFont: Font = .title3
+    @State var alertSizeWidth: CGFloat = 0
+    @State var alertSizeHeight: CGFloat = 0
     var body: some View {
         GeometryReader { proxy in
-            ZStack {
-                Image("WelcomeBackground")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: proxy.size.width)
-                
-                VStack {
-                    Image("RmitLogo")
+            NavigationStack {
+                ZStack {
+                    // Background
+                    Image("WelcomeBackground")
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: proxy.size.width/2, height: proxy.size.width/2)
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: proxy.size.width, height: proxy.size.height)
                     
-                    Spacer()
-                }
-                VStack {
-                    Spacer()
-                    HStack {
-                        Text("𝐌𝐚𝐬𝐭𝐞𝐫 𝐂𝐡𝐞𝐬𝐬")
-                            .font(.system(size: proxy.size.width/8))
-                            .bold()
+                    // Logo
+                    VStack {
+                        Image("RmitLogo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: logoSize, height: logoSize)
+                        
+                        // Push to top
                         Spacer()
                     }
-                    .padding(.horizontal)
                     
-                    HStack {
-                        Text("Master Your Mind, Master Your Moves")
-                            .font(.title3)
-                            .bold()
-                            .opacity(0.7)
+                    // Content
+                    VStack {
+                        // Push to bottom
                         Spacer()
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom)
-                    
-                    Button {
-                        isLogin = true
-                    } label: {
+                        
+                        // Push to left
                         HStack {
-                            Text("Let's explore")
-                            Spacer()
-                            Image(systemName: "arrow.up.forward")
-                        }
-                        .foregroundColor(.black)
-                        .padding(.horizontal)
-                        .frame(width: proxy.size.width/1.1, height: 70)
-                        .background(.white)
-                        .clipShape(Capsule())
-                        .padding(.bottom)
-                    }
-                    .navigationDestination(
-                        isPresented: $isLogin // trigger the navigation
-                    ) {
-//                        LoginView()
-//                            .environmentObject(currentUser)
-//                            .navigationBarBackButtonHidden(true)
-                    }
-                    
-                    HStack (alignment: .firstTextBaseline) {
-                        Button {
-                            showAlert.toggle()
-                        } label: {
-                            Text("Need help?")
-                        }
-                        .alert(isPresented: $showAlert) {
-                            Alert(
-                                title: Text("Technical Support"),
-                                message: Text("Please contact: s3927776@rmit.edu.vn"),
-                                dismissButton: .default(Text("Close"))
-                            )
-                        }
-                        .padding(.horizontal, 30)
-                        
-                        Spacer()
-                        
-                        Picker(selection: $selectedLanguage, label: Text("Select Language")) {
-                            Text("English")
-                                .tag("en")
+                            Text("𝐌𝐚𝐬𝐭𝐞𝐫 𝐂𝐡𝐞𝐬𝐬")
+                                .font(.system(size: titleFontSize))
+                                .bold()
                             
-                            Text("Vietnamese")
-                                .tag("vi")
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        
+                        // Push to left
+                        HStack {
+                            Text("Master Your Mind, Master Your Moves")
+                                .font(fontSubtitle)
+                                .bold()
+                                .opacity(0.7)
+                            
+                            Spacer()
                         }
                         .padding(.horizontal)
                         .padding(.bottom)
+                        
+                        NavigationLink(destination: LoginView().navigationBarHidden(true)) {
+                            // Push to 2 sides
+                            HStack {
+                                Text("Let's explore")
+                                    .font(needHelpFont)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "arrow.up.forward")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: arrowSize)
+                                
+                            }
+                            .foregroundColor(.black)
+                            .padding(.horizontal)
+                            .padding(.horizontal)
+                            .frame(width: buttonWidth, height: buttonHeight)
+                            .background(.white)
+                            .clipShape(Capsule())
+                            .padding(.bottom)
+                        }
+                        .simultaneousGesture(
+                            TapGesture()
+                                .onEnded {
+                                    isLogin = true
+                                }
+                        )
+                        
+                        // Push to 2 sides
+                        HStack (alignment: .firstTextBaseline) {
+                            // Show modal for need help
+                            Button {
+                                showAlert.toggle()
+                            } label: {
+                                Text("Need help?")
+                                    .font(needHelpFont)
+                            }
+                            
+                            
+                            Spacer()
+                            
+                            // Picker for localization
+                            Picker(selection: $language, label: Text("Select Language")) {
+                                
+                                // 2 options for languages
+                                Text("English")
+                                    .tag("en")
+
+                                
+                                Text("Vietnamese")
+                                    .tag("vi")
+
+                            }
+                            .scaleEffect(languageSelectionScale) // Scaling for Ipad view
+                            .padding(.bottom)
+                        }
+                        .padding(.horizontal)
                     }
+                    .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 16) // Only padding for ipad
+                    .padding(.bottom)
+                    .padding(.bottom)
+                    .foregroundColor(.white)
                     
+                    // Show alert view
+                    if showAlert {
+                        Rectangle()
+                            .foregroundColor(Color.white)
+                            .frame(width: alertSizeWidth, height: alertSizeHeight)
+                            .overlay(
+                                VStack (alignment: .center) {
+                                    Text("Technical Support")
+                                        .font(alertTitleFont)
+                                        .bold()
+                                        .padding(.top)
+                                    
+                                    Spacer()
+                                    
+                                    Text("Please contact: s3927776@rmit.edu.vn")
+                                        .font(needHelpFont)
+                                    
+                                    Spacer()
+                                    
+                                    Divider()
+                                    
+                                    Button {
+                                        withAnimation(.easeInOut(duration: 0.25)) {
+                                            showAlert.toggle()
+                                        }
+                                    }
+                                    label: {
+                                        HStack {
+                                            Spacer()
+                                            
+                                            Text("Close")
+                                                .font(alertCloseFont)
+                                                .foregroundColor(.red)
+                                            
+                                            Spacer()
+                                        }
+                                    }
+                                    .padding(.bottom)
+                                }
+                            )
+                            .cornerRadius(proxy.size.width/30)
+                            .padding()
+                    }
                 }
-                .padding(.bottom)
-                .padding(.bottom)
-                .foregroundColor(.white)
+                .frame(height: proxy.size.height)
+                .onChange(of: language) { newValue in
+                    selectedLanguage = newValue
+                }
+                .onAppear {
+                    language = selectedLanguage
+                    // Asign value according to device type
+                    if UIDevice.current.userInterfaceIdiom == .phone {
+                        logoSize = proxy.size.width/2
+                        titleFontSize = proxy.size.width/8
+                        buttonWidth = proxy.size.width/1.1
+                        buttonHeight = proxy.size.width/6
+                        fontSubtitle = .title3
+                        needHelpFont = .body
+                        arrowSize = proxy.size.width/25
+                        languageSelectionScale = 1
+                        alertTitleFont = .title
+                        alertCloseFont = .title3
+                        alertSizeWidth = proxy.size.width/1.2
+                        alertSizeHeight = proxy.size.width/2.5
+                    } else {
+                        logoSize = proxy.size.width/3
+                        titleFontSize = proxy.size.width/12
+                        buttonWidth = proxy.size.width/1.05
+                        buttonHeight = proxy.size.width/10
+                        fontSubtitle = .largeTitle
+                        needHelpFont = .largeTitle
+                        arrowSize = proxy.size.width/28
+                        languageSelectionScale = 1.7
+                        alertTitleFont = .largeTitle
+                        alertCloseFont = .title
+                        alertSizeWidth = proxy.size.width/2
+                        alertSizeHeight = proxy.size.width/3
+                    }
             }
-            .ignoresSafeArea()
+            }
         }
-        .environment(\.locale, Locale(identifier: selectedLanguage)) // Apply the selected language
+        .preferredColorScheme(.dark)
+        .ignoresSafeArea()
+        .edgesIgnoringSafeArea(.all)
+        .environment(\.locale, Locale(identifier: selectedLanguage)) // Localization
     }
 }
 

@@ -14,7 +14,7 @@ struct PromotionModal: View {
                 HStack {
                     Spacer()
                     HStack (spacing: 10) {
-                        if viewModel.chessGame.currentPlayer == .black {
+                        if viewModel.chessGame.currentPlayer == .white {
                             Button(action: {
                                 selectedPiece = "wq"
                                 withAnimation(.easeIn) {
@@ -89,9 +89,9 @@ struct PromotionModal: View {
                             }
                         }
                     }
-                    .frame(width: 280, height: 100)
+                    .frame(width: proxy.size.width/1.3, height: proxy.size.height/8)
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 20)
                             .fill(Color.gray.opacity(0.4))
                     )
                     Spacer()

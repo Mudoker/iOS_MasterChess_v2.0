@@ -124,7 +124,7 @@
 "The username should be atleast 5 characters" = "The username should be atleast 5 characters";
 "Password" = "Password";
 "Username" = "Username";
-"Choose a theme preference" = "Choose a theme preference";
+"Theme preference" = "Theme preference";
 "Music" = "Music";
 "SFX" = "SFX";
 "Auto Promotion" = "Auto Promotion";
@@ -143,7 +143,7 @@
 "Login Successfully!" = "Login Successfully!";
 "Forgot password?" = "Forgot password?";
 "or" = "or";
-"Create new account" = "Create new account";
+"Create an account" = "Create an account";
 "System alert" = "System alert";
 "Please try again" = "Please try again";
 "Password Recovery" = "Password Recovery";

@@ -12,9 +12,8 @@ struct How2playScreen: View {
     @AppStorage("theme") var theme = ""
     @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
     @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
-    
     @AppStorage("selectedLanguage") var selectedLanguage = "vi"
-    
+
     let overview = "Chess is a classic two-player strategy board game that has been enjoyed for centuries. It's played on an 8x8 board called a chessboard, with each player has control upon an army of 16 pieces. The objective is to checkmate the opponent's king while protecting your own."
     
     let boardSetup = "The chessboard consists of 64 squares arranged in an 8x8 grid. Players sit in front of each other, with the board oriented so that each player has a white square on their right.\nPlace the pieces on the board as follows:"
@@ -44,8 +43,15 @@ struct How2playScreen: View {
     
     let grandMasterConstraints = "For those Grandmasters (rating > 1600), there's a limit on the number of moves (30 moves in total). Players must carefully plan their strategies as they're restricted in their available moves."
     
+    // Custom go back button
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
+    // Responsive
+    @State var titleFont: Font = .largeTitle
+    @State var contentFont: Font = .title
+    @State var imageSizeWidth: CGFloat = 0
+    @State var imageSizeHeight: CGFloat = 0
+    @State var padding: CGFloat = 16
     private var backButton: some View {
         Button(action: {
             presentationMode.wrappedValue.dismiss()
@@ -65,24 +71,32 @@ struct How2playScreen: View {
         GeometryReader { proxy in
             ZStack {
                 ScrollView(showsIndicators: false) {
-                    
-                    
                     VStack (alignment: .leading, spacing: 10) {
-                        Section(header: Text("Overview of Chess Game").font(.title2).bold()) {
+                        Section(header:
+                            Text("Overview of Chess Game")                        .font(titleFont)
+                                .bold()
+                        ) {
                             Text (LocalizedStringKey(overview))
-                                .font(.body)
                                 .opacity(0.7)
+                                .font(contentFont)
                         }
                         
-                        Section(header: Text("Board Setup").font(.title2).bold()) {
+                        Section(header:
+                            Text("Board Setup")
+                                .font(titleFont)
+                                .bold()
+                        ) {
                             Text (LocalizedStringKey(boardSetup))
-                                .font(.body)
+                                .font(contentFont)
                                 .opacity(0.7)
                             
                             ForEach(pieces, id: \.self) { piece in
                                 HStack {
                                     Text("- ")
+                                        .font(contentFont)
+                                    
                                     Text(LocalizedStringKey(piece))
+                                        .font(contentFont)
                                         .opacity(0.7)
                                 }
                             }
@@ -91,20 +105,29 @@ struct How2playScreen: View {
                             HStack {
                                 Image("chessboard1")
                                     .resizable()
-                                    .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                    .frame(width: imageSizeWidth, height: imageSizeHeight)
+                                
                                 Spacer()
+                                
                                 Image("chessboard2")
                                     .resizable()
-                                    .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                    .frame(width: imageSizeWidth, height: imageSizeHeight)
                             }
                         }
                         
-                        Section(header: Text("How to move").font(.title2).bold()) {
+                        Section(header:
+                            Text("How to move")
+                                .font(titleFont)
+                                .bold()
+                        ) {
                             
                             ForEach(moves, id: \.self) { move in
                                 HStack {
                                     Text("• ")
+                                        .font(contentFont)
+                                    
                                     Text(LocalizedStringKey(move))
+                                        .font(contentFont)
                                         .opacity(0.7)
                                 }
                             }
@@ -112,116 +135,138 @@ struct How2playScreen: View {
                                 HStack {
                                     Image("pawnmove")
                                         .resizable()
-                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                        .frame(width: imageSizeWidth, height: imageSizeHeight)
+                                    
                                     Spacer()
+                                    
                                     Image("knightmove")
                                         .resizable()
-                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                        .frame(width: imageSizeWidth, height: imageSizeHeight)
                                 }
                                 HStack {
                                     Image("rookmove")
                                         .resizable()
-                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                        .frame(width: imageSizeWidth, height: imageSizeHeight)
+                                    
                                     Spacer()
+                                    
                                     Image("bishopmove")
                                         .resizable()
-                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                        .frame(width: imageSizeWidth, height: imageSizeHeight)
                                 }
                                 
                                 HStack {
                                     Image("queenmove")
                                         .resizable()
-                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                        .frame(width: imageSizeWidth, height: imageSizeHeight)
+                                    
                                     Spacer()
+                                    
                                     Image("kingmove")
                                         .resizable()
-                                        .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                        .frame(width: imageSizeWidth, height: imageSizeHeight)
                                 }
                             }
                         }
                         
-                        Section(header: Text("How to win").font(.title2).bold()) {
+                        Section(header: Text("How to win").font(titleFont).bold()) {
                             Text (LocalizedStringKey(winCondition))
-                                .font(.body)
+                                .font(contentFont)
                                 .opacity(0.7)
                             
                             HStack {
                                 Image("gamewin")
                                     .resizable()
-                                    .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                    .frame(width: imageSizeWidth, height: imageSizeHeight)
+
                                 Spacer()
+                                
                                 Image("gameloss")
                                     .resizable()
-                                    .frame(width: proxy.size.width / 2.2, height: proxy.size.height / 2)
+                                    .frame(width: imageSizeWidth, height: imageSizeHeight)
                             }
                             
                         }
                         
-                        Section(header: Text("Master Rank Constraints").font(.title2).bold()) {
+                        Section(header: Text("Master Rank Constraints").font(titleFont).bold()) {
                             Text (LocalizedStringKey(masterConstraints))
-                                .font(.body)
+                                .font(contentFont)
                                 .opacity(0.7)
                         }
                         
-                        Section(header: Text("Grand Master Rank Constraints").font(.title2).bold()) {
+                        Section(header: Text("Grand Master Rank Constraints").font(titleFont).bold()) {
                             Text (LocalizedStringKey(grandMasterConstraints))
-                                .font(.body)
+                                .font(contentFont)
                                 .opacity(0.7)
                         }
                         
-                        Section(header: Text("Score Calculation").font(.title2).bold()) {
+                        Section(header: Text("Score Calculation").font(titleFont).bold()) {
                             Text("In the game, points are awarded based on expected and final performance:")
-                                .font(.body)
+                                .font(contentFont)
                                 .opacity(0.7)
                                 .padding(.bottom, 10) // Add some spacing after the first Text
                             
                             Text("RatingChange = KFactor * DifficultyMultiplier * (ActualOutcome - ExpectedOutcome)")
+                                .font(contentFont)
                                 .padding(.bottom, 5) // Add some spacing after the second Text
                                 .opacity(0.7)
                             
                             Text("ExpectedOutcome = 1 / (1 + 10^((OpponentRating - PlayerRating) / 400))")
+                                .font(contentFont)
                                 .padding(.bottom, 10) // Add some spacing after the third Text
                                 .opacity(0.7)
                             
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("Where:")
+                                    .font(contentFont)
+
                                 Text("• RatingChange is the calculated change in the player's rating.")
+                                    .font(contentFont)
                                 
                                 Text("• RatingChange is the calculated change in the player's rating.")
+                                    .font(contentFont)
                                 
                                 Text("• KFactor represents a constant that governs the sensitivity of rating changes.")
+                                    .font(contentFont)
                                 
                                 Text("• DifficultyMultiplier adjusts the impact of difficulty levels on the rating change.")
+                                    .font(contentFont)
                                 
                                 Text("• ActualOutcome signifies the actual game outcome's impact on the rating change.")
+                                    .font(contentFont)
                                 
                                 Text("• ExpectedOutcome predicts the likelihood of a player's victory based on Elo's probability estimation.")
+                                    .font(contentFont)
                             }
                             .opacity(0.7)
-                            
-                            
-                            
                         }
-                        
-                        
-                        
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, padding)
                 }
             }
             .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
             .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
-            
             .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
+            .onAppear {
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                    titleFont = .title2
+                    contentFont = .body
+                    imageSizeWidth = proxy.size.width / 2.2
+                    imageSizeHeight = proxy.size.width / 1.3
+                } else {
+                    titleFont = .largeTitle
+                    contentFont = .title
+                    imageSizeWidth = proxy.size.width / 2
+                    imageSizeHeight = proxy.size.width / 1.1
+                    padding = 0
+                }
+            }
         }
-        
-        .navigationBarBackButtonHidden(true) // Hide the default back button
-        .navigationBarItems(leading: backButton) // Place the custom back button in the top-left corner
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: backButton)
         .environment(\.locale, Locale(identifier: selectedLanguage))
     }
-    
 }
-
 
 struct How2playScreen_Previews: PreviewProvider {
     static var previews: some View {

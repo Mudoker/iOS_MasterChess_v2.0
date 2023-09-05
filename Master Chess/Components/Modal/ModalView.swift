@@ -23,9 +23,15 @@ struct ModalView: View {
     @AppStorage("theme") var theme = ""
     @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
     @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
+    @State var outComeFontSize: CGFloat = 35
+    @State var outComeDesFont: Font = .title3
+    @State var playerNameFont: Font = .title2
+    @State var playerTitleFont: Font = .body
+    @State var ratingChange: CGFloat = 35
+    
+
     var body: some View {
         GeometryReader { proxy in
-            
             ZStack {
                 HStack {
                     Spacer()
@@ -47,7 +53,7 @@ struct ModalView: View {
                                     if viewModel.chessGame.outcome == .checkmate ||  viewModel.chessGame.outcome == .outOfMove || viewModel.chessGame.outcome == .outOfTime{
                                         if viewModel.chessGame.winner == .white {
                                             Text("YOU WON")
-                                                .font(.largeTitle)
+                                                .font(.system(size: outComeFontSize))
                                                 .bold()
                                                 .scaleEffect(isExpanded ? 1.1 : 1) // Apply scale effect
                                                 .animation(
@@ -66,12 +72,12 @@ struct ModalView: View {
                                                 }
                                             
                                             Text("Checkmate")
-                                                .font(.title3)
+                                                .font(outComeDesFont)
                                                 .opacity(0.7)
                                         }
                                         else {
                                             Text("YOU LOSS")
-                                                .font(.largeTitle)
+                                                .font(.system(size: outComeFontSize))
                                                 .bold()
                                                 .scaleEffect(isExpanded ? 1.1 : 1) // Apply scale effect
                                                 .animation(
@@ -87,23 +93,24 @@ struct ModalView: View {
                                             
                                             if viewModel.chessGame.outcome == .outOfMove {
                                                 Text("Out of move")
-                                                    .font(.title3)
+                                                    .font(outComeDesFont)
                                                     .opacity(0.7)
                                             } else if viewModel.chessGame.outcome == .outOfTime{
                                                 Text("Out of time")
-                                                    .font(.title3)
+                                                    .font(outComeDesFont)
                                                     .opacity(0.7)
                                             } else {
                                                 Text("Checkmate")
-                                                    .font(.title3)
+                                                    .font(outComeDesFont)
                                                     .opacity(0.7)
                                             }
                                             
                                         }
                                     } else {
                                         Text("DRAW")
-                                            .font(.largeTitle)
+                                            .font(.system(size: outComeFontSize))
                                             .bold()
+                                            .frame(minWidth:80)
                                             .scaleEffect(isExpanded ? 1.1 : 1) // Apply scale effect
                                             .animation(
                                                 Animation.easeInOut(duration: 2) // Use easeInOut animation curve
@@ -122,15 +129,16 @@ struct ModalView: View {
                                         
                                         if viewModel.chessGame.outcome == .insufficientMaterial {
                                             Text("Insufficient Material")
-                                                .font(.title3)
+                                                .font(outComeDesFont)
                                                 .opacity(0.7)
                                         } else if viewModel.chessGame.outcome == .stalemate {
                                             Text("Stale Mate")
-                                                .font(.title3)
+                                                .font(outComeDesFont)
                                                 .opacity(0.7)
                                         }
                                     }
                                 }
+                                
                                 Image("trumpet")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
@@ -149,20 +157,24 @@ struct ModalView: View {
                                         
                                         
                                         Text(CurrentUser.shared.username ?? "Undefined")
-                                            .font(.title2)
+                                            .font(playerNameFont)
                                             .padding(.leading)
                                         
                                         if CurrentUser.shared.rating < 800 {
                                             Text("Newbie")
+                                                .font(playerTitleFont)
                                                 .padding(.leading)
                                         } else if CurrentUser.shared.rating < 1300 {
                                             Text("Pro")
+                                                .font(playerTitleFont)
                                                 .padding(.leading)
                                         } else if CurrentUser.shared.rating < 1600 {
                                             Text("Master")
+                                                .font(playerTitleFont)
                                                 .padding(.leading)
                                         } else {
                                             Text("Grand Master")
+                                                .font(playerTitleFont)
                                                 .padding(.leading)
                                         }
                                         
@@ -175,17 +187,19 @@ struct ModalView: View {
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
                                             .frame(width: proxy.size.width/3.5, height: proxy.size.width/3.5)
+                                        
                                         Text(viewModel.blackPlayerName)
-                                            .font(.title2)
+                                            .font(playerNameFont)
                                             .padding(.trailing)
                                         
                                         
                                         Text(LocalizedStringKey(viewModel.blackTitle))
+                                            .font(playerTitleFont)
                                             .padding(.trailing)
-                                        
                                     }
                                 }
                                 .frame(width: proxy.size.width)
+                                
                                 Image ("versus")
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
@@ -194,17 +208,19 @@ struct ModalView: View {
                             }
                             
                             Text ("Current Rating")
-                                .font(.title2)
+                                .font(playerNameFont)
                                 .padding(.top)
                             
                             HStack {
                                 Text ("\(String(CurrentUser.shared.rating))")
-                                    .font(.largeTitle)
+                                    .font(.system(size: ratingChange))
                                     .bold()
                                 if CurrentUser.shared.rating - viewModel.chessGame.currentRating > 0 {
                                     Text ( "+ \(String(CurrentUser.shared.rating - viewModel.chessGame.currentRating))")
+                                        .font(playerTitleFont)
                                 } else {
                                     Text ( " \(String(CurrentUser.shared.rating - viewModel.chessGame.currentRating))")
+                                        .font(playerTitleFont)
                                 }
                                 
                             }
@@ -219,8 +235,9 @@ struct ModalView: View {
                                 }) {
                                     Text("Continue")
                                         .padding()
+                                        .font(playerTitleFont)
                                         .bold()
-                                        .frame(width: proxy.size.width/1.5)
+                                        .frame(width: proxy.size.width/1.5, height: proxy.size.height / 15)
                                         .background(Color.green.opacity(0.95))
                                         .cornerRadius(proxy.size.width/40)
                                     
@@ -247,13 +264,22 @@ struct ModalView: View {
             .ignoresSafeArea()
             
             .onAppear {
-                let history = GameHistory(context: viewContext)
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                } else {
+                    outComeFontSize = 70
+                    outComeDesFont = .largeTitle
+                    playerNameFont = .largeTitle
+                    playerTitleFont = .title
+                    ratingChange = 70
+                }
                 
+                let history = GameHistory(context: viewContext)
+
                 user.userStats?.totalGames = Int32((user.userStats?.totalGames ?? 0) + 1)
                 history.datePlayed = Date()
                 history.gameID = UUID()
                 history.opponentUsername = viewModel.blackPlayerName
-                
+
                 if viewModel.chessGame.outcome == .checkmate {
                     if viewModel.chessGame.winner == .white {
                         if currentUser.settingSoundEnabled {
@@ -273,27 +299,27 @@ struct ModalView: View {
                     }
                     history.outcome = "Draw"
                     user.userStats?.draws = Int32((user.userStats?.draws ?? 0) + 1)                            }
-                
-                
+
+
                 let wins = user.userStats?.wins ?? 0
                 let totalGames = user.userStats?.totalGames ?? 1
-                
+
                 let winRate: Double
                 if totalGames > 0 {
                     winRate = (Double(wins) / Double(totalGames) * 100)
                 } else {
                     winRate = 0
                 }
-                
+
                 user.userStats?.winRate = Double(winRate)
                 currentUser.hasActiveGame = false
                 user.hasActiveGame = false
-                
+
                 history.userRatingChange = Int16(abs(Int(user.rating) - currentUser.rating))
-                
+
                 user.addToUserHistory(history)
                 user.rating = Int16(currentUser.rating)
-                
+
                 try? viewContext.save()
             }
             
@@ -306,11 +332,6 @@ struct ModalView: View {
         
         .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
         .environment(\.locale, Locale(identifier: selectedLanguage))
-        
-        
-        
-        
-        
     }
 }
 

@@ -33,24 +33,52 @@ struct MenuView: View {
     @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
     @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
     
+    // Responsive
+    @State var currentDateSizeHeight: CGFloat = 0
+    @State var currentDateFont: Font = .body
+    @State var greetingSizeHeight: CGFloat = 0
+    @State var greetingFont: Font = .title2
+    @State var ratingFont: Font = .caption
+    @State var medalIconSizeWidth: CGFloat = 0
+    @State var medalIconSizeHeight: CGFloat = 0
+    @State var medalIconBackgroundSizeWidth: CGFloat = 0
+    @State var medalIconBackgroundSizeHeight: CGFloat = 0
+    @State var gameViewIconBackgroundSizeWidth: CGFloat = 0
+    @State var gameViewIconBackgroundSizeHeight: CGFloat = 0
+    @State var gameViewTitleFontSize: CGFloat = 25
+    @State var gameViewDesFontSize: CGFloat = 16
+    @State var gameViewIconSizeWidth: CGFloat = 0
+    @State var onClickTextFont: Font = .body
+    @State var gameViewTriangleIconSize: CGFloat = 0
+    @State var otherIconBackgroundSizeWidth: CGFloat = 0
+    @State var otherIconBackgroundSizeHeight: CGFloat = 0
+    @State var otherTitleFontSize: CGFloat = 16
+    @State var otherOnClickTextFont: Font = .caption
+    @State var historyFont: Font = .title3
+    @State var historyNumberFont: Font = .body
+    @State var historyEmptyFont: Font = .body
+    @State var historyDateFont: Font = .body
+    @State var historyOpponentImageSizeWidth: CGFloat = 0
+    @State var historyOpponentImageSizeHeight: CGFloat = 0
+    @State var historyOpponentNameFont: Font = .body
+    @State var historyOutcomeFont: Font = .title2
+    @State var gameViewBottomPadding: CGFloat = 16
     var body: some View {
-        
         GeometryReader { proxy in
                 ZStack {
                     let currentUser = getUserWithUsername(username)
-                    
-                   
                     
                     VStack(alignment: .leading) {
                         HStack {
                             VStack(alignment: .leading) {
                                 Text(getFormattedDate())
-                                    .frame(height: proxy.size.width/100)
+                                    .frame(height: currentDateSizeHeight)
                                     .padding(.leading)
+                                    .font(currentDateFont)
                                 
                                 Text(LocalizedStringKey(greeting(for: currentTime)))
-                                    .font(.title2)
-                                    .frame(height: proxy.size.width/10)
+                                    .font(greetingFont)
+                                    .frame(height: greetingSizeHeight)
                                     .bold()
                                     .padding(.leading)
                             }
@@ -59,16 +87,16 @@ struct MenuView: View {
                             
                             HStack {
                                 Text("Rating: \(String(currentUser?.rating ?? 0))")
-                                    .font(.caption)
+                                    .font(ratingFont)
 
                                 NavigationLink(destination: LeaderBoard()) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 16)
                                             .fill(theme == "system" ? (colorScheme == .dark ? .gray.opacity(0.7) : .black.opacity(0.2)) : (theme == "light" ? .black.opacity(0.2) : .gray.opacity(0.7)))
-                                            .frame(width: proxy.size.width/8, height: proxy.size.height/16)
+                                            .frame(width: medalIconBackgroundSizeWidth, height: medalIconBackgroundSizeHeight)
                                         Image(systemName: "medal.fill")
                                             .resizable()
-                                            .frame(width: proxy.size.width/16, height: proxy.size.width/16)
+                                            .frame(width: medalIconSizeWidth, height: medalIconSizeHeight)
                                     }
                                 }
                                 .simultaneousGesture(
@@ -77,11 +105,8 @@ struct MenuView: View {
                                             leaderBoard = true
                                         }
                                 )
-                                
-                                
                             }
                             .padding(.horizontal)
-                            
                         }
                         
                         HStack (spacing: 15) {
@@ -93,45 +118,60 @@ struct MenuView: View {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 16)
                                         .fill(theme == "system" ? (colorScheme == .dark ? .gray.opacity(0.7) : .black.opacity(0.2)) : (theme == "light" ? .black.opacity(0.2) : .gray.opacity(0.7)))
-                                        .frame(width: proxy.size.width/2.5, height: proxy.size.height/3)
+                                        .frame(width: gameViewIconBackgroundSizeWidth, height: gameViewIconBackgroundSizeHeight)
                                     
                                     VStack {
                                         HStack {
                                             Image("chess")
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
-                                                .frame(width: proxy.size.width/3)
+                                                .frame(width: gameViewIconSizeWidth)
+                                            
                                             Spacer()
                                         }
                                         .frame(width: proxy.size.width/2)
-                                        
-                                        //                                    Spacer()
-                                        
+                                                                                
                                         VStack (alignment: .leading, spacing: 5) {
-                                            Text("Competitive")
-                                                .font(.custom("OpenSans", size: 25))
-                                                .bold()
+                                            HStack {
+                                                Text("Competitive")
+                                                    .font(.custom("OpenSans", size: gameViewTitleFontSize))
+                                                    .bold()
                                                 .multilineTextAlignment(.leading)
-                                            Text("Player versus\nComputer")
-                                                .font(.custom("OpenSans", size: 16))
-                                                .multilineTextAlignment(.leading)
-                                                .lineSpacing(2)
+                                                
+                                                Spacer()
+                                            }
+                                            .padding(.leading)
+                                            
+                                            HStack {
+                                                Text("Player versus\nComputer")
+                                                    .font(.custom("OpenSans", size: gameViewDesFontSize))
+                                                    .multilineTextAlignment(.leading)
+                                                    .lineSpacing(2)
+                                                
+                                                Spacer()
+                                            }
+                                            .padding(.leading)
                                         }
                                         Spacer()
+                                        
                                         Divider()
+                                        
                                         HStack {
                                             Text("Play")
+                                                .font(onClickTextFont)
+                                            
                                             Spacer()
+                                            
                                             Image(systemName: "triangle.fill")
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
-                                                .frame(width: proxy.size.width/35)
+                                                .frame(width: gameViewTriangleIconSize)
                                                 .rotationEffect(Angle(degrees: 90))
                                             
                                         }
                                         .padding(.horizontal)
-                                        .padding(.bottom)
-                                        
+                                        .padding(.bottom, gameViewBottomPadding)
+
                                         Spacer()
                                     }
                                     .frame(width: proxy.size.width/2.5, height: proxy.size.height/2.5)
@@ -153,7 +193,7 @@ struct MenuView: View {
                                         VStack(alignment: .leading) {
                                             HStack {
                                                 Text("How to play?")
-                                                    .font(.custom("OpenSans_Italic", size: 18))
+                                                    .font(.custom("OpenSans_Italic", size: otherTitleFontSize))
                                                     .bold()
                                                     .multilineTextAlignment(.leading)
                                                 Image("how2play")
@@ -165,7 +205,7 @@ struct MenuView: View {
                                             Divider()
                                             HStack {
                                                 Text("Explore")
-                                                    .font(.caption)
+                                                    .font(otherOnClickTextFont)
                                                 Spacer()
                                                 Image(systemName: "triangle.fill")
                                                     .resizable()
@@ -202,7 +242,7 @@ struct MenuView: View {
                                         VStack(alignment: .leading) {
                                             HStack {
                                                 Text("Official Website")
-                                                    .font(.custom("OpenSans_Italic", size: 18))
+                                                    .font(.custom("OpenSans_Italic", size: otherTitleFontSize))
                                                     .bold()
                                                     .multilineTextAlignment(.leading)
                                                 Image("fide")
@@ -217,7 +257,7 @@ struct MenuView: View {
                                             
                                             HStack {
                                                 Text("Explore")
-                                                    .font(.caption)
+                                                    .font(otherOnClickTextFont)
                                                 Spacer()
                                                 Image(systemName: "triangle.fill")
                                                     .resizable()
@@ -237,32 +277,59 @@ struct MenuView: View {
                                 .frame(width: proxy.size.width/2.5, height: proxy.size.height/6.3)
                             }
                         }
-                        
-                        
                         .frame(width: proxy.size.width)
                         .padding(.top)
+                        
                         Spacer()
                         
                         VStack {
                             HStack {
                                 Text("Recent Matches")
-                                    .font(.title3)
+                                    .font(historyFont)
                                     .bold()
                                 Spacer()
                                 Text(String(currentUser?.userStats?.unwrappedWins ?? 0))
                                     .bold()
+                                    .font(historyNumberFont)
+                                
                                 Text("|")
                                     .bold()
                                 
                                 Text(String(currentUser?.userStats?.unwrappedLosses ?? 0))
                                     .bold()
                                     .opacity(0.6)
+                                    .font(historyNumberFont)
                             }
                             .padding(.horizontal)
                             
                             if currentUser?.unwrappedGameHistory.isEmpty ?? true {
-                                Spacer()
-                                Text("No available history")
+//                                Spacer()
+//                                Text("No available history")
+//                                    .font(historyEmptyFont)
+                                HStack {
+                                    Text(formatDate(Date()))
+                                        .font(historyDateFont)
+                                        .bold()
+                                    
+                                    Spacer()
+                                    
+                                    Image("mitten")
+                                        .resizable()
+                                        .frame(width: proxy.size.width / 10, height: proxy.size.width / 12)
+                                    
+                                    
+                                    Text("Mitten")
+                                        .bold()
+                                        .font(historyOpponentNameFont)
+                                    
+                                    Spacer()
+                                    
+                                    Text(LocalizedStringKey("Win"))
+                                        .font(historyOutcomeFont)
+                                        .foregroundColor(.green)
+                                        .bold()
+                                }
+                                .padding(.horizontal)
                             } else {
                                 ScrollView {
                                     ForEach(currentUser?.unwrappedGameHistory.sorted(by: { $0.unwrappedDatePlayed > $1.unwrappedDatePlayed }) ?? [GameHistory(context: viewContext)], id: \.self) { history in
@@ -306,6 +373,48 @@ struct MenuView: View {
                 }
                 .frame(width: proxy.size.width)
                 .onAppear {
+                    if UIDevice.current.userInterfaceIdiom == .phone {
+                        currentDateSizeHeight = proxy.size.width/100
+                        greetingSizeHeight = proxy.size.width/10
+                        ratingFont = .caption
+                        medalIconSizeWidth = proxy.size.width/16
+                        medalIconSizeHeight = proxy.size.width/16
+                        medalIconBackgroundSizeWidth = proxy.size.height/14
+                        medalIconBackgroundSizeHeight = proxy.size.height/16
+                        gameViewIconBackgroundSizeWidth = proxy.size.width/2.5
+                        gameViewIconBackgroundSizeHeight = proxy.size.height/3
+                        gameViewIconSizeWidth = proxy.size.width/3
+                        gameViewTriangleIconSize = proxy.size.width/35
+                        otherTitleFontSize = 18
+                    } else {
+                        currentDateSizeHeight = proxy.size.width/250
+                        greetingSizeHeight = proxy.size.width/15
+                        ratingFont = .title2
+                        medalIconSizeWidth = proxy.size.width/20
+                        medalIconSizeHeight = proxy.size.width/18
+                        medalIconBackgroundSizeWidth = proxy.size.height/14
+                        medalIconBackgroundSizeHeight = proxy.size.height/16
+                        greetingFont = .largeTitle
+                        currentDateFont = .title
+                        gameViewIconBackgroundSizeWidth = proxy.size.width/2.5
+                        gameViewIconBackgroundSizeHeight = proxy.size.height/3
+                        gameViewTitleFontSize = 40
+                        gameViewDesFontSize = 25
+                        gameViewIconSizeWidth = proxy.size.width/3.5
+                        gameViewTriangleIconSize = proxy.size.width/50
+                        onClickTextFont = .title
+                        otherTitleFontSize = 24
+                        otherOnClickTextFont = .title3
+                        historyFont = .title
+                        historyNumberFont = .title2
+                        historyEmptyFont = .title
+                        historyDateFont = .title
+                        historyOutcomeFont = .title
+                        historyOpponentNameFont = .title
+                        historyOpponentImageSizeWidth =  proxy.size.width / 10
+                        historyOpponentImageSizeHeight = proxy.size.width / 12
+                        gameViewBottomPadding = 32
+                    }
                     let currentUser = getUserWithUsername(username)
                     for achievement in currentUser?.unwrappedAchievements ?? [] {
                         if achievement.title == "First Step" && !achievement.unlocked {

@@ -128,7 +128,7 @@
 "The username should be atleast 5 characters" = "Tên đăng nhập phải chứa ít nhất 5 kí tự";
 "Password" = "Mật khẩu";
 "Username" = "Tên đăng nhập";
-"Choose a theme preference" = "Chọn giao diện";
+"Theme preference" = "Giao diện";
 "Music" = "Nhạc nền";
 "SFX" = "Hiệu ứng";
 "Auto Promotion" = "Tự phong cấp";
@@ -148,7 +148,7 @@
 
 "Forgot password?" = "Quên mật khẩu?";
 "or" = "hoặc";
-"Create new account" = "Tạo tài khoản";
+"Create an account" = "Tạo tài khoản";
 "System alert" = "Thông báo";
 "Please try again" = "Hãy thử lại";
 "Password Recovery" = "Lấy lại mật khẩu";

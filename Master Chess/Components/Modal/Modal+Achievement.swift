@@ -11,6 +11,12 @@ struct AchievementView: View {
     @AppStorage("theme") var theme = ""
     @State var lightBackground = Color(red: 0.70, green: 0.90, blue: 0.90)
     @State var darkBackground = Color(red: 0.00, green: 0.09, blue: 0.18)
+    
+    //Responsive
+    @State var capsuleSizeWidth: CGFloat = 0
+    @State var capsuleSizeHeight: CGFloat = 0
+    @State var titleFont: Font = .title2
+    @State var contentFont: Font = .body
     var body: some View {
         GeometryReader { proxy in
             HStack {
@@ -19,7 +25,7 @@ struct AchievementView: View {
                     if isContentVisible {
                         Capsule()
                             .fill(.gray)
-                            .frame(width: proxy.size.height / 2, height: proxy.size.width / 5)
+                            .frame(width: capsuleSizeWidth, height: capsuleSizeHeight)
                             .overlay(
                                 HStack {
                                     Image(imageName)
@@ -29,9 +35,11 @@ struct AchievementView: View {
                                     
                                     VStack(alignment: .leading) {
                                         Text("Achievement Unlocked")
-                                            .font(.title2)
+                                            .font(titleFont)
                                             .bold()
+                                        
                                         Text(LocalizedStringKey(des))
+                                            .font(contentFont)
                                     }
                                     Spacer()
                                 }
@@ -47,6 +55,15 @@ struct AchievementView: View {
                     }
                 }
                 .onAppear {
+                    if UIDevice.current.userInterfaceIdiom == .phone {
+                        capsuleSizeWidth = proxy.size.height / 2
+                        capsuleSizeHeight = proxy.size.width / 5
+                    } else {
+                        capsuleSizeWidth = proxy.size.height / 2
+                        capsuleSizeHeight = proxy.size.width / 8
+                        contentFont = .title
+                        titleFont = .largeTitle
+                    }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                         withAnimation(.easeInOut(duration: 0.5)) {
                             isContentVisible.toggle()

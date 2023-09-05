@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProfileView: View {
+struct Test_ProfileView: View {
     var currentUserr = CurrentUser.shared
     @AppStorage("userName") var username = "Mudoker"
     @State private var isUsernameTakenAlertPresented = false
@@ -24,31 +24,6 @@ struct ProfileView: View {
     }
     
     var currentUser: Users?
-    
-    // Responsive
-    @State var imageBackgroundSize: CGFloat = 0
-    @State var profileImageSize: CGFloat = 0
-    @State var activeStatusSize: CGFloat = 0
-    @State var userNameFont: Font = .title
-    @State var userTitleFont: Font = .title3
-    @State var userJoinDateFont: Font = .body
-    @State var gameStatsFont: CGFloat = 35
-    @State var gameStatsDesFont: Font = .callout
-    @State var activeStatusPositionX: CGFloat = 0
-    @State var activeStatusPositionY: CGFloat = 0
-    @State var achievementImageSize: CGFloat = 0
-    @State var achievementTitleFont: Font = .title3
-    @State var achievementDesFont: Font = .caption
-    @State var historyDateFont: Font = .callout
-    @State var historyOpponentName: Font = .body
-    @State var historyDifficulty: Font = .body
-    @State var historyOutcome: Font = .title2
-    @State var historyRatingChange: Font = .body
-    @State var historyImageSizeWidth: CGFloat = 0
-    @State var historyImageSizeHeight: CGFloat = 0
-    @State var historyCapsuleSizeWidth: CGFloat = 0
-    @State var historyCapsuleSizeHeight: CGFloat = 0
-    
     private var backButton: some View {
         Button(action: {
             presentationMode.wrappedValue.dismiss()
@@ -78,22 +53,21 @@ struct ProfileView: View {
                             Spacer()
                             Circle()
                                 .fill(.pink.opacity(0.4))
-                                .frame(width: imageBackgroundSize)
+                                .frame(width: proxy.size.width / 2.5)
                                 .overlay(
                                     Image(currentUser?.profilePicture ?? "profile1")
                                         .resizable()
-                                        .frame(width: profileImageSize, height: profileImageSize)
+                                        .frame(width: proxy.size.width / 3, height: proxy.size.width / 3)
                                         .overlay(
                                             ZStack {
                                                 Circle()
                                                     .fill(CurrentUser.shared.username == currentUser?.unwrappedUsername ? Color.green : .gray)
-                                                    .frame(width: activeStatusSize)
-                                                    .position(x: activeStatusPositionX, y: activeStatusPositionY)
-                                                
+                                                    .frame(width: proxy.size.width / 18)
+                                                    .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
                                                 Circle()
                                                     .stroke(Color.black, lineWidth: 3)
-                                                    .frame(width: activeStatusSize)
-                                                    .position(x: activeStatusPositionX, y: activeStatusPositionY)
+                                                    .frame(width: proxy.size.width / 18)
+                                                    .position(x: proxy.size.width / 3.3, y: proxy.size.width / 3.2)
                                                 
                                             }
                                         )
@@ -102,36 +76,34 @@ struct ProfileView: View {
                             Spacer()
                         }
                         
+                        
                         Text(currentUser?.username ?? "Mudoker")
-                            .font(userNameFont)
+                            .font(.title)
                             .bold()
                         VStack {
                             if currentUser?.rating ?? 2000 < 800 {
                                 Text("Newbie")
-                                    .font(userTitleFont)
+                                    .font(.title3)
                                     .bold()
                             } else if currentUser?.rating ?? 2000 < 1300 {
                                 Text("Pro")
-                                    .font(userTitleFont)
+                                    .font(.title3)
                                     .bold()
                                 
                             } else if currentUser?.rating ?? 2000 < 1600 {
                                 Text("Master")
-                                    .font(userTitleFont)
+                                    .font(.title3)
                                     .bold()
                                 
                             } else {
                                 Text("Grand Master")
-                                    .font(userTitleFont)
+                                    .font(.title3)
                                     .bold()
                             }
                             
                             HStack {
                                 Text("Join date: ")
-                                    .font(userJoinDateFont)
-
                                 Text(formatDate(currentUser?.joinDate ?? Date()))
-                                    .font(userJoinDateFont)
                             }
                         }
                         .padding(.bottom, 5)
@@ -145,13 +117,13 @@ struct ProfileView: View {
                                         .bold()
                                 } else {
                                     Text("0")
-                                        .font(.system(size: gameStatsFont))
+                                        .font(.largeTitle)
                                         .bold()
                                 }
                                 
                                 Text("Games")
                                     .opacity(0.7)
-                                    .font(gameStatsDesFont)
+                                    .font(.callout)
                             }
                             
                             Spacer()
@@ -163,12 +135,12 @@ struct ProfileView: View {
                                         .bold()
                                 } else {
                                     Text("0%")
-                                        .font(.system(size: gameStatsFont))
+                                        .font(.largeTitle)
                                         .bold()
                                 }
                                 Text("Win rate")
                                     .opacity(0.7)
-                                    .font(gameStatsDesFont)
+                                    .font(.callout)
                             }
                             
                             Spacer()
@@ -181,13 +153,13 @@ struct ProfileView: View {
                                         .bold()
                                 } else {
                                     Text("0")
-                                        .font(.system(size: gameStatsFont))
+                                        .font(.largeTitle)
                                         .bold()
                                 }
                                 
                                 Text("Ratings")
                                     .opacity(0.7)
-                                    .font(gameStatsDesFont)
+                                    .font(.callout)
                             }
                             Spacer()
                         }
@@ -225,15 +197,15 @@ struct ProfileView: View {
                                     VStack(alignment: .leading) {
                                         Image(achievement.icon ?? "rank1")
                                             .resizable()
-                                            .frame(width: achievementImageSize, height: achievementImageSize)
+                                            .frame(width: proxy.size.width / 4, height: proxy.size.width / 4)
                                             .aspectRatio(contentMode: .fit)
                                         
                                         Text(LocalizedStringKey(achievement.title ?? "Top 1"))
-                                            .font(achievementTitleFont)
+                                            .font(.title3)
                                             .bold()
                                         
                                         Text(LocalizedStringKey(achievement.des ?? "Top 1 on the leaderboard!"))
-                                            .font(achievementDesFont)
+                                            .font(.caption)
                                             .bold()
                                             .opacity(0.7)
                                         
@@ -251,6 +223,9 @@ struct ProfileView: View {
                             .padding(.vertical)
                     }
                     
+                    
+                    
+                    
                     HStack {
                         Text("History")
                             .font(.largeTitle)
@@ -263,17 +238,17 @@ struct ProfileView: View {
                         ForEach(histories, id: \.self) { history in
                             Capsule()
                                 .fill(.gray.opacity(0.3))
-                                .frame(width: historyCapsuleSizeWidth,height: historyCapsuleSizeHeight)
+                                .frame(width: proxy.size.width/1.2,height: proxy.size.width/5)
                                 .overlay(
                                     HStack {
                                         Text(formatDate(history.unwrappedDatePlayed))
-                                            .font(historyDateFont)
+                                            .font(.callout)
                                             .bold()
                                         Spacer()
                                         
                                         Image(history.unwrappedOpponentUsername == "M.Carlsen" ? "magnus" : history.unwrappedOpponentUsername == "Nobita" ? "nobita" : "mitten")
                                             .resizable()
-                                            .frame(width: historyImageSizeWidth, height: historyImageSizeHeight)
+                                            .frame(width: proxy.size.width / 10, height: proxy.size.width / 12)
                                             .background(
                                                 Circle()
                                             )
@@ -282,17 +257,13 @@ struct ProfileView: View {
                                         VStack(alignment: .leading) {
                                             Text(history.unwrappedOpponentUsername)
                                                 .bold()
-                                                .font(historyOpponentName)
-
                                             Text(history.unwrappedOpponentUsername == "M.Carlsen" ? "Hard" : history.unwrappedOpponentUsername == "Nobita" ? "Easy" : "Normal")
-                                                .font(historyDifficulty)
                                         }
                                         
                                         Spacer()
-                                        
                                         VStack {
                                             Text(LocalizedStringKey(history.unwrappedOutcome))
-                                                .font(historyOutcome)
+                                                .font(.title2)
                                                 .foregroundColor(history.unwrappedOutcome == "Win" ? .green : history.unwrappedOutcome == "Draw" ? .yellow : .red)
                                                 .bold()
                                             
@@ -300,7 +271,6 @@ struct ProfileView: View {
                                                 .bold()
                                                 .opacity(0.7)
                                                 .foregroundColor(history.unwrappedOutcome == "Win" ? .green : history.unwrappedOutcome == "Draw" ? .yellow : .red)
-                                                .font(historyRatingChange)
                                         }
                                         
                                     }
@@ -310,7 +280,6 @@ struct ProfileView: View {
                     }else {
                         Text("No available history")
                             .padding(.vertical)
-                        
                     }
                     
                 }
@@ -318,43 +287,6 @@ struct ProfileView: View {
                 VStack {
                 }.frame(height: 30)
                 
-            }
-            .onAppear {
-                if UIDevice.current.userInterfaceIdiom == .phone {
-                    imageBackgroundSize = proxy.size.width / 2.5
-                    profileImageSize = proxy.size.width / 3
-                    activeStatusSize = proxy.size.width / 18
-                    activeStatusPositionX = proxy.size.width / 3.3
-                    activeStatusPositionY = proxy.size.width / 3.2
-                    achievementImageSize = proxy.size.width / 4
-                    historyCapsuleSizeWidth = proxy.size.width/1.1
-                    historyCapsuleSizeHeight = proxy.size.width/6
-                    historyImageSizeWidth = proxy.size.width / 10
-                    historyImageSizeHeight = proxy.size.width / 12
-                } else {
-                    userNameFont = .largeTitle
-                    userTitleFont = .title
-                    userJoinDateFont = .title2
-                    gameStatsFont = 50
-                    gameStatsDesFont = .title3
-                    profileImageSize = proxy.size.width / 5
-                    imageBackgroundSize = proxy.size.width / 3.5
-                    activeStatusSize = proxy.size.width / 24
-                    activeStatusPositionX = proxy.size.width / 4.6
-                    activeStatusPositionY = proxy.size.width / 5.5
-                    achievementImageSize = proxy.size.width / 6
-                    achievementTitleFont = .title
-                    achievementDesFont = .title3
-                    historyCapsuleSizeWidth = proxy.size.width/1.1
-                    historyCapsuleSizeHeight = proxy.size.width/7
-                    historyImageSizeWidth = proxy.size.width / 8
-                    historyImageSizeHeight = proxy.size.width / 10
-                    historyDateFont = .title
-                    historyOutcome = .largeTitle
-                    historyDifficulty = .title
-                    historyRatingChange = .title2
-                    historyOpponentName = .title
-                }
             }
             .edgesIgnoringSafeArea(.bottom)
             
@@ -371,8 +303,8 @@ struct ProfileView: View {
     }
 }
 
-struct ProfileView_Previews: PreviewProvider {
+struct Test_ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView()
+        Test_ProfileView()
     }
 }
