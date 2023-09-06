@@ -10,6 +10,7 @@
  Acknowledgement:
  Baamboozle. "Ranking Numbers Design Vector" baamboozle.com https://www.baamboozle.com/study/223799 (accessed 29/08/2023)
  PNGTree. "Vs Versus 3d Transparent Background" pngtree.com https://pngtree.com/freepng/vs-versus-3d-transparent-background_5995748.html (accessed 29/08/2023)
+ VectorStock. "Music trumpet icon cartoon style vector image" vectorstock.com https://www.vectorstock.com/royalty-free-vector/music-trumpet-icon-cartoon-style-vector-23436213 (accessed 29/08/2023)
  */
 
 import SwiftUI

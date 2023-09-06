@@ -355,6 +355,7 @@ struct LoginView: View {
                                     // Push to 2 sides
                                     // Center
                                     HStack {
+                                        // Push view
                                         Spacer()
                                         
                                         Text("Create an account")
@@ -362,6 +363,7 @@ struct LoginView: View {
                                             .bold()
                                             .underline()
                                         
+                                        // Push view
                                         Spacer()
                                     }
                                     .foregroundColor(Color(red: 1.00, green: 0.30, blue: 0.00))
