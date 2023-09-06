@@ -65,6 +65,7 @@ struct ProfileView: View {
     @State var historyImageSizeHeight: CGFloat = 0
     @State var historyCapsuleSizeWidth: CGFloat = 0
     @State var historyCapsuleSizeHeight: CGFloat = 0
+    @State var pressNum = 0
     
     // custom back button
     private var backButton: some View {
@@ -237,6 +238,7 @@ struct ProfileView: View {
                         // Show full or at most 3 achievements
                         Button(action: {
                             withAnimation {
+                                pressNum += 1
                                 showAllItems.toggle()
                             }
                         }) {
@@ -263,8 +265,8 @@ struct ProfileView: View {
                                     VStack(alignment: .leading) {
                                         Image(achievement.icon ?? "rank1")
                                             .resizable()
-                                            .frame(width: achievementImageSize, height: achievementImageSize)
                                             .aspectRatio(contentMode: .fit)
+                                            .frame(width: achievementImageSize, height: achievementImageSize)
                                         
                                         Text(LocalizedStringKey(achievement.title ?? "Top 1"))
                                             .font(achievementTitleFont)
@@ -287,6 +289,26 @@ struct ProfileView: View {
                     } else {
                         Text("No available achievement")
                             .padding(.vertical)
+                    }
+                    
+                    if proxy.size.width == 1024 && pressNum <= 3 {
+                        if pressNum == 0 {
+                            VStack{
+                            }
+                            .frame(height:110)
+                        } else if pressNum == 1 {
+                            VStack{
+                            }
+                            .frame(height:130)
+                        } else if pressNum == 2 {
+                            VStack{
+                            }
+                            .frame(height:40)
+                        } else if pressNum == 3 {
+                            VStack{
+                            }
+                            .frame(height:20)
+                        }
                     }
                     
                     // Gaming history
@@ -359,13 +381,9 @@ struct ProfileView: View {
                         }
                     }
                 }
-                
-                // push view
-                VStack {
-                }.frame(height: 30)
-                
             }
             .onAppear {
+                print(proxy.size.width)
                 // Responsive
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     imageBackgroundSize = proxy.size.width / 2.5
@@ -404,14 +422,12 @@ struct ProfileView: View {
                 }
             }
             .edgesIgnoringSafeArea(.bottom)
-            
         }
         .navigationBarBackButtonHidden(true) // Hide the default back button
         .navigationBarItems(leading: backButton) // Place the custom back button in the top-left corner
         // theme
         .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
         .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
-        
         .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
         .environment(\.locale, Locale(identifier: selectedLanguage)) // localization
     }

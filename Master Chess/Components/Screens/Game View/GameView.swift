@@ -65,14 +65,19 @@ struct GameView: View {
                 // Overlay board view
                 ChessBoardView(viewModel: viewModel, user: user)                
                 VStack {
-                    if proxy.size.height != 839 {
-                        VStack{}
-                            .frame(height: proxy.size.width/20)
-                    } else if proxy.size.height == 1150 {
-                        
+                    if UIDevice.current.userInterfaceIdiom == .phone {
+                        if proxy.size.height != 839 {
+                            VStack{}
+                                .frame(height: proxy.size.width/20)
+                        } else {
+                            VStack{}
+                                .frame(height: proxy.size.width/26)
+                        }
                     } else {
-                        VStack{}
-                            .frame(height: proxy.size.width/26)
+                        if proxy.size.height == 1150 {
+                            VStack{}
+                                .frame(height: proxy.size.width/20)
+                        }
                     }
                     
                     // Load all pieces
@@ -176,6 +181,7 @@ struct GameView: View {
                 }
             }
             .onAppear {
+                print(proxy.size.height)
                 // Responsive
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     pieceImageSizeWidth1 = proxy.size.width / 8

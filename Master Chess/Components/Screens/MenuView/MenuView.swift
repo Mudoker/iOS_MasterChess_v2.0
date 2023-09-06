@@ -606,7 +606,7 @@ struct MenuView: View {
                 try? viewContext.save()
             }
         }
-        .edgesIgnoringSafeArea(UIDevice.current.userInterfaceIdiom == .pad ? .all : .bottom)
+        .edgesIgnoringSafeArea(UIDevice.current.userInterfaceIdiom == .pad ? .all : [])
         // theme
         .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
         .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)

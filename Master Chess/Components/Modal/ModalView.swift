@@ -361,9 +361,14 @@ struct ModalView: View {
                 }
 
                 user.userStats?.winRate = Double(winRate)
+                
                 currentUser.hasActiveGame = false
                 user.hasActiveGame = false
-
+                
+                if currentUser.rating <= 0 {
+                    currentUser.rating = 0
+                }
+                
                 // Rating change
                 history.userRatingChange = Int16(abs(Int(user.rating) - currentUser.rating))
 

@@ -481,9 +481,6 @@ struct SettingView: View {
                 if UIDevice.current.userInterfaceIdiom == .pad {
                     VStack{}
                         .frame(height: proxy.size.height / 12)
-                } else {
-                    VStack {}
-                        .frame(height: proxy.size.height/12)
                 }
             }
             //Theme
@@ -528,7 +525,7 @@ struct SettingView: View {
                 dismissButton: .default(Text("OK"))
             )
         }
-        .edgesIgnoringSafeArea(.all)
+        .edgesIgnoringSafeArea(UIDevice.current.userInterfaceIdiom == .pad ? .all : [])
         .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
         .environment(\.locale, Locale(identifier: localization))
     }
