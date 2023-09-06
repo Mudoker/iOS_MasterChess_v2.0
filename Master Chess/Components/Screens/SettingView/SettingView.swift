@@ -35,7 +35,10 @@ struct SettingView: View {
     @State var selectedDifficulty = "easy"
     @State private var isUsernameTakenAlertPresented = false
     @State var isShowProfile = false
-    
+    @State var isValidUsername = false
+    @State var isBackgroundMusic = false
+    @State var isActiveGame = false
+    @State var isShowAlert = false
     // Theme
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("theme") var theme = ""
@@ -49,13 +52,6 @@ struct SettingView: View {
     // Find user
     @AppStorage("userName") var username = "Mudoker"
 
-    // Validate username
-    func isUsernameAvailable(_ newUsername: String) -> Bool {
-        let isTaken = users.contains { user in
-            user.unwrappedUsername == newUsername
-        }
-        return !isTaken
-    }
     // Function to convert date to string
     func formatDate(_ date: Date) -> String {
         let dateFormatter = DateFormatter()
@@ -133,7 +129,7 @@ struct SettingView: View {
                                     .font(profileNameFont)
                                     .bold()
                                 
-                                if currentUser?.rating ?? 2000 < 800 {
+                                if currentUser?.rating ?? 2000 < 1000 {
                                     Text("Newbie")
                                         .font(profileTitleFont)
                                 } else if currentUser?.rating ?? 2000 < 1300 {
@@ -170,29 +166,19 @@ struct SettingView: View {
                     // Update infor
                     VStack(spacing: 20) {
                         VStack {
-                            TextField("", text: $newUsername, prompt:  Text("New Username")
-                            )
-                            .padding()
-                            .disableAutocorrection(true)
-                            .textInputAutocapitalization(.never)
-                            .onChange(of: newUsername) { _ in
-                                isChangesMade = true
-                                updateConfirmButtonState()
-                            }
-                            .scaleEffect(scaleSettingField)
-                            .padding(.leading, textFieldPadding)
-                            
-                            // Line separator
-                            Divider()
-                            
-                            TextField("", text: $newPassword, prompt:  Text("New Password")
+                            TextField("", text: $newPassword, prompt:  Text("New Password").foregroundColor(.gray)
                             )
                             .padding()
                             .disableAutocorrection(true)
                             .textInputAutocapitalization(.never)
                             .onChange(of: newPassword) { _ in
-                                isChangesMade = true
-                                updateConfirmButtonState()
+                                if isActiveGame {
+                                    isShowAlert = true
+                                    newPassword = ""
+                                } else {
+                                    isChangesMade = true
+                                    updateConfirmButtonState()
+                                }
                             }
                             .scaleEffect(scaleSettingField)
                             .padding(.leading, textFieldPadding)
@@ -202,12 +188,18 @@ struct SettingView: View {
                         .background(.gray.opacity(0.2))
                         
                         // Setting
-                        VStack (spacing: 20) {
+                        VStack (spacing: 0) {
                             Toggle("Auto Promotion Enabled", isOn: $selectedAP)
                                 .padding()
                                 .onChange(of: selectedAP) { _ in
-                                    isChangesMade = true
-                                    updateConfirmButtonState()
+                                    if isActiveGame {
+                                        isShowAlert = true
+                                        let autoPromotionEnabled = currentUser?.unwrappedUserSetting.unwrappedAutoPromotionEnabled ?? false
+                                        selectedAP = autoPromotionEnabled
+                                    } else {
+                                        isChangesMade = true
+                                        updateConfirmButtonState()
+                                    }
                                 }
                                 .onAppear {
                                     let autoPromotionEnabled = currentUser?.unwrappedUserSetting.unwrappedAutoPromotionEnabled ?? false
@@ -222,12 +214,18 @@ struct SettingView: View {
                             Toggle("Music Enabled", isOn: $selectedSound)
                                 .padding()
                                 .onChange(of: selectedSound) { _ in
-                                    isChangesMade = true
-                                    updateConfirmButtonState()
+                                    if isActiveGame {
+                                        isShowAlert = true
+                                        let isMusicOn = currentUser?.unwrappedUserSetting.unwrappedMusicEnabled ?? false
+                                        selectedSound = isMusicOn
+                                    } else {
+                                        isChangesMade = true
+                                        isBackgroundMusic = true
+                                        updateConfirmButtonState()
+                                    }
                                 }
                                 .onAppear {
                                     let isMusicOn = currentUser?.unwrappedUserSetting.unwrappedMusicEnabled ?? false
-                                    
                                     selectedSound = isMusicOn
                                 }
                                 .padding(.horizontal, textFieldPadding/1.35)
@@ -239,12 +237,17 @@ struct SettingView: View {
                             Toggle("Sound Enabled", isOn: $selectedSFX)
                                 .padding()
                                 .onChange(of: selectedSFX) { _ in
-                                    isChangesMade = true
-                                    updateConfirmButtonState()
+                                    if isActiveGame {
+                                        isShowAlert = true
+                                        let isSoundOn = currentUser?.unwrappedUserSetting.unwrappedSoundEnabled ?? false
+                                        selectedSFX = isSoundOn
+                                    } else {
+                                        isChangesMade = true
+                                        updateConfirmButtonState()
+                                    }
                                 }
                                 .onAppear {
                                     let isSoundOn = currentUser?.unwrappedUserSetting.unwrappedSoundEnabled ?? false
-                                    
                                     selectedSFX = isSoundOn
                                 }
                                 .padding(.horizontal, textFieldPadding/1.35)
@@ -256,8 +259,14 @@ struct SettingView: View {
                             Text("Theme")
                                 .font(settingTitleFont)
                                 .padding(.top)
-                            
-                            Picker("Language", selection: $selectedTheme) {
+                            if selectedTheme == "system" {
+                                Text("Ensure system theme has been updated!")
+                                    .opacity(0.7)
+                                    .font(profileTitleFont)
+                                    .italic()
+                            }
+
+                            Picker("Theme", selection: $selectedTheme) {
                                 Text("Light").tag("light")
                                 Text("Dark").tag("dark")
                                 Text("System").tag("system")
@@ -277,8 +286,20 @@ struct SettingView: View {
                                 }
                             }
                             .onChange(of: selectedTheme) { _ in
-                                isChangesMade = true
-                                updateConfirmButtonState()
+                                if isActiveGame {
+                                    isShowAlert = true
+                                    let isSystem = currentUser?.unwrappedUserSetting.isSystemTheme ?? false
+                                    
+                                    if isSystem {
+                                        selectedTheme = "system"
+                                    } else {
+                                        let theme = currentUser?.unwrappedUserSetting.isDarkMode
+                                        selectedTheme = theme == true ? "dark" : "light"
+                                    }
+                                } else {
+                                    isChangesMade = true
+                                    updateConfirmButtonState()
+                                }
                             }
                             .padding([.bottom, .horizontal])
                             
@@ -296,12 +317,17 @@ struct SettingView: View {
                             .scaleEffect(scaleSettingField)
                             .onAppear {
                                 let language = currentUser?.unwrappedUserSetting.unwrappedLanguage ?? "en"
-                                
                                 selectedLanguage = language
                             }
                             .onChange(of: selectedLanguage) { _ in
-                                isChangesMade = true
-                                updateConfirmButtonState()
+                                if isActiveGame {
+                                    isShowAlert = true
+                                    let language = currentUser?.unwrappedUserSetting.unwrappedLanguage ?? "en"
+                                    selectedLanguage = language
+                                } else {
+                                    isChangesMade = true
+                                    updateConfirmButtonState()
+                                }
                             }
                             .padding([.bottom, .horizontal])
                             
@@ -309,19 +335,25 @@ struct SettingView: View {
                                 Text("Difficulty")
                                     .padding(.top)
                                     .font(settingTitleFont)
-                                
-                                if selectedDifficulty == "easy" {
-                                    Text("The AI will plan at most 2 moves ahead")
-                                        .opacity(0.7)
-                                        .font(profileTitleFont)
-                                        .italic()
-                                } else if selectedDifficulty == "normal" {
-                                    Text("The AI will plan at most 3 moves ahead")
-                                        .opacity(0.7)
-                                        .font(profileTitleFont)
-                                        .italic()
+                                if !(currentUser?.hasActiveGame ?? false) {
+                                    if selectedDifficulty == "easy" {
+                                        Text("The AI will plan at most 2 moves ahead")
+                                            .opacity(0.7)
+                                            .font(profileTitleFont)
+                                            .italic()
+                                    } else if selectedDifficulty == "normal" {
+                                        Text("The AI will plan at most 3 moves ahead")
+                                            .opacity(0.7)
+                                            .font(profileTitleFont)
+                                            .italic()
+                                    } else {
+                                        Text("The AI will always plan 3 moves ahead")
+                                            .opacity(0.7)
+                                            .font(profileTitleFont)
+                                            .italic()
+                                    }
                                 } else {
-                                    Text("The AI will always plan 3 moves ahead")
+                                    Text("Please finish your game first!")
                                         .opacity(0.7)
                                         .font(profileTitleFont)
                                         .italic()
@@ -339,12 +371,17 @@ struct SettingView: View {
                             .scaleEffect(scaleSettingField)
                             .onAppear {
                                 let difficulty = currentUser?.unwrappedUserSetting.unwrappedDifficulty ?? "easy"
-                                
                                 selectedDifficulty = difficulty
                             }
                             .onChange(of: selectedDifficulty) { _ in
-                                isChangesMade = true
-                                updateConfirmButtonState()
+                                if isActiveGame {
+                                    isShowAlert = true
+                                    let difficulty = currentUser?.unwrappedUserSetting.unwrappedDifficulty ?? "easy"
+                                    selectedDifficulty = difficulty
+                                } else {
+                                    isChangesMade = true
+                                    updateConfirmButtonState()
+                                }
                             }
                             .padding([.bottom, .horizontal])
                         }
@@ -353,62 +390,55 @@ struct SettingView: View {
                         // Confirm button
                         VStack {
                             Button {
-                                // On press will update the current user setting both in core date and CurrentUser struct
-                                if newUsername != "" {
-                                    if isUsernameAvailable(newUsername) {
-                                        isUsernameTakenAlertPresented = false
-                                        currentUser?.username = newUsername
-                                        newUsername = ""
-                                    } else {
-                                        isUsernameTakenAlertPresented = true
+                                if !isActiveGame {
+                                    if newPassword != "" {
+                                        currentUser?.password = newPassword
+                                        newPassword = ""
                                     }
-                                }
-                                if newPassword != "" {
-                                    currentUser?.password = newPassword
-                                    newPassword = ""
                                     
-                                }
-                                localization = selectedLanguage
-                                
-                                // Core Date
-                                currentUser?.userSettings?.autoPromotionEnabled = selectedAP
-                                currentUser?.userSettings?.isSystemTheme = selectedTheme == "system" ? true : false
-                                currentUser?.userSettings?.isDarkMode = selectedTheme == "light" ? false : true
-                                
-                                currentUser?.userSettings?.soundEnabled = selectedSFX
-                                currentUser?.userSettings?.musicEnabled = selectedSound
-                                currentUser?.userSettings?.difficulty = selectedDifficulty
-                                currentUser?.userSettings?.language = selectedLanguage
-                                
-                                theme = selectedTheme
-                                
-                                // CurrentUser
-                                currentUserr.settingAutoPromotionEnabled = selectedAP
-                                
-                                currentUserr.settingIsSystemTheme = selectedTheme == "system" ? true : false
-                                
-                                currentUserr.settingIsDarkMode = selectedTheme == "light" ? false : true
-                                
-                                currentUserr.settingSoundEnabled = selectedSFX
-                                currentUserr.settingMusicEnabled = selectedSound
-                                currentUserr.settingDifficulty = selectedDifficulty
-                                
-                                currentUserr.settingLanguage = selectedLanguage
-                                
-                                // Background music
-                                if !selectedSound {
-                                    SoundPlayer.stopBackgroundMusic()
+                                    localization = selectedLanguage
                                     
-                                } else {
-                                    SoundPlayer.startBackgroundMusic()
+                                    // Core Data
+                                    currentUser?.userSettings?.autoPromotionEnabled = selectedAP
+                                    currentUser?.userSettings?.isSystemTheme = selectedTheme == "system" ? true : false
+                                    currentUser?.userSettings?.isDarkMode = selectedTheme == "light" ? false : true
+                                    currentUser?.userSettings?.soundEnabled = selectedSFX
+                                    currentUser?.userSettings?.musicEnabled = selectedSound
+                                    currentUser?.userSettings?.difficulty = selectedDifficulty
+                                    currentUser?.userSettings?.language = selectedLanguage
+                                    
+                                    theme = selectedTheme
+                                    
+                                    // CurrentUser stores setting
+                                    currentUserr.settingAutoPromotionEnabled = selectedAP
+                                    
+                                    currentUserr.settingIsSystemTheme = selectedTheme == "system" ? true : false
+                                    
+                                    currentUserr.settingIsDarkMode = selectedTheme == "light" ? false : true
+                                    
+                                    currentUserr.settingSoundEnabled = selectedSFX
+                                    currentUserr.settingMusicEnabled = selectedSound
+                                    currentUserr.settingDifficulty = selectedDifficulty
+                                    
+                                    currentUserr.settingLanguage = selectedLanguage
+                                    
+                                    if isBackgroundMusic {
+                                        // Background music
+                                        if !selectedSound {
+                                            SoundPlayer.stopBackgroundMusic()
+                                        } else {
+                                            SoundPlayer.startBackgroundMusic()
+                                        }
+                                    }
+                                    
+                                    // Save
+                                    try? viewContext.save()
+
+                                    // Update state
+                                    isConfirmButtonEnabled = false
+                                    isChangesMade = false
+                                    isBackgroundMusic = false
                                 }
-                                
-                                // Save
-                                try? viewContext.save()
-                                
-                                // Update state
-                                isConfirmButtonEnabled = false
-                                
                             } label: {
                                 Text("Confirm Change")
                                     .font(buttonConfirmFont)
@@ -427,10 +457,10 @@ struct SettingView: View {
                                     dismissButton: .default(Text("OK"))
                                 )
                             }
-                            
+
                             // Log out
                             Button {
-                                isConfirmLogOut.toggle()
+                                isLogOut = true
                             } label: {
                                 ZStack {
                                     Text("Sign out")
@@ -438,17 +468,6 @@ struct SettingView: View {
                                         .bold()
                                         .font(buttonSignOutFont)
                                 }
-                            }
-                            .alert(isPresented: $isConfirmLogOut) {
-                                Alert(
-                                    title: Text("Confirmation"),
-                                    message: Text("Are you sure you want to sign out?"),
-                                    primaryButton: .destructive(Text("Sign out")) {
-                                        isLogOut = true
-                                        username = ""
-                                    },
-                                    secondaryButton: .cancel(Text("Cancel"))
-                                )
                             }
                             .navigationDestination(isPresented: $isLogOut) {
                                 LoginView()
@@ -458,16 +477,21 @@ struct SettingView: View {
                         .padding(.horizontal)
                         .padding(.top)
                     }
-                    
-                    // push view
+                }
+                if UIDevice.current.userInterfaceIdiom == .pad {
                     VStack{}
-                        .frame(height: 50)
+                        .frame(height: proxy.size.height / 12)
+                } else {
+                    VStack {}
+                        .frame(height: proxy.size.height/12)
                 }
             }
             //Theme
             .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
             .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
             .onAppear {
+                // Do not allow setting change when has game -> may create bug
+                isActiveGame = currentUserr.hasActiveGame
                 // Responsive
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     viewTitleFontSize = 35
@@ -489,14 +513,22 @@ struct SettingView: View {
                     navigationImageSizeWidth = proxy.size.width/14
                     navigationImageSizeHeight = proxy.size.width/14
                     profileFrameSizeHeight = proxy.size.width/4.5
-                    scaleSettingField = 2
-                    textFieldPadding = proxy.size.width/3
+                    scaleSettingField = 1.5
+                    textFieldPadding = proxy.size.width/4.5
                     settingTitleFont = .title
                     buttonConfirmFont = .title
                     buttonSignOutFont = .title
                 }
             }
         }
+        .alert(isPresented: $isShowAlert) {
+            Alert(
+                title: Text("Game In Play"),
+                message: Text("To avoid system conflict. Please finish your game first!"),
+                dismissButton: .default(Text("OK"))
+            )
+        }
+        .edgesIgnoringSafeArea(.all)
         .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
         .environment(\.locale, Locale(identifier: localization))
     }

@@ -41,23 +41,29 @@ struct PromotionModal: View {
                     
                     // List of piece to promote
                     HStack (spacing: 10) {
-                        if viewModel.chessGame.currentPlayer == .black {
+                        if viewModel.chessGame.currentPlayer == .white {
                             Button(action: {
                                 // Set selected piece
                                 selectedPiece = "wq"
                                 
                                 // Animation
                                 withAnimation(.easeIn) {
+                                    // Update piece at position
+                                    if viewModel.chessGame.history.value.count >= 2 {
+                                            let nearLastMove = viewModel.chessGame.history.value[viewModel.chessGame.history.value.count - 2]
+                                            viewModel.chessGame.piecePositions.value[nearLastMove.to.y][nearLastMove.to.x] = ChessPiece(stringLiteral: "wq")
+                                    } else {
+                                        print("There are not enough moves in the history to update piece positions.")
+                                    }
+                                    
                                     // Finish promotion -> set to false
                                     viewModel.chessGame.isPromotion = false
-                                    
-                                    // Update piece at position
-                                    viewModel.chessGame.piecePositions.value[viewModel.chessGame.history.value.last?.to.y ?? 0][viewModel.chessGame.history.value.last?.to.x ?? 0] = ChessPiece(stringLiteral: "wq")
                                     
                                     // Promotion sound
                                     if currentUser.settingSoundEnabled {
                                         viewModel.playSound(sound: "promote", type: "mp3")
                                     }
+                                    viewModel.didMove(move: Move(from: Position(x: -1, y: -1), to: Position(x: -1, y: -1)), piece: ChessPiece(stringLiteral: "wr"))
                                 }
                             }) {
                                 Image("wq")
@@ -81,16 +87,21 @@ struct PromotionModal: View {
                                 
                                 // Animation
                                 withAnimation(.easeIn) {
-                                    // Finish promotion -> set to false
-                                    viewModel.chessGame.isPromotion = false
-                                    
                                     // Update piece at position
-                                    viewModel.chessGame.piecePositions.value[viewModel.chessGame.history.value.last?.to.y ?? 0][viewModel.chessGame.history.value.last?.to.x ?? 0] = ChessPiece(stringLiteral: "wn")
-                                    
+                                    if viewModel.chessGame.history.value.count >= 2 {
+                                            let nearLastMove = viewModel.chessGame.history.value[viewModel.chessGame.history.value.count - 2]
+                                            viewModel.chessGame.piecePositions.value[nearLastMove.to.y][nearLastMove.to.x] = ChessPiece(stringLiteral: "wn")
+                                    } else {
+                                        print("There are not enough moves in the history to update piece positions.")
+                                    }
                                     // Promotion sound
                                     if currentUser.settingSoundEnabled {
                                         viewModel.playSound(sound: "promote", type: "mp3")
                                     }
+                                    
+                                    // Finish promotion -> set to false
+                                    viewModel.chessGame.isPromotion = false
+                                    viewModel.didMove(move: Move(from: Position(x: -1, y: -1), to: Position(x: -1, y: -1)), piece: ChessPiece(stringLiteral: "wr"))
                                 }
                             }) {
                                 Image("wn")
@@ -104,16 +115,21 @@ struct PromotionModal: View {
                                 
                                 // Animation
                                 withAnimation(.easeIn) {
-                                    // Finish promotion -> set to false
-                                    viewModel.chessGame.isPromotion = false
-                                    
                                     // Update piece at position
-                                    viewModel.chessGame.piecePositions.value[viewModel.chessGame.history.value.last?.to.y ?? 0][viewModel.chessGame.history.value.last?.to.x ?? 0] = ChessPiece(stringLiteral: "wb")
+                                    if viewModel.chessGame.history.value.count >= 2 {
+                                            let nearLastMove = viewModel.chessGame.history.value[viewModel.chessGame.history.value.count - 2]
+                                            viewModel.chessGame.piecePositions.value[nearLastMove.to.y][nearLastMove.to.x] = ChessPiece(stringLiteral: "wb")
+                                    } else {
+                                        print("There are not enough moves in the history to update piece positions.")
+                                    }
                                     
                                     // Promotion sound
                                     if currentUser.settingSoundEnabled {
                                         viewModel.playSound(sound: "promote", type: "mp3")
                                     }
+                                    // Finish promotion -> set to false
+                                    viewModel.chessGame.isPromotion = false
+                                    viewModel.didMove(move: Move(from: Position(x: -1, y: -1), to: Position(x: -1, y: -1)), piece: ChessPiece(stringLiteral: "wr"))
                                 }
                             }) {
                                 Image("wb")
@@ -127,16 +143,20 @@ struct PromotionModal: View {
                                 
                                 // Animation
                                 withAnimation(.easeIn) {
-                                    // Finish promotion -> set to false
-                                    viewModel.chessGame.isPromotion = false
-                                    
                                     // Update piece at position
-                                    viewModel.chessGame.piecePositions.value[viewModel.chessGame.history.value.last?.to.y ?? 0][viewModel.chessGame.history.value.last?.to.x ?? 0] = ChessPiece(stringLiteral: "wr")
-                                    
+                                    if viewModel.chessGame.history.value.count >= 2 {
+                                            let nearLastMove = viewModel.chessGame.history.value[viewModel.chessGame.history.value.count - 2]
+                                            viewModel.chessGame.piecePositions.value[nearLastMove.to.y][nearLastMove.to.x] = ChessPiece(stringLiteral: "wr")
+                                    } else {
+                                        print("There are not enough moves in the history to update piece positions.")
+                                    }
                                     // Promotion sound
                                     if currentUser.settingSoundEnabled {
                                         viewModel.playSound(sound: "promote", type: "mp3")
                                     }
+                                    // Finish promotion -> set to false
+                                    viewModel.chessGame.isPromotion = false
+                                    viewModel.didMove(move: Move(from: Position(x: -1, y: -1), to: Position(x: -1, y: -1)), piece: ChessPiece(stringLiteral: "wr"))
                                 }
                             }) {
                                 Image("wr")

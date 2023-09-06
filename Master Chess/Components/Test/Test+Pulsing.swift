@@ -34,7 +34,7 @@ struct PulsingView: View {
             .onAppear {
                 self.isPulsing.toggle()
             }
-            .animation(Animation.linear(duration: 1).repeatForever(autoreverses: true), value: isPulsing)
+            .animation(Animation.linear(duration: 2).repeatForever(autoreverses: true), value: isPulsing)
         }
     }
 }

@@ -100,6 +100,13 @@ struct MenuView: View {
                 
                 // Greetings
                 VStack(alignment: .leading) {
+                    // Push view
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        VStack{
+                        }
+                        .frame(height: proxy.size.width/18)
+                    }
+                    
                     HStack {
                         // Gretings
                         VStack(alignment: .leading) {
@@ -439,13 +446,13 @@ struct MenuView: View {
                     medalIconBackgroundSizeWidth = proxy.size.height/14
                     medalIconBackgroundSizeHeight = proxy.size.height/16
                     gameViewIconBackgroundSizeWidth = proxy.size.width/2.5
-                    gameViewIconBackgroundSizeHeight = proxy.size.height/3
+                    gameViewIconBackgroundSizeHeight = proxy.size.width/1.6
                     gameViewIconSizeWidth = proxy.size.width/3
                     gameViewTriangleIconSize = proxy.size.width/35
                     otherTitleFontSize = 18
                 } else {
-                    currentDateSizeHeight = proxy.size.width/250
-                    greetingSizeHeight = proxy.size.width/15
+                    currentDateSizeHeight = proxy.size.height/40
+                    greetingSizeHeight = proxy.size.height/25
                     ratingFont = .title2
                     medalIconSizeWidth = proxy.size.width/20
                     medalIconSizeHeight = proxy.size.width/18
@@ -454,7 +461,7 @@ struct MenuView: View {
                     greetingFont = .largeTitle
                     currentDateFont = .title
                     gameViewIconBackgroundSizeWidth = proxy.size.width/2.5
-                    gameViewIconBackgroundSizeHeight = proxy.size.height/3
+                    gameViewIconBackgroundSizeHeight = proxy.size.height/2.95
                     gameViewTitleFontSize = 40
                     gameViewDesFontSize = 25
                     gameViewIconSizeWidth = proxy.size.width/3.5
@@ -475,10 +482,10 @@ struct MenuView: View {
                 
                 // get user
                 let currentUser = getUserWithUsername(username)
-                
+
                 // check if user have meet requirements to add achievements
                 for achievement in currentUser?.unwrappedAchievements ?? [] {
-                    if achievement.title == "First Step" && !achievement.unlocked {
+                    if achievement.title == "First Step" && achievement.unlocked == false {
                         achievementImage = achievement.icon ?? ""
                         achievementDes = achievement.des ?? ""
                         showToast = true
@@ -496,7 +503,7 @@ struct MenuView: View {
                     
                     if users.count >= 3 {
                         if achievement.title == "Top 2" {
-                            if currentUser == users[1] && !achievement.unlocked {
+                            if currentUser == users[1] && achievement.unlocked == false {
                                 achievementImage = achievement.icon ?? ""
                                 achievementDes = achievement.des ?? ""
                                 showToast = true
@@ -516,7 +523,7 @@ struct MenuView: View {
                     
                     
                     if achievement.title == "Get's started" {
-                        if currentUser?.userStats?.totalGames == 1 && !achievement.unlocked {
+                        if currentUser?.userStats?.totalGames == 1 && achievement.unlocked == false {
                             achievementImage = achievement.icon ?? ""
                             achievementDes = achievement.des ?? ""
                             showToast = true
@@ -525,7 +532,7 @@ struct MenuView: View {
                     }
                     
                     if achievement.title == "Game Lover" {
-                        if currentUser?.userStats?.totalGames == 5 && !achievement.unlocked {
+                        if currentUser?.userStats?.totalGames == 5 && achievement.unlocked == false {
                             achievementImage = achievement.icon ?? ""
                             achievementDes = achievement.des ?? ""
                             showToast = true
@@ -534,7 +541,7 @@ struct MenuView: View {
                     }
                     
                     if achievement.title == "Friend with AI" {
-                        if currentUser?.userStats?.totalGames == 10 && !achievement.unlocked {
+                        if currentUser?.userStats?.totalGames == 10 && achievement.unlocked == false {
                             achievementImage = achievement.icon ?? ""
                             achievementDes = achievement.des ?? ""
                             showToast = true
@@ -543,7 +550,7 @@ struct MenuView: View {
                     }
                     
                     if achievement.title == "The Challenger" {
-                        if currentUser?.userStats?.totalGames == 20 && !achievement.unlocked {
+                        if currentUser?.userStats?.totalGames == 20 && achievement.unlocked == false {
                             achievementImage = achievement.icon ?? ""
                             achievementDes = achievement.des ?? ""
                             showToast = true
@@ -552,7 +559,7 @@ struct MenuView: View {
                     }
                     
                     if achievement.title == "AI Killer" {
-                        if currentUser?.userStats?.totalGames == 50 && !achievement.unlocked {
+                        if currentUser?.userStats?.totalGames == 50 && achievement.unlocked == false {
                             achievementImage = achievement.icon ?? ""
                             achievementDes = achievement.des ?? ""
                             showToast = true
@@ -561,7 +568,7 @@ struct MenuView: View {
                     }
                     
                     if achievement.title == "Newbie" {
-                        if currentUser?.rating ?? 0 < 1000 && !achievement.unlocked {
+                        if currentUser?.rating ?? 0 < 1000 && achievement.unlocked == false {
                             achievementImage = achievement.icon ?? ""
                             achievementDes = achievement.des ?? ""
                             showToast = true
@@ -570,7 +577,7 @@ struct MenuView: View {
                     }
                     
                     if achievement.title == "Pro Player" {
-                        if 1000 <= (currentUser?.rating ?? 0) && (currentUser?.rating ?? 0) < 1300 && !achievement.unlocked {
+                        if 1000 <= (currentUser?.rating ?? 0) && (currentUser?.rating ?? 0) < 1300 && achievement.unlocked == false {
                             achievementImage = achievement.icon ?? ""
                             achievementDes = achievement.des ?? ""
                             showToast = true
@@ -579,7 +586,7 @@ struct MenuView: View {
                     }
                     
                     if achievement.title == "Master" {
-                        if 1300 <= (currentUser?.rating ?? 0) && (currentUser?.rating ?? 0) < 1600 && !achievement.unlocked {
+                        if 1300 <= (currentUser?.rating ?? 0) && (currentUser?.rating ?? 0) < 1600 && achievement.unlocked == false {
                             achievementImage = achievement.icon ?? ""
                             achievementDes = achievement.des ?? ""
                             showToast = true
@@ -588,17 +595,18 @@ struct MenuView: View {
                     }
                     
                     if achievement.title == "Grand Master" {
-                        if currentUser?.rating ?? 0 >= 1600 && !achievement.unlocked {
+                        if currentUser?.rating ?? 0 >= 1600 && achievement.unlocked == false {
                             achievementImage = achievement.icon ?? ""
                             achievementDes = achievement.des ?? ""
                             showToast = true
                             achievement.unlocked = true
                         }
                     }
-                    showToast = false
                 }
+                try? viewContext.save()
             }
         }
+        .edgesIgnoringSafeArea(UIDevice.current.userInterfaceIdiom == .pad ? .all : .bottom)
         // theme
         .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
         .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)

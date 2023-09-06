@@ -30,7 +30,7 @@ struct Welcome_Screen: View {
     @EnvironmentObject var currentUser: CurrentUser
     
     // Update and UI and store to selectedLanguage
-    @State var language = ""
+    @State var language = "en"
     
     // Responsive for Iphone and Ipad
     @State var logoSize: CGFloat = 0.0
@@ -166,6 +166,7 @@ struct Welcome_Screen: View {
                                 VStack (alignment: .center) {
                                     Text("Technical Support")
                                         .font(alertTitleFont)
+                                        .foregroundColor(.black)
                                         .bold()
                                         .padding(.top)
                                     
@@ -173,6 +174,7 @@ struct Welcome_Screen: View {
                                     Spacer()
                                     
                                     Text("Please contact: s3927776@rmit.edu.vn")
+                                        .foregroundColor(.black)
                                         .font(needHelpFont)
                                     
                                     // Push view
@@ -245,7 +247,6 @@ struct Welcome_Screen: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
         .ignoresSafeArea()
         .edgesIgnoringSafeArea(.all)
         .environment(\.locale, Locale(identifier: selectedLanguage)) // Localization

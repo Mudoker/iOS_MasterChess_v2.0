@@ -19,7 +19,7 @@ struct AchievementView: View {
     @State var isContentVisible: Bool = true
     
     // Data
-    var imageName = "rank1"
+    var imageName = "master"
     var des = "Top 1 on the leaderboard!"
     
     // Localization
@@ -36,7 +36,6 @@ struct AchievementView: View {
     @State var capsuleSizeHeight: CGFloat = 0
     @State var titleFont: Font = .title2
     @State var contentFont: Font = .body
-    
     var body: some View {
         GeometryReader { proxy in
             // Center horizontally
@@ -54,7 +53,7 @@ struct AchievementView: View {
                                 HStack {
                                     Image(imageName)
                                         .resizable()
-                                        .aspectRatio(contentMode: .fill)
+                                        .aspectRatio(contentMode: .fit)
                                         .frame(width: proxy.size.height / 11, height: proxy.size.width / 9)
                                     
                                     VStack(alignment: .leading) {
@@ -86,8 +85,8 @@ struct AchievementView: View {
                         capsuleSizeWidth = proxy.size.height / 2
                         capsuleSizeHeight = proxy.size.width / 5
                     } else {
-                        capsuleSizeWidth = proxy.size.height / 2
-                        capsuleSizeHeight = proxy.size.width / 8
+                        capsuleSizeWidth = proxy.size.height / 1.5
+                        capsuleSizeHeight = proxy.size.width / 6
                         contentFont = .title
                         titleFont = .largeTitle
                     }

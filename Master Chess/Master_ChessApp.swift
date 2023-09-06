@@ -22,7 +22,7 @@ struct Master_ChessApp: App {
     
     var body: some Scene {
         WindowGroup {
-            SettingView()
+            SplashView()
                 .environment(\.managedObjectContext, dataManager.container.viewContext) // pass for core date CRUD
                 .environmentObject(currentUser) // Pass currentUser as an environment object
         }

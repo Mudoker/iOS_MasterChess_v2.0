@@ -153,7 +153,7 @@ final class GameViewModel: ObservableObject {
     func didMove(move: Move, piece: ChessPiece) {
         // Check if the ai is still moving
         guard ai2.isCalculatingMove == false else { return }
-        
+        guard chessGame.isPromotion == false else {return}
         // Player turn
         if currentPlayer == .white {
             allMove(from: move.from, piece: piece)

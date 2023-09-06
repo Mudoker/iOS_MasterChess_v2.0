@@ -131,7 +131,7 @@ struct ProfileView: View {
                         
                         // Title
                         VStack {
-                            if currentUser?.rating ?? 2000 < 800 {
+                            if currentUser?.rating ?? 2000 < 1000 {
                                 Text("Newbie")
                                     .font(userTitleFont)
                                     .bold()
@@ -139,12 +139,10 @@ struct ProfileView: View {
                                 Text("Pro")
                                     .font(userTitleFont)
                                     .bold()
-                                
                             } else if currentUser?.rating ?? 2000 < 1600 {
                                 Text("Master")
                                     .font(userTitleFont)
                                     .bold()
-                                
                             } else {
                                 Text("Grand Master")
                                     .font(userTitleFont)
@@ -304,6 +302,10 @@ struct ProfileView: View {
                     
                     // Show list of histories
                     if let histories = currentUser?.unwrappedGameHistory.sorted(by: { $0.unwrappedDatePlayed > $1.unwrappedDatePlayed }) {
+                        if histories.count == 0 {
+                            Text("No available history")
+                                .padding(.vertical)
+                        }
                         ForEach(histories, id: \.self) { history in
                             Capsule()
                                 .fill(.gray.opacity(0.3))
@@ -355,9 +357,6 @@ struct ProfileView: View {
                                     .padding(.horizontal)
                                 )
                         }
-                    } else {
-                        Text("No available history")
-                            .padding(.vertical)
                     }
                 }
                 

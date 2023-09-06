@@ -169,6 +169,7 @@
 "Are you sure you want to sign out?" = "Bạn có chắc muốn đăng xuất?";
 "Cancel" = "Huỷ";
 
+"Leaderboard" = "Bảng xếp hạng";
 "First time login!" = "Người chơi mới";
 "Top 1 on the leaderboard!" = "Top 1 bảng xếp hạng!";
 "Top 2 on the leaderboard!" = "Top 2 bảng xếp hạng!";
@@ -197,4 +198,6 @@
 "Out of time" = "Hết giờ";
 "Current Rating" = "Điểm hiện tại";
 "Go Back" = "Quay lại";
-
+"Ensure system theme has been updated!" = "Hãy kiểm tra giao diện của máy!";
+"To avoid system conflict. Please finish your game first!" = "Để tránh lỗi. Hoàn thành game hiện tại trước!";
+"Game In Play" = "Trong trận";

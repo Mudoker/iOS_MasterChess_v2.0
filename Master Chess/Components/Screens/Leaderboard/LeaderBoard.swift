@@ -9,7 +9,7 @@
  Last modified: 03/09/2023
  Acknowledgement:
  Pikbest. "Ranking Numbers Design Vector" pikbest.com https://pikbest.com/png-images/qiantu-ranking-numbers-design-vector_2666278.html (accessed 25/08/2023)
-
+ 
  */
 
 
@@ -63,18 +63,98 @@ struct LeaderBoard: View {
     
     var body: some View {
         GeometryReader { proxy in
-            VStack {
-                // Push view
-                Spacer()
-                    .frame(height: proxy.size.width/6)
-                
-                ZStack {
-                    HStack {
-                        // Push view
-                        Spacer()
-                        
-                        // Show if at least 1 player
-                        if users.count >= 1 {
+            if users.count == 0 {
+                VStack{
+                    // Push view
+                    Spacer()
+                    
+                    Text ("Not enough data")
+                    
+                    // Push view
+                    Spacer()
+                }
+            } else if users.count < 4 {
+                VStack{
+                    Text("Leaderboard")
+                        .bold()
+                        .font(.largeTitle)
+                    
+                    ScrollView {
+                        ForEach(0..<users.count, id: \.self) { index in
+                            NavigationLink(destination: ProfileView(currentUser: users[index])) {
+                                HStack {
+                                    Circle()
+                                        .fill((index + 1) == 1 ? Color.yellow : (index + 1) == 2 ? Color.gray : (index + 1) == 3 ? Color.brown : .gray.opacity(0.7))
+                                        .frame(width: imageBackgroundSize/4)
+                                        .overlay(
+                                            Text("\(index + 1)")
+                                                .font(otherUsernameFont)
+                                                .bold()
+                                                .foregroundColor(.black)
+                                        )
+                                    
+                                    Image(users[index].unwrappedProfilePicture)
+                                        .resizable()
+                                        .frame(width: imageSizeWidth, height: imageSizeHeight)
+                                    
+                                    Text(users[index].unwrappedUsername)
+                                        .font(otherUsernameFont)
+                                    
+                                    // Push view
+                                    Spacer()
+                                    
+                                    Text(String(users[index].rating))
+                                        .font(.title)
+                                        .bold()
+                                }
+                                .padding(.vertical, 8)
+                                .padding(.horizontal)
+                                .background(Color.gray.opacity(0.3))
+                                .cornerRadius(10)
+                                .shadow(radius: 3)
+                                .padding(.horizontal)
+                            }
+                            .simultaneousGesture(
+                                TapGesture()
+                                    .onEnded {
+                                        isProfileViewActive = true
+                                    }
+                            )
+                        }
+                    }
+                }
+                .frame(maxHeight: .infinity)
+                .onAppear {
+                    // Responsive
+                    if UIDevice.current.userInterfaceIdiom == .phone {
+                        imageSizeWidth = proxy.size.width/5
+                        imageSizeHeight = proxy.size.width/5
+                        imageBackgroundSize = proxy.size.width/3.5
+                    } else {
+                        imageSizeWidth = proxy.size.width/5.5
+                        imageSizeHeight = proxy.size.width/5.5
+                        imageBackgroundSize = proxy.size.width/4
+                        scaleUpSize = 1
+                        scaleDownSize = 1.1
+                        rank1UsernameFont = .title
+                        otherUsernameFont = .title2
+                    }
+                }
+                // Theme
+                .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
+                .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
+                .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
+            } else if users.count >= 4 {
+                VStack {
+                    // Push view
+                    Spacer()
+                        .frame(height: proxy.size.width/6)
+                    
+                    ZStack {
+                        HStack {
+                            // Push view
+                            Spacer()
+                            
                             // Press will navigate to profile view
                             NavigationLink(
                                 destination: ProfileView(currentUser: users[0])
@@ -111,18 +191,12 @@ struct LeaderBoard: View {
                                         isProfileViewActive = true
                                     }
                             )
-                        } else {
-                            // No user
-                            Text("Not enough data!")
+                            
+                            // Push view
+                            Spacer()
                         }
                         
-                        // Push view
-                        Spacer()
-                    }
-                    
-                    // More than 1 players
-                    HStack {
-                        if users.count >= 2 {
+                        HStack {
                             // Navigate profile view
                             NavigationLink(destination: ProfileView(currentUser: users[1])) {
                                 VStack {
@@ -157,12 +231,11 @@ struct LeaderBoard: View {
                                         isProfileViewActive = true
                                     }
                             )
-                        }
-                        
-                        // Push view
-                        Spacer()
-                        
-                        if users.count >= 3 {
+                            
+                            
+                            // Push view
+                            Spacer()
+                            
                             // Navigate profile view
                             NavigationLink(destination: ProfileView(currentUser: users[2])) {
                                 VStack {
@@ -196,14 +269,12 @@ struct LeaderBoard: View {
                                         isProfileViewActive = true
                                     }
                             )
+                            
                         }
+                        .padding(.top, proxy.size.width / 3)
                     }
-                    .padding(.top, proxy.size.width / 3)
-                }
-                .padding(.horizontal)
-                
-                // More than 3 players
-                if users.count >= 4 {
+                    .padding(.horizontal)
+                    
                     ScrollView {
                         ForEach(3..<users.count, id: \.self) { index in
                             NavigationLink(destination: ProfileView(currentUser: users[index])) {
@@ -248,30 +319,29 @@ struct LeaderBoard: View {
                         }
                     }
                 }
-            }
-            .frame(maxHeight: .infinity)
-            .onAppear {
-                // Responsive
-                if UIDevice.current.userInterfaceIdiom == .phone {
-                    imageSizeWidth = proxy.size.width/5
-                    imageSizeHeight = proxy.size.width/5
-                    imageBackgroundSize = proxy.size.width/3.5
-                } else {
-                    imageSizeWidth = proxy.size.width/5.5
-                    imageSizeHeight = proxy.size.width/5.5
-                    imageBackgroundSize = proxy.size.width/4
-                    scaleUpSize = 1
-                    scaleDownSize = 1.1
-                    rank1UsernameFont = .title
-                    otherUsernameFont = .title2
+                .frame(maxHeight: .infinity)
+                .onAppear {
+                    // Responsive
+                    if UIDevice.current.userInterfaceIdiom == .phone {
+                        imageSizeWidth = proxy.size.width/5
+                        imageSizeHeight = proxy.size.width/5
+                        imageBackgroundSize = proxy.size.width/3.5
+                    } else {
+                        imageSizeWidth = proxy.size.width/5.5
+                        imageSizeHeight = proxy.size.width/5.5
+                        imageBackgroundSize = proxy.size.width/4
+                        scaleUpSize = 1
+                        scaleDownSize = 1.1
+                        rank1UsernameFont = .title
+                        otherUsernameFont = .title2
+                    }
                 }
+                .edgesIgnoringSafeArea(.all)
+                // Theme
+                .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
+                .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
+                .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
             }
-            .edgesIgnoringSafeArea(.all)
-            // Theme
-            .background(theme == "system" ? colorScheme == .dark ? darkBackground : lightBackground : theme == "light" ? lightBackground : darkBackground)
-            .foregroundColor(theme == "system" ? colorScheme == .dark ? .white : Color.black : theme == "light" ? Color.black : Color.white)
-            .preferredColorScheme(theme == "system" ? .init(colorScheme) : theme == "light" ? .light : .dark)
-            
         }
         .navigationBarBackButtonHidden(true) // Hide the default back button
         .navigationBarItems(leading: backButton) // Place the custom back button in the top-left corner

@@ -88,6 +88,7 @@ struct ModalView: View {
                                             Text("YOU WON")
                                                 .font(.system(size: outComeFontSize))
                                                 .bold()
+                                                .frame(minWidth:90)
                                                 .scaleEffect(isExpanded ? 1.1 : 1) // Apply scale effect
                                                 .animation(
                                                     Animation.easeInOut(duration: 2).repeatForever(autoreverses: true),
@@ -112,6 +113,7 @@ struct ModalView: View {
                                             Text("YOU LOSS")
                                                 .font(.system(size: outComeFontSize))
                                                 .bold()
+                                                .frame(minWidth:90)
                                                 .scaleEffect(isExpanded ? 1.1 : 1) // Apply scale effect
                                                 .animation(
                                                     Animation.easeInOut(duration: 2).repeatForever(autoreverses: true),
@@ -143,7 +145,7 @@ struct ModalView: View {
                                         Text("DRAW")
                                             .font(.system(size: outComeFontSize))
                                             .bold()
-                                            .frame(minWidth:80)
+                                            .frame(minWidth:90)
                                             .scaleEffect(isExpanded ? 1.1 : 1) // Apply scale effect
                                             .animation(
                                                 Animation.easeInOut(duration: 2).repeatForever(autoreverses: true),
@@ -300,7 +302,6 @@ struct ModalView: View {
             }
             .ignoresSafeArea()
             .onAppear {
-                
                 // Responsive on phone and ipad
                 if UIDevice.current.userInterfaceIdiom == .phone {
                 } else {
@@ -310,13 +311,13 @@ struct ModalView: View {
                     playerTitleFont = .title
                     ratingChange = 70
                 }
-                
+
                 // History instance
                 let history = GameHistory(context: viewContext)
                 history.datePlayed = Date()
                 history.gameID = UUID()
                 history.opponentUsername = viewModel.blackPlayerName
-                
+
                 // Update user stats
                 user.userStats?.totalGames = Int32((user.userStats?.totalGames ?? 0) + 1)
 
@@ -325,49 +326,54 @@ struct ModalView: View {
                         if currentUser.settingSoundEnabled {
                             viewModel.playSound(sound: "gameWin", type: "mp3")
                         }
-                        
+
                         user.userStats?.wins = Int32((user.userStats?.wins ?? 0) + 1)
-                        
+
                         history.outcome = "Win"
                     } else {
                         if currentUser.settingSoundEnabled {
                             viewModel.playSound(sound: "gameLoss", type: "mp3")
                         }
-                        
+
                         history.outcome = "Loss"
-                        
+
                         user.userStats?.losses = Int32((user.userStats?.losses ?? 0) + 1)
                     }
                 } else {
                     if currentUser.settingSoundEnabled {
                         viewModel.playSound(sound: "gameDraw", type: "mp3")
                     }
-                    
+
                     history.outcome = "Draw"
-                    
+
                     user.userStats?.draws = Int32((user.userStats?.draws ?? 0) + 1)
                 }
-                
+
                 // Calculate win rate
                 let wins = user.userStats?.wins ?? 0
                 let totalGames = user.userStats?.totalGames ?? 1
-                
+
                 let winRate: Double
                 if totalGames > 0 {
                     winRate = (Double(wins) / Double(totalGames) * 100)
                 } else {
                     winRate = 0
                 }
-                
+
                 user.userStats?.winRate = Double(winRate)
                 currentUser.hasActiveGame = false
                 user.hasActiveGame = false
-                
+
                 // Rating change
                 history.userRatingChange = Int16(abs(Int(user.rating) - currentUser.rating))
-                
+
                 user.addToUserHistory(history)
+                
                 user.rating = Int16(currentUser.rating)
+
+                if user.rating <= 0 {
+                    user.rating = 0
+                }
                 
                 // Save to core data
                 try? viewContext.save()

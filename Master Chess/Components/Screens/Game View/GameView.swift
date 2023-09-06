@@ -65,6 +65,16 @@ struct GameView: View {
                 // Overlay board view
                 ChessBoardView(viewModel: viewModel, user: user)                
                 VStack {
+                    if proxy.size.height != 839 {
+                        VStack{}
+                            .frame(height: proxy.size.width/20)
+                    } else if proxy.size.height == 1150 {
+                        
+                    } else {
+                        VStack{}
+                            .frame(height: proxy.size.width/26)
+                    }
+                    
                     // Load all pieces
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 8), spacing: 0) {
                         ForEach(0..<8) { y in
@@ -79,9 +89,9 @@ struct GameView: View {
                                     let isCurrentPiece = currentPiece.0 == piece
                                     let pieceImage = Image(piece.imageView)
                                         .resizable()
-                                        .frame(width: pieceImageSizeWidth1, height: pieceImageSizeHeight1)
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: pieceImageSizeWidth2, height: pieceImageSizeHeight2)
+                                        .frame(width: pieceImageSizeWidth1, height: pieceImageSizeHeight1)
+                                        .scaleEffect(0.8)
                                         .overlay(
                                             Circle()
                                                 .fill(isMoveValid ? Color.blue.opacity(0.8) : .clear)
@@ -168,24 +178,20 @@ struct GameView: View {
             .onAppear {
                 // Responsive
                 if UIDevice.current.userInterfaceIdiom == .phone {
-                    pieceImageSizeWidth1 = proxy.size.width / 9
-                    pieceImageSizeHeight1 = proxy.size.width / 9
-                    pieceImageSizeWidth2 = proxy.size.width / 8
-                    pieceImageSizeHeight2 = proxy.size.width / 8
+                    pieceImageSizeWidth1 = proxy.size.width / 8
+                    pieceImageSizeHeight1 = proxy.size.width / 8
                     tileSizeWidth = proxy.size.width / 8
                     tileSizeHeight = proxy.size.width / 8
                     viewPush = proxy.size.width / 4.5
                 } else {
-                    pieceImageSizeWidth1 = proxy.size.width / 10
-                    pieceImageSizeHeight1 = proxy.size.width / 11
-                    pieceImageSizeWidth2 = proxy.size.width / 9
-                    pieceImageSizeHeight2 = proxy.size.width / 10
+                    pieceImageSizeWidth1 = proxy.size.width / 8
+                    pieceImageSizeHeight1 = proxy.size.width / 10
                     tileSizeWidth = proxy.size.width / 8
                     tileSizeHeight = proxy.size.width / 10
-                    if proxy.size.width >= 1024 {
+                    if proxy.size.width == 1024 {
                         viewPush = proxy.size.width / 19
                     } else {
-                        viewPush = proxy.size.width / 9
+                        viewPush = proxy.size.width / 7
                     }
                 }
             }

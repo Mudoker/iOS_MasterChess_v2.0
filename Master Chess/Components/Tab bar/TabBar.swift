@@ -20,23 +20,47 @@ struct TabBar: View {
     @AppStorage("selectedLanguage") var selectedLanguage = "en"
     
     var body: some View {
-        TabView(selection: $tabSelection) {
-            NavigationView {
-                MenuView()
+        if UIDevice.current.userInterfaceIdiom == .phone{
+            TabView(selection: $tabSelection) {
+                NavigationView {
+                    MenuView()
+                }
+                .tag(0)
+                .toolbarBackground(.hidden, for: .tabBar) // hide color
+                
+                NavigationView {
+                    SettingView()
+                }
+                .tag(1)
+                .toolbarBackground(.hidden, for: .tabBar) // hide color
+                
             }
-            .tag(0)
-            .toolbarBackground(.hidden, for: .tabBar) // hide color
-            
-            NavigationView {
-                SettingView()
+            .environment(\.locale, Locale(identifier: selectedLanguage)) // Localization
+            .overlay(alignment: .bottom) {
+                CustomTabbar(tabSelection: $tabSelection)
             }
-            .tag(1)
-            .toolbarBackground(.hidden, for: .tabBar) // hide color
-            
-        }
-        .environment(\.locale, Locale(identifier: selectedLanguage)) // Localization
-        .overlay(alignment: .bottom) {
-            CustomTabbar(tabSelection: $tabSelection)
+        } else {
+            NavigationStack {
+                TabView(selection: $tabSelection) {
+                    NavigationView {
+                        MenuView()
+                    }
+                    .tag(0)
+                    .toolbarBackground(.hidden, for: .tabBar) // hide color
+                    
+                    NavigationView {
+                        SettingView()
+                    }
+                    .tag(1)
+                    .toolbarBackground(.hidden, for: .tabBar) // hide color
+                    
+                }
+                .environment(\.locale, Locale(identifier: selectedLanguage)) // Localization
+                .overlay(alignment: .bottom) {
+                    CustomTabbar(tabSelection: $tabSelection)
+                }
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }

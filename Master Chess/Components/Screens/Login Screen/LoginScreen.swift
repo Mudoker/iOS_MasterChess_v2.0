@@ -267,13 +267,6 @@ struct LoginView: View {
                                         CurrentUser.shared.settingSoundEnabled = users[index].userSettings?.soundEnabled ?? false
                                         CurrentUser.shared.settingDifficulty = users[index].userSettings?.difficulty ?? ""
                                         
-                                        // Play or turn off background music
-                                        if !CurrentUser.shared.settingMusicEnabled {
-                                            SoundPlayer.stopBackgroundMusic()
-                                        } else {
-                                            SoundPlayer.startBackgroundMusic()
-                                        }
-                                        
                                         // Properties from SavedGame
                                         CurrentUser.shared.savedGameAutoPromotionEnabled = users[index].savedGame?.autoPromotionEnabled ?? false
                                         CurrentUser.shared.savedGameBlackTimeLeft = users[index].savedGame?.blackTimeLeft ?? 0
@@ -320,6 +313,7 @@ struct LoginView: View {
                                     TabBar()
                                         .environment(\.locale, Locale(identifier: CurrentUser.shared.settingLanguage)) // Localization
                                         .navigationBarBackButtonHidden(true)
+                                    
                                 }
                             
                             // push view
@@ -351,6 +345,7 @@ struct LoginView: View {
                                 .foregroundColor(.white)
                             
                             NavigationLink(destination: SignUpScreen()
+                                .environment(\.locale, Locale(identifier: selectedLanguage))
                                 .navigationBarBackButtonHidden(true)) {
                                     // Push to 2 sides
                                     // Center
@@ -390,7 +385,7 @@ struct LoginView: View {
                 // Custom alert for login status
                 if isAlert {
                     Rectangle()
-                        .foregroundColor(Color.gray)
+                        .foregroundColor(Color.white)
                         .frame(width: alertSizeWidth, height: alertLoginSizeHeight)
                         .overlay(
                             VStack (alignment: .center) {
@@ -409,7 +404,6 @@ struct LoginView: View {
                                 } else {
                                     Text(LocalizedStringKey(loginStatus))
                                         .font(alertContentFont)
-                                        .bold()
                                 }
                                 
                                 // push view
@@ -449,7 +443,7 @@ struct LoginView: View {
                 // Custom alert for forgot password
                 if isShowHint {
                     Rectangle()
-                        .foregroundColor(Color.gray)
+                        .foregroundColor(Color.white)
                         .frame(width: alertSizeWidth, height: alertSizeHeight)
                         .overlay(
                             VStack (alignment: .center) {
@@ -504,7 +498,6 @@ struct LoginView: View {
                         }
                 }
             }
-            
             .onAppear {
                 // Responsive
                 if UIDevice.current.userInterfaceIdiom == .phone {
@@ -543,6 +536,13 @@ struct LoginView: View {
                     alertLoginSizeHeight = proxy.size.width/4
                 }
             }
+            .onChange(of: CurrentUser.shared.settingMusicEnabled) { newValue in
+                if !CurrentUser.shared.settingMusicEnabled {
+                    SoundPlayer.stopBackgroundMusic()
+                } else {
+                    SoundPlayer.startBackgroundMusic()
+                }
+            }// Play or turn off background music
         }
         .edgesIgnoringSafeArea(.all)
         .environment(\.locale, Locale(identifier: selectedLanguage))

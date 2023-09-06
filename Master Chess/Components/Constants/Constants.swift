@@ -41,6 +41,17 @@ struct Constant {
         ["", "", "", "", "", "", "", ""]
     ]
     
+    static let pawnPromotionSetup = [
+        // Stalemate Case with No Available Moves for Kings
+        ["", "", "", "", "bk", "", "", ""],
+        ["", "wp", "", "", "", "", "", ""],
+        ["", "", "wp", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "bp", ""],
+        ["", "", "wk", "", "", "", "", ""],
+    ]
+        
     static let staleMateSetup = [
         // Stalemate Case with No Available Moves for Kings
         ["bk", "", "", "", "", "", "", ""],

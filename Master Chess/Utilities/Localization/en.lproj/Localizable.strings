@@ -27,6 +27,7 @@
 "Normal" = "Normal";
 "Hard" = "Hard";
 
+"Leaderboard" = "Leaderboard";
 "%@ moves left" = "%@ moves left";
 "%@'s Turn" = "%@'s Turn";
 "Start a move!" = "Start a move!";
@@ -189,5 +190,6 @@
 "Out of time" = "Out of time";
 "Current Rating" = "Current Rating";
 "Go Back" = "Go Back";
-
-
+"Ensure system theme has been updated!" = "Ensure system theme has been updated!";
+"To avoid system conflict. Please finish your game first!" = "To avoid system conflict. Please finish your game first!";
+"Game In Play" = "Game In Play";

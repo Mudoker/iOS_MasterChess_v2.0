@@ -294,7 +294,6 @@ class ChessBoard: ObservableObject, NSCopying {
                         isSoundPlayed = true
                     }
                 }
-                
                 // Update the piecePositions with the new value
                 piecePositions = updatedPiecePositions
                 
@@ -303,7 +302,7 @@ class ChessBoard: ObservableObject, NSCopying {
                 
                 // Switch to the next player's turn
                 currentPlayer = (currentPlayer == .white) ? .black : .white
-                
+
                 // Store move history
                 history.value.append(Move(from: Position(x: start.x, y: start.y), to: Position(x: end.x, y: end.y)))
                 

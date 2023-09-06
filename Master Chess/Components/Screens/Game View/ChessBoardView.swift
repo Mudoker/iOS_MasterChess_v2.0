@@ -339,7 +339,7 @@ struct ChessBoardView: View {
                     .padding(.vertical)
                     
                     // Move histories
-                    if !viewModel.chessGame.history.value.isEmpty {
+                    if viewModel.chessGame.history.value.isEmpty {
                         Text("Start a move!")
                             .font(.title3.bold())
                             .opacity(0.7)
@@ -394,8 +394,7 @@ struct ChessBoardView: View {
                                 user.hasActiveGame = false
                                 user.savedGame?.history = []
                                 user.savedGame?.captures = []
-                                
-                                try?viewContext.save()
+                                viewModel.chessGame.captures = []
                                 viewModel.start()
                             }) {
                                 VStack {
@@ -411,10 +410,7 @@ struct ChessBoardView: View {
                             Button(action: {
                                 viewModel.chessGame.outcome = .checkmate
                                 viewModel.chessGame.winner = .black
-                                
                                 currentUser.rating -= viewModel.chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: viewModel.chessGame.outcome, difficulty: currentUser.settingDifficulty)
-                                
-                                try?viewContext.save()
                             }) {
                                 VStack {
                                     Image(systemName: "flag")
@@ -424,28 +420,7 @@ struct ChessBoardView: View {
                                     Text("Resign")
                                 }
                             }
-                            
-                            // Menu view
-                            Button(action: {
-                                viewModel.chessGame.stopClocks()
-                                isMenu.toggle()
-                            }) {
-                                VStack {
-                                    Image(systemName: "line.3.horizontal.circle")
-                                        .resizable()
-                                        .frame(width: proxy.size.width/18, height: proxy.size.width/18)
-                                    
-                                    Text("Main Menu")
-                                }
-                            }
-                            .fullScreenCover(isPresented: $isMenu) {
-                                TabBar()
-                                    .navigationBarBackButtonHidden(true)
-                            }
                         }
-                        
-                        // Push view
-                        Spacer()
                         
                         // admin buttons
                         if currentUser.username == "admin" {
@@ -470,7 +445,6 @@ struct ChessBoardView: View {
                                 // Force draw
                                 Button(action: {
                                     viewModel.chessGame.outcome = .stalemate
-                                    
                                     currentUser.rating += viewModel.chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: viewModel.chessGame.outcome, difficulty: currentUser.settingDifficulty)
                                 }) {
                                     VStack {
@@ -487,13 +461,13 @@ struct ChessBoardView: View {
                                 Button(action: {
                                     viewModel.chessGame.outcome = .checkmate
                                     viewModel.chessGame.winner = .black
-                                    
                                     currentUser.rating -= viewModel.chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: viewModel.chessGame.outcome, difficulty: currentUser.settingDifficulty)
                                     
                                     // Avoid negative rating
                                     if currentUser.rating < 0 {
                                         currentUser.rating = 0
                                     }
+                                    
                                 }) {
                                     VStack {
                                         Text("Force Lose")
@@ -508,14 +482,14 @@ struct ChessBoardView: View {
                             .padding(.vertical)
                         }
                     } else {
-                        // The same for iphone
+                        // The same as iphone
                         HStack (spacing: 20) {
                             Button(action: {
                                 currentUser.hasActiveGame = false
                                 user.hasActiveGame = false
                                 user.savedGame?.history = []
                                 user.savedGame?.captures = []
-                                try?viewContext.save()
+                                viewModel.chessGame.captures = []
                                 viewModel.start()
                             }) {
                                 VStack {
@@ -529,9 +503,7 @@ struct ChessBoardView: View {
                             Button(action: {
                                 viewModel.chessGame.outcome = .checkmate
                                 viewModel.chessGame.winner = .black
-                                
                                 currentUser.rating -= viewModel.chessGame.ratingChange.calculateRatingChange(playerRating: currentUser.rating, opponentRating: currentUser.settingDifficulty == "easy" ? 400 : currentUser.settingDifficulty == "medium" ? 1000 : 2000, result: viewModel.chessGame.outcome, difficulty: currentUser.settingDifficulty)
-                                try?viewContext.save()
                             }) {
                                 VStack {
                                     Image(systemName: "flag")
@@ -539,22 +511,6 @@ struct ChessBoardView: View {
                                         .frame(width: proxy.size.width/18, height: proxy.size.width/18)
                                     Text("Resign")
                                 }
-                            }
-                            
-                            Button(action: {
-                                viewModel.chessGame.stopClocks()
-                                isMenu.toggle()
-                            }) {
-                                VStack {
-                                    Image(systemName: "line.3.horizontal.circle")
-                                        .resizable()
-                                        .frame(width: proxy.size.width/18, height: proxy.size.width/18)
-                                    Text("Main Menu")
-                                }
-                            }
-                            .fullScreenCover(isPresented: $isMenu) {
-                                TabBar()
-                                    .navigationBarBackButtonHidden(true)
                             }
                             
                             if currentUser.username == "admin" {
@@ -634,11 +590,13 @@ struct ChessBoardView: View {
                     historyFrameSizeWidth = proxy.size.width/6
                     historyFrameSizeHeight = proxy.size.width/12
                     playerTurnRoundedCorner = proxy.size.width/35
+                    adminButtonSizeWidth = proxy.size.width / 4
+                    adminButtonSizeHeight = proxy.size.width / 10
                 } else {
                     profileImageSize = proxy.size.width/8
                     timerSpacing = proxy.size.width/40
-                    playerTurnFrameSizeWidth = proxy.size.width / 5
-                    playerTurnFrameSizeHeight = proxy.size.width / 17
+                    playerTurnFrameSizeWidth = proxy.size.width / 4
+                    playerTurnFrameSizeHeight = proxy.size.width / 12
                     timerBackground = proxy.size.width / 8
                     userNameFont = .title
                     userTitleFont = .title2
