@@ -1,4 +1,4 @@
-# Master Chess - A Chess Gam
+# Master Chess - A Chess Game
 
 ## Overview
 "Master Chess" is an engaging and challenging chess game developed using Swift and SwiftUI. It features the powerful Minimax algorithm for computer-controlled gameplay and leverages Google Firebase for online multiplayer functionality. Enjoy a classic game of chess on your iOS device with intuitive controls and a visually appealing user interface.
